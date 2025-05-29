@@ -56,7 +56,7 @@ const renderTechBadge = (project: Project, isSelected: boolean = false) => {
 
   return (
     <div className={`absolute ${isSelected ? 'bottom-4' : 'top-4'} left-4 z-30`}>
-      <div className="px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm text-gray-300 tech-badge-clip flex items-center gap-1.5 border border-blue-500/30 hover:border-[#e28d1d]/30 transition-colors">
+      <div className="px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm text-gray-300 tech-badge-clip flex items-center gap-1.5 hover:border-[#e28d1d]/30 transition-colors shadow-[0_0_0_1px_rgba(59,130,246,0.3)]">
         <Code className="w-3.5 h-3.5 text-[#e28d1d] tech-badge-icon" />
         <span className="text-xs font-medium">{project.mainTechnology}</span>
       </div>
@@ -447,7 +447,7 @@ export const Portfolio: React.FC = () => {
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          <AnimatePresence >
+          <AnimatePresence mode="wait">
             {filteredProjects.map((project) => (
                <motion.div
                 key={project.id}
