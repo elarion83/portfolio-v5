@@ -56,7 +56,7 @@ const renderTechBadge = (project: Project, isSelected: boolean = false) => {
 
   return (
     <div className={`absolute ${isSelected ? 'bottom-4' : 'top-4'} left-4 z-30`}>
-      <div className="px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm text-gray-300 tech-badge-clip flex items-center gap-1.5 hover:border-[#e28d1d]/30 transition-colors shadow-[0_0_0_1px_rgba(59,130,246,0.3)]">
+      <div className="px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm text-gray-300 tech-badge-clip flex items-center gap-1.5 hover:border-[#e28d1d]/30 transition-colors shadow-[0_0_5px_rgba(59,130,246,0.5),0_0_10px_rgba(59,130,246,0.3)]">
         <Code className="w-3.5 h-3.5 text-[#e28d1d] tech-badge-icon" />
         <span className="text-xs font-medium">{project.mainTechnology}</span>
       </div>
