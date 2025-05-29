@@ -334,13 +334,13 @@ export const Portfolio: React.FC = () => {
         backgroundColor: 'rgba(38, 25, 57, 0.95)'
       }}>
       <div className="max-w-6xl mx-auto">
-        <motion.h2
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-bold text-white mb-8 title-neon"
         >
           Portfolio
-        </motion.h2>
+        </motion.h1>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-200 p-4 rounded-lg mb-8">
@@ -478,8 +478,8 @@ export const Portfolio: React.FC = () => {
                     </div>
                   )}
                   <div className="absolute bottom-0 p-6 z-20">
-                    <h3 
-                      className="text-xl font-bold text-white mt-3"
+                    <h2 
+                      className="text-xl font-bold text-white mb-3"
                       dangerouslySetInnerHTML={{ __html: project.title }}
                     />
                     <div className="flex flex-wrap gap-2">
