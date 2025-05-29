@@ -478,6 +478,10 @@ export const Portfolio: React.FC = () => {
                     </div>
                   )}
                   <div className="absolute bottom-0 p-6 z-20">
+                    <h3 
+                      className="text-xl font-bold text-white mt-3"
+                      dangerouslySetInnerHTML={{ __html: project.title }}
+                    />
                     <div className="flex flex-wrap gap-2">
                       <span className="px-3 py-1.5 bg-[#e28d1d] text-white rounded-full text-sm font-medium inline-flex items-center">
                         <Briefcase className="w-4 h-4 mr-1.5" />
@@ -485,10 +489,6 @@ export const Portfolio: React.FC = () => {
                       </span>
                       {renderYearBadge(project.year)}
                     </div>
-                    <h3 
-                      className="text-xl font-bold text-white mt-3"
-                      dangerouslySetInnerHTML={{ __html: project.title }}
-                    />
                     <div 
                       className="text-gray-300 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       dangerouslySetInnerHTML={{ __html: project.description }}
