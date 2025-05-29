@@ -479,7 +479,7 @@ export const Portfolio: React.FC = () => {
                   )}
                   <div className="absolute bottom-0 p-6 z-20">
                     <h2 
-                      className="text-xl font-bold text-white mb-3 text-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+                      className="text-xl font-bold text-white mb-3 text-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
                       dangerouslySetInnerHTML={{ __html: project.title }}
                     />
                     <div className="flex flex-wrap gap-2">
