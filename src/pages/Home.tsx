@@ -9,6 +9,36 @@ export const Home: React.FC = () => {
   const location = useLocation();
   const { t, language } = useLanguage();
 
+  React.useEffect(() => {
+    document.title = language === 'fr' 
+      ? 'Développeur Web Freelance pour Agences – WordPress, React, VueJS'
+      : 'Freelance Web Developer for Agencies – WordPress, React, VueJS';
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', language === 'fr'
+        ? 'Développeur freelance avec +13 ans d\'expérience. Spécialisé en WordPress, ReactJS, VueJS. Idéal pour renfort technique ou sous-traitance.'
+        : 'Freelance developer with 13+ years of experience. Specialized in WordPress, ReactJS, VueJS. Ideal for technical support or subcontracting.'
+      );
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', language === 'fr'
+        ? 'Renfort Technique pour Agences – Développeur Freelance Web'
+        : 'Technical Support for Agencies – Freelance Web Developer'
+      );
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', language === 'fr'
+        ? 'Besoin d\'un renfort fiable pour vos projets clients ? Sites performants, respect des délais, livrables pro.'
+        : 'Need a reliable dev for your client projects? Fast websites, strict deadlines, professional delivery.'
+      );
+    }
+  }, [language]);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div 
