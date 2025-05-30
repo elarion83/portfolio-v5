@@ -31,44 +31,12 @@ export const Blog: React.FC = () => {
   const { language } = useLanguage();
 
   useEffect(() => {
-    const title = language === 'fr' 
-      ? 'Blog Dev Web pour Agences – WordPress & Optimisations'
-      : 'Dev Blog for Agencies – WordPress & Optimization Tips';
-    
-    const description = language === 'fr'
-      ? 'Tutoriels et astuces pro pour améliorer vos sites WordPress : SEO, sécurité, perf, automatisation.'
-      : 'Pro tips and tutorials to improve WordPress sites: SEO, security, performance, automation.';
-    
-    const ogTitle = language === 'fr'
-      ? 'Blog Technique WordPress – Pour Freelances & Agences'
-      : 'Technical WordPress Blog – For Freelancers & Agencies';
-    
-    const ogDescription = language === 'fr'
-      ? 'Articles orientés développement WordPress, bonne pratiques, outils pour agences.'
-      : 'Articles focused on WordPress development, best practices, and tools for agencies.';
-
-    document.title = title;
-    
-    const metaTags = {
-      'meta[name="description"]': description,
-      'meta[property="og:title"]': ogTitle,
-      'meta[property="og:description"]': ogDescription,
-      'meta[property="twitter:title"]': ogTitle,
-      'meta[property="twitter:description"]': ogDescription,
-      'link[rel="canonical"]': 'https://nicolas-gruwe.fr/blog'
-    };
-
-    Object.entries(metaTags).forEach(([selector, content]) => {
-      const element = document.querySelector(selector);
-      if (element) {
-        if (selector === 'link[rel="canonical"]') {
-          element.setAttribute('href', content);
-        } else {
-          element.setAttribute('content', content);
-        }
-      }
-    });
-  }, [language]);
+    // Update canonical URL
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', 'https://nicolas-gruwe.fr/blog');
+    }
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async () => {

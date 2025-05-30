@@ -9,40 +9,6 @@ export const Home: React.FC = () => {
   const location = useLocation();
   const { t, language } = useLanguage();
 
-  React.useEffect(() => {
-    // Update meta tags based on language
-    const title = language === 'fr' 
-      ? 'Développeur Web Freelance pour Agences – WordPress, React, VueJS'
-      : 'Freelance Web Developer for Agencies – WordPress, React, VueJS';
-    
-    const description = language === 'fr'
-      ? 'Développeur freelance avec +13 ans d\'expérience. Spécialisé en WordPress, ReactJS. Idéal pour renfort technique ou sous-traitance.'
-      : 'Freelance developer with 13+ years of experience. Specialized in WordPress, ReactJS. Ideal for technical support or subcontracting.';
-    
-    const ogTitle = language === 'fr'
-      ? 'Renfort Technique pour Agences – Développeur Freelance Web'
-      : 'Technical Support for Agencies – Freelance Web Developer';
-    
-    const ogDescription = language === 'fr'
-      ? 'Besoin d\'un renfort fiable pour vos projets clients ? Sites performants, respect des délais, livrables pro.'
-      : 'Need a reliable dev for your client projects? Fast websites, strict deadlines, professional delivery.';
-
-    document.title = title;
-    
-    const metaTags = {
-      'meta[name="description"]': description,
-      'meta[property="og:title"]': ogTitle,
-      'meta[property="og:description"]': ogDescription,
-      'meta[property="twitter:title"]': ogTitle,
-      'meta[property="twitter:description"]': ogDescription
-    };
-
-    Object.entries(metaTags).forEach(([selector, content]) => {
-      const element = document.querySelector(selector);
-      if (element) element.setAttribute('content', content);
-    });
-  }, [language]);
-
   return (
     <AnimatePresence mode="wait">
       <motion.div 

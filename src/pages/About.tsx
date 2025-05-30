@@ -25,44 +25,12 @@ export const About: React.FC = () => {
   const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
-    const title = language === 'fr' 
-      ? 'Profil Développeur Freelance pour Agences Web'
-      : 'Freelance Developer Profile for Web Agencies';
-    
-    const description = language === 'fr'
-      ? '+13 ans d\'expérience en développement web. Capable de prendre en charge des projets WordPress ou JS de A à Z, en toute autonomie.'
-      : '13+ years in web development. Capable of handling full WordPress or JS projects independently, from planning to delivery.';
-    
-    const ogTitle = language === 'fr'
-      ? 'Développeur Web Freelance – Autonome & Expérimenté'
-      : 'Freelance Web Developer – Experienced & Independent';
-    
-    const ogDescription = language === 'fr'
-      ? 'Profil technique complet : WordPress, VueJS, React. Habitué à travailler seul ou intégré à une équipe technique.'
-      : 'Full technical profile: WordPress, VueJS, React. Used to working solo or within technical teams.';
-
-    document.title = title;
-    
-    const metaTags = {
-      'meta[name="description"]': description,
-      'meta[property="og:title"]': ogTitle,
-      'meta[property="og:description"]': ogDescription,
-      'meta[property="twitter:title"]': ogTitle,
-      'meta[property="twitter:description"]': ogDescription,
-      'link[rel="canonical"]': 'https://nicolas-gruwe.fr/about'
-    };
-
-    Object.entries(metaTags).forEach(([selector, content]) => {
-      const element = document.querySelector(selector);
-      if (element) {
-        if (selector === 'link[rel="canonical"]') {
-          element.setAttribute('href', content);
-        } else {
-          element.setAttribute('content', content);
-        }
-      }
-    });
-  }, [language]);
+    // Update canonical URL
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', 'https://nicolas-gruwe.fr/about');
+    }
+  }, []);
 
   const timeline = [
     {
