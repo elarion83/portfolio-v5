@@ -37,6 +37,23 @@ export const Home: React.FC = () => {
         : 'Need a reliable dev for your client projects? Fast websites, strict deadlines, professional delivery.'
       );
     }
+
+    // Update Twitter meta tags as well
+    const twitterTitle = document.querySelector('meta[property="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', language === 'fr'
+        ? 'Renfort Technique pour Agences – Développeur Freelance Web'
+        : 'Technical Support for Agencies – Freelance Web Developer'
+      );
+    }
+
+    const twitterDescription = document.querySelector('meta[property="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', language === 'fr'
+        ? 'Besoin d\'un renfort fiable pour vos projets clients ? Sites performants, respect des délais, livrables pro.'
+        : 'Need a reliable dev for your client projects? Fast websites, strict deadlines, professional delivery.'
+      );
+    }
   }, [language]);
 
   return (
