@@ -299,22 +299,45 @@ export const Portfolio: React.FC = () => {
             stroke="#261939"
             strokeWidth="4"
           />
-          <circle
+          <motion.circle
             cx="24"
             cy="24"
             r="20"
             fill="none"
             stroke={value >= 90 ? '#22c55e' : value >= 50 ? '#f59e0b' : '#ef4444'}
             strokeWidth="4"
-            strokeDasharray={`${value * 1.26} 126`}
-            className="transition-all duration-1000 ease-out"
+            strokeDasharray="126"
+            initial={{ strokeDashoffset: 126 }}
+            animate={{ strokeDashoffset: 126 - (value * 1.26) }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
           />
         </svg>
-        <span className="absolute inset-0 flex items-center justify-center text-sm font-medium">
-          {value}
-        </span>
+        <motion.span 
+          className="absolute inset-0 flex items-center justify-center text-sm font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 1,
+              delay: 0.2
+            }}
+          >
+            {value}
+          </motion.span>
+        </motion.span>
       </div>
-      <span className="text-xs text-gray-400">{label}</span>
+      <motion.span 
+        className="text-xs text-gray-400"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+      >
+        {label}
+      </motion.span>
     </div>
   );
 
@@ -449,7 +472,7 @@ export const Portfolio: React.FC = () => {
         >
           <AnimatePresence mode="wait">
             {filteredProjects.map((project) => (
-               <motion.div
+              <motion.div
                 key={project.id}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -479,7 +502,7 @@ export const Portfolio: React.FC = () => {
                   )}
                   <div className="absolute bottom-0 p-6 z-20">
                     <h2 
-                      className="text-xl font-bold text-white mb-3 text-shadow-[0_4px_8px_rgba(0,0,0,0.95)]"
+                      className="text-2xl md:text-3xl font-bold text-white mb-3 text-shadow-[0_4px_8px_rgba(0,0,0,0.95)]"
                       dangerouslySetInnerHTML={{ __html: project.title }}
                     />
                     <div className="flex flex-wrap gap-2">
@@ -604,9 +627,9 @@ export const Portfolio: React.FC = () => {
                     </div>
                   </div>
 
-                  {selectedProject.pageSpeed &&  selectedProject.pageSpeed.performance != 'n.a' && (
+                  {selectedProject.pageSpeed && selectedProject.pageSpeed.performance != 'n.a' && (
                     <div className="mb-6">
-                        <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
+                      <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
                         <Gauge className="w-5 h-5 text-[#e28d1d]" />
                         PageSpeed Insights (Au jour de livraison)
                       </h4>
@@ -616,7 +639,6 @@ export const Portfolio: React.FC = () => {
                         {renderPageSpeedMetric(selectedProject.pageSpeed.bestPractices, 'Best Practices')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.seo, 'SEO')}
                       </div>
-                    
                     </div>
                   )}
 
