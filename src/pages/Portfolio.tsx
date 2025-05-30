@@ -604,7 +604,7 @@ export const Portfolio: React.FC = () => {
                     </div>
                   </div>
 
-                  {selectedProject.pageSpeed && (
+                  {selectedProject.pageSpeed &&  selectedProject.pageSpeed.performance != 'n.a' && (
                     <div className="mb-6">
                         <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
                         <Gauge className="w-5 h-5 text-[#e28d1d]" />
