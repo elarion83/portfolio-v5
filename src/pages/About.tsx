@@ -25,12 +25,58 @@ export const About: React.FC = () => {
   const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
+    // Update meta tags based on language
+    document.title = language === 'fr' 
+      ? 'Profil Développeur Freelance pour Agences Web'
+      : 'Freelance Developer Profile for Web Agencies';
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', language === 'fr'
+        ? '+13 ans d\'expérience en développement web. Capable de prendre en charge des projets WordPress ou JS de A à Z, en toute autonomie.'
+        : '13+ years in web development. Capable of handling full WordPress or JS projects independently, from planning to delivery.'
+      );
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', language === 'fr'
+        ? 'Développeur Web Freelance – Autonome & Expérimenté'
+        : 'Freelance Web Developer – Experienced & Independent'
+      );
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', language === 'fr'
+        ? 'Profil technique complet : WordPress, VueJS, React. Habitué à travailler seul ou intégré à une équipe technique.'
+        : 'Full technical profile: WordPress, VueJS, React. Used to working solo or within technical teams.'
+      );
+    }
+
+    // Update Twitter meta tags
+    const twitterTitle = document.querySelector('meta[property="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', language === 'fr'
+        ? 'Développeur Web Freelance – Autonome & Expérimenté'
+        : 'Freelance Web Developer – Experienced & Independent'
+      );
+    }
+
+    const twitterDescription = document.querySelector('meta[property="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', language === 'fr'
+        ? 'Profil technique complet : WordPress, VueJS, React. Habitué à travailler seul ou intégré à une équipe technique.'
+        : 'Full technical profile: WordPress, VueJS, React. Used to working solo or within technical teams.'
+      );
+    }
+
     // Update canonical URL
     const canonicalLink = document.querySelector('link[rel="canonical"]');
     if (canonicalLink) {
       canonicalLink.setAttribute('href', 'https://nicolas-gruwe.fr/about');
     }
-  }, []);
+  }, [language]);
 
   const timeline = [
     {
