@@ -586,7 +586,7 @@ export const Portfolio: React.FC = () => {
                 <div className="p-6">
                   <div className="flex flex-wrap items-center gap-3 mb-4">
                     <h3 
-                      className="text-2xl font-bold text-white"
+                      className="text-3xl font-bold text-white"
                       dangerouslySetInnerHTML={{ __html: selectedProject.title }}
                     />
                     <div className="flex gap-2 flex-wrap">
@@ -606,16 +606,17 @@ export const Portfolio: React.FC = () => {
 
                   {selectedProject.pageSpeed && (
                     <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
+                        <Gauge className="w-5 h-5 text-[#e28d1d]" />
+                        PageSpeed Insights (Au jour de livraison)
+                      </h4>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white/5 p-4 rounded-lg">
                         {renderPageSpeedMetric(selectedProject.pageSpeed.performance, 'Performance')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.accessibility, 'Accessibility')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.bestPractices, 'Best Practices')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.seo, 'SEO')}
                       </div>
-                      <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
-                        <Gauge className="w-5 h-5 text-[#e28d1d]" />
-                        PageSpeed Insights (Au jour de livraison)
-                      </h4>
+                    
                     </div>
                   )}
 
