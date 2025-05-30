@@ -127,10 +127,10 @@ export const Portfolio: React.FC = () => {
           mainTechnology: item.acf?.socle_technique || '',
           projectUrl: item.acf?.url_projet || '',
           pageSpeed: item.acf?.informations_pagespeed ? {
-            performance: parseInt(item.acf.informations_pagespeed.performance) || 0,
-            accessibility: parseInt(item.acf.informations_pagespeed.accessibilite) || 0,
-            bestPractices: parseInt(item.acf.informations_pagespeed.bonnes) || 0,
-            seo: parseInt(item.acf.informations_pagespeed.seo) || 0
+            performance: parseInt(item.acf.informations_pagespeed.performance) || 'n.a',
+            accessibility: parseInt(item.acf.informations_pagespeed.accessibilite) || 'n.a',
+            bestPractices: parseInt(item.acf.informations_pagespeed.bonnes) || 'n.a',
+            seo: parseInt(item.acf.informations_pagespeed.seo) || 'n.a'
           } : null
         }));
 
@@ -606,16 +606,16 @@ export const Portfolio: React.FC = () => {
 
                   {selectedProject.pageSpeed && (
                     <div className="mb-6">
-                      <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                        <Gauge className="w-5 h-5 text-[#e28d1d]" />
-                        PageSpeed Insights
-                      </h4>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white/5 p-4 rounded-lg">
                         {renderPageSpeedMetric(selectedProject.pageSpeed.performance, 'Performance')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.accessibility, 'Accessibility')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.bestPractices, 'Best Practices')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.seo, 'SEO')}
                       </div>
+                      <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
+                        <Gauge className="w-5 h-5 text-[#e28d1d]" />
+                        PageSpeed Insights (Au jour de livraison)
+                      </h4>
                     </div>
                   )}
 
