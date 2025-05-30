@@ -628,10 +628,6 @@ export const Portfolio: React.FC = () => {
 
                   {selectedProject.pageSpeed && selectedProject.pageSpeed.performance != 'n.a' && (
                     <div className="mb-6">
-                      <h4 className="text-lg font-semibold text-white mt-3 mb-3 flex items-center gap-2">
-                        <Gauge className="w-5 h-5 text-[#e28d1d]" />
-                        PageSpeed Insights
-                      </h4>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white/5 p-4 rounded-lg">
                         {renderPageSpeedMetric(selectedProject.pageSpeed.performance, 'Performance')}
                         {renderPageSpeedMetric(selectedProject.pageSpeed.accessibility, 'Accessibility')}
