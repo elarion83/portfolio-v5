@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, MapPin, Send, Linkedin, Github, ArrowRight, MessageCircle, CheckCircle, AlertCircle, CalendarPlus2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -27,6 +27,46 @@ export const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+
+  useEffect(() => {
+    const title = language === 'fr' 
+      ? 'Collaborer avec un Développeur Freelance – Contact Agences'
+      : 'Collaborate with a Freelance Developer – Contact for Agencies';
+    
+    const description = language === 'fr'
+      ? 'Contactez-moi pour discuter de votre projet : développement sur mesure, renfort ponctuel ou mission longue.'
+      : 'Get in touch to discuss your project: custom development, short-term support, or long-term mission.';
+    
+    const ogTitle = language === 'fr'
+      ? 'Besoin d\'un Développeur pour votre Agence ? Contactez-moi'
+      : 'Need a Developer for Your Agency? Contact Me';
+    
+    const ogDescription = language === 'fr'
+      ? 'Réactif, autonome, expérimenté. Disponible pour vos projets techniques en marque blanche.'
+      : 'Responsive, independent, experienced. Available for white-label technical projects.';
+
+    document.title = title;
+    
+    const metaTags = {
+      'meta[name="description"]': description,
+      'meta[property="og:title"]': ogTitle,
+      'meta[property="og:description"]': ogDescription,
+      'meta[property="twitter:title"]': ogTitle,
+      'meta[property="twitter:description"]': ogDescription,
+      'link[rel="canonical"]': 'https://nicolas-gruwe.fr/contact'
+    };
+
+    Object.entries(metaTags).forEach(([selector, content]) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        if (selector === 'link[rel="canonical"]') {
+          element.setAttribute('href', content);
+        } else {
+          element.setAttribute('content', content);
+        }
+      }
+    });
+  }, [language]);
   
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
