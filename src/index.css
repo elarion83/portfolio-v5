@@ -118,3 +118,7 @@
 .photos_projets img {
   cursor:pointer;
 }
+
+.portfolio-field .launch {
+  display:none;
+}
