@@ -500,7 +500,7 @@ export const Portfolio: React.FC = () => {
                       />
                     </div>
                   )}
-                  <div className="absolute bottom-0 p-6 z-20">
+                  <div className="absolute bottom-0 p-4 z-20">
                     <h2 
                       className="text-2xl md:text-3xl font-bold text-white mb-3 text-shadow-[0_4px_8px_rgba(0,0,0,0.95)]"
                       dangerouslySetInnerHTML={{ __html: project.title }}
