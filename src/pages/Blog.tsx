@@ -31,12 +31,58 @@ export const Blog: React.FC = () => {
   const { language } = useLanguage();
 
   useEffect(() => {
+    // Update meta tags based on language
+    document.title = language === 'fr' 
+      ? 'Blog Dev Web pour Agences – WordPress & Optimisations'
+      : 'Dev Blog for Agencies – WordPress & Optimization Tips';
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', language === 'fr'
+        ? 'Tutoriels et astuces pro pour améliorer vos sites WordPress : SEO, sécurité, perf, automatisation.'
+        : 'Pro tips and tutorials to improve WordPress sites: SEO, security, performance, automation.'
+      );
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', language === 'fr'
+        ? 'Blog Technique WordPress – Pour Freelances & Agences'
+        : 'Technical WordPress Blog – For Freelancers & Agencies'
+      );
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', language === 'fr'
+        ? 'Articles orientés développement WordPress, bonne pratiques, outils pour agences.'
+        : 'Articles focused on WordPress development, best practices, and tools for agencies.'
+      );
+    }
+
+    // Update Twitter meta tags
+    const twitterTitle = document.querySelector('meta[property="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', language === 'fr'
+        ? 'Blog Technique WordPress – Pour Freelances & Agences'
+        : 'Technical WordPress Blog – For Freelancers & Agencies'
+      );
+    }
+
+    const twitterDescription = document.querySelector('meta[property="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', language === 'fr'
+        ? 'Articles orientés développement WordPress, bonne pratiques, outils pour agences.'
+        : 'Articles focused on WordPress development, best practices, and tools for agencies.'
+      );
+    }
+
     // Update canonical URL
     const canonicalLink = document.querySelector('link[rel="canonical"]');
     if (canonicalLink) {
       canonicalLink.setAttribute('href', 'https://nicolas-gruwe.fr/blog');
     }
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     const fetchPosts = async () => {
