@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, MapPin, Send, Linkedin, Github, ArrowRight, MessageCircle, CheckCircle, AlertCircle, CalendarPlus2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -27,6 +27,60 @@ export const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+
+  useEffect(() => {
+    // Update meta tags based on language
+    document.title = language === 'fr' 
+      ? 'Collaborer avec un Développeur Freelance – Contact Agences'
+      : 'Collaborate with a Freelance Developer – Contact for Agencies';
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', language === 'fr'
+        ? 'Contactez-moi pour discuter de votre projet : développement sur mesure, renfort ponctuel ou mission longue.'
+        : 'Get in touch to discuss your project: custom development, short-term support, or long-term mission.'
+      );
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', language === 'fr'
+        ? 'Besoin d\'un Développeur pour votre Agence ? Contactez-moi'
+        : 'Need a Developer for Your Agency? Contact Me'
+      );
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', language === 'fr'
+        ? 'Réactif, autonome, expérimenté. Disponible pour vos projets techniques en marque blanche.'
+        : 'Responsive, independent, experienced. Available for white-label technical projects.'
+      );
+    }
+
+    // Update Twitter meta tags
+    const twitterTitle = document.querySelector('meta[property="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', language === 'fr'
+        ? 'Besoin d\'un Développeur pour votre Agence ? Contactez-moi'
+        : 'Need a Developer for Your Agency? Contact Me'
+      );
+    }
+
+    const twitterDescription = document.querySelector('meta[property="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', language === 'fr'
+        ? 'Réactif, autonome, expérimenté. Disponible pour vos projets techniques en marque blanche.'
+        : 'Responsive, independent, experienced. Available for white-label technical projects.'
+      );
+    }
+
+    // Update canonical URL
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', 'https://nicolas-gruwe.fr/contact');
+    }
+  }, [language]);
   
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
