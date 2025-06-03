@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, ArrowLeftCircle, ArrowRightCircle, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, ArrowLeftCircle, ArrowRightCircle, MessageCircle, CalendarPlus2, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { CommentList } from '../components/CommentList';
@@ -245,6 +245,46 @@ export const BlogPost: React.FC = () => {
               className="prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: post.content.rendered }}
             />
+
+            {/* CTA Section */}
+            <div className="mt-12 p-8 bg-[#261939]/50 rounded-xl border border-[#e28d1d]/20">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    Besoin d'aide pour votre projet ?
+                  </h3>
+                  <p className="text-gray-300 mb-6">
+                    Réservez un appel gratuit de 30 minutes pour discuter de vos besoins et découvrir comment je peux vous aider à atteindre vos objectifs.
+                  </p>
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-2 text-gray-300">
+                      <span className="w-1.5 h-1.5 bg-[#e28d1d] rounded-full" />
+                      Expertise technique approfondie
+                    </li>
+                    <li className="flex items-center gap-2 text-gray-300">
+                      <span className="w-1.5 h-1.5 bg-[#e28d1d] rounded-full" />
+                      Solutions sur mesure
+                    </li>
+                    <li className="flex items-center gap-2 text-gray-300">
+                      <span className="w-1.5 h-1.5 bg-[#e28d1d] rounded-full" />
+                      Accompagnement personnalisé
+                    </li>
+                  </ul>
+                </div>
+                <div className="flex-shrink-0">
+                  <a
+                    href="https://calendly.com/gruwe-nicolas/30min"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#e28d1d] text-white rounded-full font-semibold hover:bg-[#e28d1d]/90 transition-colors"
+                  >
+                    <CalendarPlus2 className="w-5 h-5" />
+                    Réserver mon appel gratuit
+                    <ArrowRight className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </article>
 
