@@ -91,21 +91,23 @@ export const BlogPost: React.FC = () => {
           setNavigation(nav);
         }
 
-        document.title = `${postData[0].title.rendered}`;
+        // Update meta tags
+        const postTitle = postData[0].title.rendered;
+        const postDescription = postData[0].excerpt.rendered.replace(/<[^>]*>/g, '');
+        const postImage = postData[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg';
+        const postUrl = `https://nicolas-gruwe.fr/blog/${postData[0].slug}`;
         
-        const description = postData[0].excerpt.rendered.replace(/<[^>]*>/g, '');
-        const imageUrl = postData[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg';
-        const url = `https://nicolas-gruwe.fr/blog/${postData[0].slug}`;
+        document.title = `${postTitle} | Blog - Nicolas Gruwe`;
         
         const metaTags = {
-          'meta[name="description"]': description,
-          'meta[property="og:title"]': `${postData[0].title.rendered} | Blog - Nicolas Gruwe`,
-          'meta[property="og:description"]': description,
-          'meta[property="og:image"]': imageUrl,
-          'meta[property="og:url"]': url,
-          'meta[property="twitter:title"]': `${postData[0].title.rendered} | Blog - Nicolas Gruwe`,
-          'meta[property="twitter:description"]': description,
-          'meta[property="twitter:image"]': imageUrl
+          'meta[name="description"]': postDescription,
+          'meta[property="og:title"]': `${postTitle} | Blog - Nicolas Gruwe`,
+          'meta[property="og:description"]': postDescription,
+          'meta[property="og:image"]': postImage,
+          'meta[property="og:url"]': postUrl,
+          'meta[property="twitter:title"]': `${postTitle} | Blog - Nicolas Gruwe`,
+          'meta[property="twitter:description"]': postDescription,
+          'meta[property="twitter:image"]': postImage
         };
 
         Object.entries(metaTags).forEach(([selector, value]) => {
