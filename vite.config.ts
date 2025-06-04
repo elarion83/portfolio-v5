@@ -25,11 +25,7 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true
       }
-    },
-    ssr: true
-  },
-  ssr: {
-    noExternal: ['react-router-dom']
+    }
   },
   server: {
     headers: {
