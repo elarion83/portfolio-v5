@@ -68,7 +68,7 @@ export const BlogPost: React.FC = () => {
       try {
         const [postResponse, allPostsResponse] = await Promise.all([
           fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/posts?slug=${postId}&_embed`),
-          fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?per_page=100&_fields=title,slug')
+          fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?per_page=5&_fields=title,slug')
         ]);
 
         if (!postResponse.ok || !allPostsResponse.ok) {
