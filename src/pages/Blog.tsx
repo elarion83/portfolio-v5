@@ -204,7 +204,7 @@ export const Blog: React.FC = () => {
                       
                       {(isFeature || isSecondary) && (
                         <div 
-                          className="text-gray-300 mb-4 line-clamp-3 backdrop-blur-sm p-4 rounded-lg"
+                          className="text-gray-300 mb-4 line-clamp-3 p-4 rounded-lg"
                           dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
                         />
                       )}
