@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, ArrowLeftCircle, ArrowRightCircle, MessageCircle, CalendarPlus2, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, MessageCircle, CalendarPlus2, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { CommentList } from '../components/CommentList';
@@ -249,7 +249,7 @@ export const BlogPost: React.FC = () => {
             />
 
             {/* CTA Section */}
-            <div className="mt-12 p-8 bg-[#261939]/50 rounded-xl border border-[#e28d1d]/20">
+            <div className="mt-12 p-8 bg-[#261939]/80 backdrop-blur-md rounded-xl border border-[#e28d1d]/20">
               <div className="flex flex-col md:flex-row items-center gap-8">
                 <div className="flex-1">
                   <h3 className="text-2xl font-bold text-white mb-4">
@@ -298,7 +298,7 @@ export const BlogPost: React.FC = () => {
               className="group flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-[#e28d1d]/30 transition-colors"
             >
               <div className="flex items-center gap-3 text-gray-400 group-hover:text-[#e28d1d] transition-colors mb-2">
-                <ArrowLeftCircle className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
                 <span className="text-sm font-medium">
                   {language === 'fr' ? 'Article précédent' : 'Previous Post'}
                 </span>
@@ -319,7 +319,7 @@ export const BlogPost: React.FC = () => {
                 <span className="text-sm font-medium">
                   {language === 'fr' ? 'Article suivant' : 'Next Post'}
                 </span>
-                <ArrowRightCircle className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5" />
               </div>
               <h3 
                 className="text-white group-hover:text-[#e28d1d] transition-colors line-clamp-2"
