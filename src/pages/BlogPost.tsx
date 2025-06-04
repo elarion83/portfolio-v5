@@ -28,23 +28,38 @@ export const BlogPost: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { language } = useLanguage();
 
-  useEffect(() => {
-    const canonicalLink = document.querySelector('link[rel="canonical"]');
-    if (canonicalLink && postId) {
-      canonicalLink.setAttribute('href', `https://nicolas-gruwe.fr/blog/${postId}`);
-    }
-  }, [postId]);
+  const updateMetaTags = (post: BlogPost) => {
+    const postTitle = post.title.rendered;
+    const postDescription = post.excerpt.rendered.replace(/<[^>]*>/g, '');
+    const postImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg';
+    const postUrl = `https://nicolas-gruwe.fr/blog/${postId}`;
 
-  const fetchComments = async (postId: number) => {
-    try {
-      const response = await fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/comments?post=${postId}&order=desc`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch comments');
+    // Update document title
+    document.title = `${postTitle} | Blog - Nicolas Gruwe`;
+
+    // Update meta tags
+    const metaTags = {
+      'meta[name="description"]': postDescription,
+      'meta[property="og:title"]': `${postTitle} | Blog - Nicolas Gruwe`,
+      'meta[property="og:description"]': postDescription,
+      'meta[property="og:image"]': postImage,
+      'meta[property="og:url"]': postUrl,
+      'meta[property="twitter:title"]': `${postTitle} | Blog - Nicolas Gruwe`,
+      'meta[property="twitter:description"]': postDescription,
+      'meta[property="twitter:image"]': postImage
+    };
+
+    Object.entries(metaTags).forEach(([selector, content]) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.setAttribute('content', content);
       }
-      const data = await response.json();
-      setComments(data);
-    } catch (err) {
-      console.error('Error fetching comments:', err);
+    });
+
+    // Update canonical URL
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', postUrl);
     }
   };
 
@@ -69,8 +84,10 @@ export const BlogPost: React.FC = () => {
           throw new Error('Post not found');
         }
 
-        setPost(postData[0]);
-        fetchComments(postData[0].id);
+        const currentPost = postData[0];
+        setPost(currentPost);
+        updateMetaTags(currentPost);
+        fetchComments(currentPost.id);
         
         // Set up navigation
         const currentIndex = allPosts.findIndex((p: any) => p.slug === postId);
@@ -91,29 +108,6 @@ export const BlogPost: React.FC = () => {
           setNavigation(nav);
         }
 
-        // Update meta tags
-        const postTitle = postData[0].title.rendered;
-        const postDescription = postData[0].excerpt.rendered.replace(/<[^>]*>/g, '');
-        const postImage = postData[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg';
-        const postUrl = `https://nicolas-gruwe.fr/blog/${postData[0].slug}`;
-        
-        document.title = `${postTitle} | Blog - Nicolas Gruwe`;
-        
-        const metaTags = {
-          'meta[name="description"]': postDescription,
-          'meta[property="og:title"]': `${postTitle} | Blog - Nicolas Gruwe`,
-          'meta[property="og:description"]': postDescription,
-          'meta[property="og:image"]': postImage,
-          'meta[property="og:url"]': postUrl,
-          'meta[property="twitter:title"]': `${postTitle} | Blog - Nicolas Gruwe`,
-          'meta[property="twitter:description"]': postDescription,
-          'meta[property="twitter:image"]': postImage
-        };
-
-        Object.entries(metaTags).forEach(([selector, value]) => {
-          const element = document.querySelector(selector);
-          if (element) element.setAttribute('content', value);
-        });
       } catch (err) {
         console.error('Error fetching post:', err);
         setError('Post not found');
@@ -124,6 +118,19 @@ export const BlogPost: React.FC = () => {
 
     fetchPost();
   }, [postId]);
+
+  const fetchComments = async (postId: number) => {
+    try {
+      const response = await fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/comments?post=${postId}&order=desc`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+      const data = await response.json();
+      setComments(data);
+    } catch (err) {
+      console.error('Error fetching comments:', err);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -137,13 +144,13 @@ export const BlogPost: React.FC = () => {
   const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
     if (!post) return;
 
-    const url = `https://nicolas-gruwe.fr/blog/${post.slug}`;
+    const projectUrl = `https://nicolas-gruwe.fr/blog/${post.slug}`;
     const text = post.title.rendered;
 
     const urls = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(projectUrl)}`,
+      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(projectUrl)}&text=${encodeURIComponent(text)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(projectUrl)}`
     };
 
     window.open(urls[platform], '_blank', 'width=600,height=400');
