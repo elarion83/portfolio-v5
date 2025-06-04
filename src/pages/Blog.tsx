@@ -15,6 +15,9 @@ interface BlogPost {
   excerpt: {
     rendered: string;
   };
+  content: {
+    rendered: string;
+  };
   slug: string;
   featured_image_url?: string;
   _embedded?: {
@@ -177,18 +180,18 @@ export const Blog: React.FC = () => {
                         alt={post.title.rendered}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#261939] via-[#261939]/60 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#261939] via-[#261939]/80 to-transparent" />
                     </div>
                     
                     <div className="relative h-full p-6 flex flex-col justify-end">
-                      <div className="flex items-center gap-4 text-sm text-gray-300 mb-3">
-                        <div className="flex items-center gap-1">
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm rounded-full text-sm">
                           <Calendar className="w-4 h-4 text-[#e28d1d]" />
-                          <time dateTime={post.date}>{formatDate(post.date)}</time>
+                          <time dateTime={post.date} className="text-gray-300">{formatDate(post.date)}</time>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm rounded-full text-sm">
                           <Clock className="w-4 h-4 text-[#e28d1d]" />
-                          <span>{getReadTime(post.content.rendered)}</span>
+                          <span className="text-gray-300">{getReadTime(post.content.rendered)}</span>
                         </div>
                       </div>
                       
@@ -201,7 +204,7 @@ export const Blog: React.FC = () => {
                       
                       {(isFeature || isSecondary) && (
                         <div 
-                          className="text-gray-300 mb-4 line-clamp-3"
+                          className="text-gray-300 mb-4 line-clamp-3 bg-[#261939]/60 backdrop-blur-sm p-4 rounded-lg"
                           dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
                         />
                       )}
