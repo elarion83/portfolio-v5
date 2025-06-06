@@ -1,5 +1,12 @@
 {
   "version": 2,
+  "redirects": [
+    {
+      "source": "https://nicolas-gruwe.fr/:path*",
+      "destination": "https://www.nicolas-gruwe.fr/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/portfolio/:path*",
