@@ -18,7 +18,7 @@ export const ImageLightbox: React.FC = () => {
     };
 
     // Use event delegation on the document body
-    document.body.addEventListener('click', handleImageClick, true);
+    document.body.addEventListener('click', handleImageClick, { passive: true });
     
     return () => {
       document.body.removeEventListener('click', handleImageClick, true);

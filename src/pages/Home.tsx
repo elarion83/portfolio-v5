@@ -73,7 +73,15 @@ export const Home: React.FC = () => {
             backgroundBlendMode: 'overlay',
             backgroundColor: 'rgba(38, 25, 57, 0.95)'
           }}
-        />
+        >
+          <img 
+            src="/img/home.webp" 
+            alt="" 
+            className="hidden" 
+            fetchPriority="high"
+            loading="eager"
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#261939]/80 via-transparent to-[#261939]/80" />
         <ConstellationBackground />
         
@@ -81,7 +89,7 @@ export const Home: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
             className="text-center relative max-w-[90%] sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto"
             style={{ zIndex: 2 }}
           >

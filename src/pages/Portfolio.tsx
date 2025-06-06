@@ -248,7 +248,7 @@ export const Portfolio: React.FC = () => {
       }
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handlePopState, { passive: true });
     return () => window.removeEventListener('popstate', handlePopState);
   }, [projects, location]);
 

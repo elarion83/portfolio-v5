@@ -78,7 +78,7 @@ export const ConstellationBackground: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
     resizeCanvas();
 
     const getNumPoints = () => {
@@ -143,15 +143,19 @@ export const ConstellationBackground: React.FC = () => {
       mouseRef.current = { x: canvas.width / 2, y: canvas.height / 2 };
     };
 
-    canvas.addEventListener('mousemove', handleMouseMove);
-    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-    canvas.addEventListener('mouseenter', handleMouseEnter);
-    canvas.addEventListener('mouseleave', handleMouseLeave);
-    canvas.addEventListener('touchstart', () => isMouseInCanvas.current = true);
+    canvas.addEventListener('mousemove', handleMouseMove, { passive: true });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+    canvas.addEventListener('mouseenter', handleMouseEnter, { passive: true });
+    canvas.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+    canvas.addEventListener('touchstart', () => isMouseInCanvas.current = true, { passive: true });
     canvas.addEventListener('touchend', () => {
       isMouseInCanvas.current = false;
-      mouseRef.current = { x: canvas.width / 2, y: canvas.height / 2 };
-    });
+      setTimeout(() => {
+        if (!isMouseInCanvas.current) {
+          mouseRef.current = { x: canvas.width / 2, y: canvas.height / 2 };
+        }
+      }, 50);
+    }, { passive: true });
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
