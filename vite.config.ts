@@ -37,7 +37,6 @@ export default defineConfig({
   },
   clearScreen: false,
   esbuild: {
-    jsxInject: `import React from 'react'`,
     treeShaking: true,
     minifyIdentifiers: true,
     minifySyntax: true,
