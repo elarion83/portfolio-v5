@@ -18,7 +18,7 @@ export default defineConfig({
         }
       }
     },
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -35,5 +35,12 @@ export default defineConfig({
       timeout: 5000
     }
   },
-  clearScreen: false
+  clearScreen: false,
+  esbuild: {
+    jsxInject: `import React from 'react'`,
+    treeShaking: true,
+    minifyIdentifiers: true,
+    minifySyntax: true,
+    minifyWhitespace: true
+  }
 });
