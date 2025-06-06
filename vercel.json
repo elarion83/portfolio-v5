@@ -2,7 +2,13 @@
   "version": 2,
   "redirects": [
     {
-      "source": "https://nicolas-gruwe.fr/:path*",
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "nicolas-gruwe.fr"
+        }
+      ],
       "destination": "https://www.nicolas-gruwe.fr/:path*",
       "permanent": true
     }
