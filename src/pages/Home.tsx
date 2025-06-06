@@ -72,6 +72,8 @@ export const Home: React.FC = () => {
             backgroundBlendMode: 'overlay',
             backgroundColor: 'rgba(38, 25, 57, 0.95)'
           }}
+          aria-hidden="true"
+          loading="eager"
         >
           <link rel="preload" href="/img/home.webp" as="image" />
         </div>
