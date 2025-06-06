@@ -9,7 +9,7 @@ export const ImageLightbox: React.FC = () => {
   useEffect(() => {
     const handleImageClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName === 'IMG' && target.closest('.photos_projets figure')) {
+      if (target.tagName === 'IMG' && target.closest('.photos_projets')) {
         e.preventDefault();
         e.stopPropagation();
         setCurrentImage((target as HTMLImageElement).src);
@@ -17,11 +17,35 @@ export const ImageLightbox: React.FC = () => {
       }
     };
 
-    // Use event delegation on the document body
-    document.body.addEventListener('click', handleImageClick);
+    const initializeLightbox = () => {
+      // Retirer l'ancien écouteur s'il existe
+      document.body.removeEventListener('click', handleImageClick);
+      // Ajouter le nouvel écouteur
+      document.body.addEventListener('click', handleImageClick);
+    };
+
+    // Observer les changements dans le DOM
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length > 0) {
+          // Si des nœuds ont été ajoutés, réinitialiser la lightbox
+          initializeLightbox();
+        }
+      });
+    });
+
+    // Configurer l'observer pour surveiller les changements dans le corps du document
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    // Initialisation initiale
+    initializeLightbox();
     
     return () => {
       document.body.removeEventListener('click', handleImageClick);
+      observer.disconnect();
     };
   }, []);
 
