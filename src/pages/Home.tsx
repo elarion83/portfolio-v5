@@ -38,7 +38,6 @@ export const Home: React.FC = () => {
       );
     }
 
-    // Update Twitter meta tags as well
     const twitterTitle = document.querySelector('meta[property="twitter:title"]');
     if (twitterTitle) {
       twitterTitle.setAttribute('content', language === 'fr'
@@ -97,6 +96,7 @@ export const Home: React.FC = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.3, delay: 0.4 }}
+              className="flex justify-center mb-3 sm:mb-4"
             >
               <Code className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#e28d1d]" aria-hidden="true" />
             </motion.div>
@@ -165,96 +165,31 @@ export const Home: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1, y: -5 }}
-              <div className="mb-4 sm:mb-6">
-                <p className="text-sm sm:text-base md:text-lg text-white mb-4 max-w-xs sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto leading-relaxed bg-[#261939]/30 backdrop-blur-sm p-3 sm:p-4 md:p-5 rounded-xl text-shadow">
-                  {t('home.description')}
-                </p>
-                
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-                  <div className="flex items-center gap-1.5 text-white bg-[#261939]/30 backdrop-blur-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm">
-                    <Coffee className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e28d1d]" aria-hidden="true" />
-                    <span className="text-shadow">500+ {t('about.stats.tea')}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-white bg-[#261939]/30 backdrop-blur-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm">
-                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e28d1d]" aria-hidden="true" />
-                    <span className="text-shadow">30+ {t('about.stats.clients')}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-                <Link to="/about">
-                  <motion.button
-                    whileHover={{ scale: 1.05, x: 10 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#e28d1d] rounded-full text-white font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow text-sm"
-                  >
-                    {t('home.cta.work')} <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </motion.button>
-                </Link>
-                <Link to="/portfolio">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-5 sm:px-6 py-2 sm:py-2.5 border-2 border-[#e28d1d] text-[#e28d1d] rounded-full font-semibold hover:bg-[#e28d1d] hover:text-white transition-colors text-sm"
-                  >
-                    {language === 'fr' ? 'Voir mes projets' : 'View My Work'}
-                  </motion.button>
-                </Link>
-              </div>
-
-              <div className="flex gap-2 sm:gap-3 justify-center">
-                <motion.a
-                  href="https://github.com/elarion83"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
-                  aria-label="Personal GitHub Profile"
-                >
-                  <Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                </motion.a>
-                <motion.a
-                  href="https://calendly.com/gruwe-nicolas/30min"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
-                  aria-label="Schedule a meeting on Calendly"
-                >
-                  <CalendarPlus2 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                </motion.a>
-                <motion.a
-                  href="https://github.com/gnicolas31"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
-                  aria-label="Professional GitHub Profile"
-                >
-                  <Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                </motion.a>
-                <motion.a
-                  href="https://www.linkedin.com/in/nicolas-gruwe-b4805587/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
-                  aria-label="LinkedIn Profile"
-                >
-                  <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                </motion.a>
-                <motion.a
-                  href={`mailto:${import.meta.env.EMAIL_USER}`}
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
-                  aria-label="Send email"
-                >
-                  <Mail className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                </motion.a>
-              </div>
-            </motion.div>
-          </div>
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="Professional GitHub Profile"
+              >
+                <Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+              <motion.a
+                href="https://www.linkedin.com/in/nicolas-gruwe-b4805587/"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="LinkedIn Profile"
+              >
+                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+              <motion.a
+                href={`mailto:${import.meta.env.VITE_EMAIL_USER}`}
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="Send email"
+              >
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+            </div>
+          </motion.div>
         </div>
         <ConstellationBackground />
       </motion.div>
