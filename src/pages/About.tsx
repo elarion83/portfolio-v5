@@ -474,7 +474,7 @@ export const About: React.FC = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ 
-            backgroundImage: 'url(https://images.unsplash.com/photo-1522071820081-009f0129c71c)',
+            backgroundImage: 'url(/img/about3.webp)',
             filter: 'brightness(0.2)'
           }}
         />

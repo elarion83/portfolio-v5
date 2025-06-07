@@ -50,6 +50,7 @@ export interface BlogPost {
     rendered: string;
   };
   date: string;
+  modified: string;
   slug: string;
   _embedded?: {
     'wp:featuredmedia'?: Array<{

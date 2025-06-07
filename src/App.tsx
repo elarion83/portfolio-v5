@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import * as Icons from 'lucide-react';
 import { Navigation } from './components/Navigation';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { LanguageSwitch } from './components/LanguageSwitch';
@@ -11,6 +12,7 @@ import { Portfolio } from './pages/Portfolio';
 import { Contact } from './pages/Contact';
 import { Blog } from './pages/Blog';
 import { BlogPost } from './pages/BlogPost';
+import { motion } from 'framer-motion';
 
 // Title updater component
 const TitleUpdater = () => {

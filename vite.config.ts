@@ -1,11 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'public/*',
+          dest: ''
+        }
+      ]
+    })
+  ],
   optimizeDeps: {
-    exclude: ['lucide-react'],
-    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion']
+    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion', 'lucide-react'],
+    exclude: []
   },
   build: {
     rollupOptions: {
@@ -19,27 +30,27 @@ export default defineConfig({
       }
     },
     cssCodeSplit: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    minify: false,
+    ssrManifest: true
   },
   server: {
     headers: {
-      'Cache-Control': 'public, max-age=31536000'
+      'Cache-Control': 'no-store'
     },
     hmr: {
       timeout: 5000
     }
   },
+  resolve: {
+    dedupe: ['react', 'react-dom', 'lucide-react']
+  },
   clearScreen: false,
   esbuild: {
     treeShaking: true,
-    minifyIdentifiers: true,
-    minifySyntax: true,
-    minifyWhitespace: true
-  }
+    minifyIdentifiers: false,
+    minifySyntax: false,
+    minifyWhitespace: false
+  },
+  logLevel: 'info',
+  mode: 'development'
 });

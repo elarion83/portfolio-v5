@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code, Github, Linkedin, Mail, ArrowRight, Coffee, Users, CalendarPlus2 } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ConstellationBackground } from '../components/ConstellationBackground';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -100,7 +100,7 @@ export const Home: React.FC = () => {
               transition={{ duration: 0.3, delay: 0.4 }}
               className="flex justify-center mb-3 sm:mb-4"
             >
-              <Code className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#e28d1d]" aria-hidden="true" />
+              <Icons.Code className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#e28d1d]" aria-hidden="true" />
             </motion.div>
 
             <div className="mb-4 sm:mb-6">
@@ -110,11 +110,11 @@ export const Home: React.FC = () => {
               
               <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
                 <div className="flex items-center gap-1.5 text-white bg-[#261939]/30 backdrop-blur-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm">
-                  <Coffee className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e28d1d]" aria-hidden="true" />
+                  <Icons.Coffee className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e28d1d]" aria-hidden="true" />
                   <span className="text-shadow">500+ {t('about.stats.tea')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-white bg-[#261939]/30 backdrop-blur-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm">
-                  <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e28d1d]" aria-hidden="true" />
+                  <Icons.Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e28d1d]" aria-hidden="true" />
                   <span className="text-shadow">30+ {t('about.stats.clients')}</span>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export const Home: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   className="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#e28d1d] rounded-full text-white font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow text-sm"
                 >
-                  {t('home.cta.work')} <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  {t('home.cta.work')} <Icons.ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </motion.button>
               </Link>
               <Link to="/portfolio">
@@ -150,7 +150,7 @@ export const Home: React.FC = () => {
                 className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
                 aria-label="Personal GitHub Profile"
               >
-                <Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                <Icons.Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
               </motion.a>
               <motion.a
                 href="https://calendly.com/gruwe-nicolas/30min"
@@ -160,7 +160,7 @@ export const Home: React.FC = () => {
                 className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
                 aria-label="Schedule a meeting on Calendly"
               >
-                <CalendarPlus2 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                <Icons.CalendarPlus2 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
               </motion.a>
               <motion.a
                 href="https://github.com/gnicolas31"
@@ -170,7 +170,7 @@ export const Home: React.FC = () => {
                 className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
                 aria-label="Professional GitHub Profile"
               >
-                <Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                <Icons.Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
               </motion.a>
               <motion.a
                 href="https://www.linkedin.com/in/nicolas-gruwe-b4805587/"
@@ -180,7 +180,7 @@ export const Home: React.FC = () => {
                 className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
                 aria-label="LinkedIn Profile"
               >
-                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                <Icons.Linkedin className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
               </motion.a>
               <motion.a
                 href={`mailto:${import.meta.env.VITE_EMAIL_USER}`}
@@ -188,7 +188,7 @@ export const Home: React.FC = () => {
                 className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
                 aria-label="Send email"
               >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                <Icons.Mail className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
               </motion.a>
             </div>
           </motion.div>
