@@ -125,7 +125,7 @@ export const Home: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05, x: 10 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-5 sm:px-6 py-2 sm:py-2.5 bg-[#e28d1d] rounded-full text-white font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow text-sm"
+                  className="text-shadow px-5 sm:px-6 py-2 sm:py-2.5 bg-[#e28d1d] text-shadow-ng rounded-full text-white font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow text-sm"
                 >
                   {t('home.cta.work')} <Icons.ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </motion.button>
