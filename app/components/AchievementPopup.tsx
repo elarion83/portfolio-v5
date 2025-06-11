@@ -5,35 +5,35 @@ import { motion } from 'framer-motion'
 import { Star, Trophy, Award, Crown, Sparkles } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
 
-interface AchievementPopupProps {
-  achievementId: string
-  isVisible: boolean
-  onClose: () => void
+interface Achievement {
+  id: string
+  threshold: number
   level: number
 }
 
-export function AchievementPopup({ achievementId, isVisible, onClose, level }: AchievementPopupProps) {
+interface AchievementPopupProps {
+  achievement: Achievement
+  onClose: () => void
+}
+
+export function AchievementPopup({ achievement, onClose }: AchievementPopupProps) {
   const { language } = useLanguage()
   
   useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(onClose, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [isVisible, onClose])
+    const timer = setTimeout(onClose, 5000)
+    return () => clearTimeout(timer)
+  }, [onClose])
 
-  const icon = level === 1 ? <Star className="w-6 h-6 text-white" /> :
-              level === 2 ? <Trophy className="w-6 h-6 text-white" /> :
-              level === 3 ? <Award className="w-6 h-6 text-white" /> :
-              level === 4 ? <Crown className="w-6 h-6 text-white" /> :
+  const icon = achievement.level === 1 ? <Star className="w-6 h-6 text-white" /> :
+              achievement.level === 2 ? <Trophy className="w-6 h-6 text-white" /> :
+              achievement.level === 3 ? <Award className="w-6 h-6 text-white" /> :
+              achievement.level === 4 ? <Crown className="w-6 h-6 text-white" /> :
               <Sparkles className="w-6 h-6 text-white" />
 
-  const particles = Array.from({ length: level * 2 }, (_, i) => ({
-    angle: (Math.PI * 2 * i) / (level * 2),
+  const particles = Array.from({ length: achievement.level * 2 }, (_, i) => ({
+    angle: (Math.PI * 2 * i) / (achievement.level * 2),
     delay: i * 0.1
   }))
-
-  if (!isVisible) return null;
 
   return (
     <motion.div
@@ -79,19 +79,32 @@ export function AchievementPopup({ achievementId, isVisible, onClose, level }: A
                     }}
                     className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full -translate-x-1/2 -translate-y-1/2"
                     style={{
-                      background: `hsl(${(360 / level) * i}, 70%, 50%)`,
+                      background: `hsl(${(360 / achievement.level) * i}, 70%, 50%)`,
                       filter: 'blur(1px)'
                     }}
                   />
                 ))}
               </div>
             </div>
+            
             <div>
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-sm font-medium text-[#e28d1d] mb-1">
                 {language === 'fr' ? 'Succès débloqué !' : 'Achievement Unlocked!'}
               </h3>
-              <p className="text-sm text-gray-300">
-                {achievementId}
+              <p className="text-white text-lg font-bold">
+                {language === 'fr' ? 
+                  achievement.id === 'star-explorer' ? 'Explorateur d\'étoiles' :
+                  achievement.id === 'star-voyager' ? 'Voyageur stellaire' :
+                  achievement.id === 'star-commander' ? 'Commandant des étoiles' :
+                  achievement.id === 'star-admiral' ? 'Amiral galactique' :
+                  'Maître de la galaxie'
+                  :
+                  achievement.id === 'star-explorer' ? 'Star Explorer' :
+                  achievement.id === 'star-voyager' ? 'Star Voyager' :
+                  achievement.id === 'star-commander' ? 'Star Commander' :
+                  achievement.id === 'star-admiral' ? 'Star Admiral' :
+                  'Galactic Master'
+                }
               </p>
             </div>
           </div>

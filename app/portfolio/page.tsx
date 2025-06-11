@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
-import Link from 'next/link'
-import { Filter, Calendar, Code } from 'lucide-react'
+import { PortfolioContent } from '../components/PortfolioContent'
 
 interface Project {
   id: string
@@ -33,7 +32,7 @@ async function getProjects() {
   }
 
   const data = await res.json()
-
+  
   interface WPResponse {
     id: number;
     title: {
@@ -116,82 +115,7 @@ export const metadata: Metadata = {
   },
 }
 
-function renderYearBadge(year: string) {
-  return (
-    <span className="px-2 py-1 bg-background text-foreground rounded-full text-xs font-medium inline-flex items-center border border-border">
-      <Calendar className="w-3 h-3 mr-1" />
-      {year}
-    </span>
-  )
-}
-
-function renderTechBadge(project: Project) {
-  if (!project.mainTechnology) return null
-
-  return (
-    <div className="absolute top-4 left-4 z-30">
-      <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-foreground tech-badge-clip flex items-center gap-1.5 hover:border-primary/30 transition-colors shadow-[0_0_5px_rgba(59,130,246,0.5),0_0_10px_rgba(59,130,246,0.3)]">
-        <Code className="w-3.5 h-3.5 text-primary tech-badge-icon" />
-        <span className="text-xs font-medium">{project.mainTechnology}</span>
-      </div>
-    </div>
-  )
-}
-
 export default async function PortfolioPage() {
   const projects = await getProjects()
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-background/50">
-      <div className="py-20 px-4">
-        {/* Hero Section */}
-        <div className="max-w-7xl mx-auto mb-16 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 title-neon">
-            Portfolio
-          </h1>
-          <p className="text-xl text-foreground/80 max-w-2xl mx-auto">
-            Découvrez mes projets de développement WordPress et web sur mesure.
-          </p>
-        </div>
-
-        {/* Projects Grid */}
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project: Project) => (
-              <Link
-                key={project.id}
-                href={`/portfolio/${project.slug}`}
-                className="relative group"
-              >
-                <div className="relative aspect-video overflow-hidden rounded-lg">
-                  <img
-                    src={project.imageUrl}
-                    alt={project.title}
-                    width={600}
-                    height={315}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  
-                  {renderTechBadge(project)}
-                  {renderYearBadge(project.year)}
-
-                  <div className="absolute bottom-4 left-4 right-4 z-20">
-                    <h2 className="text-xl font-bold text-white mb-2">
-                      {project.title}
-                    </h2>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-300">
-                        {project.department}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  return <PortfolioContent initialProjects={projects} />
 } 

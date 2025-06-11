@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as Icons from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '@/app/contexts/LanguageContext'
+import { ConstellationBackground } from './ConstellationBackground'
 
 export function HomeContent() {
   const { t, language } = useLanguage()
@@ -15,7 +16,7 @@ export function HomeContent() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className="min-h-screen relative overflow-hidden"
+        className="min-h-screen relative overflow-hidden flex items-center justify-center"
       >
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -31,7 +32,7 @@ export function HomeContent() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#261939]/80 via-transparent to-[#261939]/80" />
         
         <motion.div 
-          className="text-center relative max-w-[90%] sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto"
+          className="text-center relative max-w-[90%] sm:max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto py-8"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -88,8 +89,60 @@ export function HomeContent() {
               </motion.button>
             </Link>
           </div>
+          
+          <div className="flex gap-2 pt-6 sm:gap-3 justify-center">
+              <motion.a
+                href="https://github.com/elarion83"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="Personal GitHub Profile"
+              >
+                <Icons.Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+              <motion.a
+                href="https://calendly.com/gruwe-nicolas/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="Schedule a meeting on Calendly"
+              >
+                <Icons.CalendarPlus className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+              <motion.a
+                href="https://github.com/gnicolas31"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="Professional GitHub Profile"
+              >
+                <Icons.Github className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+              <motion.a
+                href="https://www.linkedin.com/in/nicolas-gruwe-b4805587/"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="LinkedIn Profile"
+              >
+                <Icons.Linkedin className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+              <motion.a
+                href={`mailto:gruwe.nicolas@hotmail.fr`}
+                whileHover={{ scale: 1.1, y: -5 }}
+                className="p-2 bg-[#261939] hexagon-shape text-gray-300 hover:text-[#e28d1d] transition-colors"
+                aria-label="Send email"
+              >
+                <Icons.Mail className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+              </motion.a>
+          </div>
         </motion.div>
       </motion.div>
+      <ConstellationBackground />
     </AnimatePresence>
   )
 } 

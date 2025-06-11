@@ -1,5 +1,8 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Facebook, Twitter, Linkedin, ExternalLink, Calendar, Code, Briefcase } from 'lucide-react'
+import Link from 'next/link'
+import '@/app/styles/project.css'
 
 interface Project {
   id: string
@@ -138,154 +141,234 @@ export default async function ProjectPage({ params }: { params: { slug: string }
     notFound()
   }
 
+  // Extract technologies from content
+  const techMatches = project.content.match(/<li><a>([^<]+)<\/a><\/li>/g)
+  const technologies = techMatches ? techMatches.map(match => match.replace(/<li><a>|<\/a><\/li>/g, '')) : []
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-background/50">
-      <article className="max-w-5xl mx-auto py-20 px-4">
-        <div className="relative aspect-video rounded-xl overflow-hidden mb-8">
-          <img
-            src={project.imageUrl}
-            alt={project.title}
-            width={1200}
-            height={630}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-          
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <section className="project-hero">
+        <img
+          src={project.imageUrl}
+          alt={project.title}
+          className="project-hero-image"
+        />
+        <div className="project-hero-overlay" />
+        
+        {/* Hero Content */}
+        <div className="relative z-10 h-full flex flex-col justify-end px-4 py-12 max-w-7xl mx-auto">
+          {/* Top Badges */}
+          <div className="absolute top-4 left-4 flex items-center gap-4">
+            <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-white rounded-lg font-medium flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              {project.year}
+            </div>
+            {project.mainTechnology && (
+              <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-white rounded-lg font-medium flex items-center gap-2">
+                <Code className="w-4 h-4" />
+                {project.mainTechnology}
+              </div>
+            )}
+            <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-white rounded-lg font-medium flex items-center gap-2">
+              <Briefcase className="w-4 h-4" />
+              {project.department}
+            </div>
+          </div>
+
+          {/* Social Links */}
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <a href="#" className="p-2 bg-background/80 backdrop-blur-sm text-white rounded-full hover:bg-primary/80 transition-colors">
+              <Facebook className="w-4 h-4" />
+            </a>
+            <a href="#" className="p-2 bg-background/80 backdrop-blur-sm text-white rounded-full hover:bg-primary/80 transition-colors">
+              <Twitter className="w-4 h-4" />
+            </a>
+            <a href="#" className="p-2 bg-background/80 backdrop-blur-sm text-white rounded-full hover:bg-primary/80 transition-colors">
+              <Linkedin className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* Project Logo */}
           {project.logoUrl && (
-            <div className="absolute bottom-4 right-4">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <img
                 src={project.logoUrl}
                 alt={`${project.title} logo`}
-                className={`h-12 ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
+                className={`h-32 ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
               />
             </div>
           )}
+
+          {/* Title and CTA */}
+          <div className="flex items-end justify-between">
+            <h1 className="project-title text-5xl font-bold text-white mb-0">
+              {project.title}
+            </h1>
+            {project.projectUrl && (
+              <a 
+                href={project.projectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="project-meta flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <span>Voir le projet</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        {/* PageSpeed Scores */}
+        {project.pageSpeed && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+            <div className="pagespeed-item flex flex-col items-center">
+              <div className="relative w-32 h-32">
+                <svg className="w-full h-full progress-circle">
+                  <circle
+                    className="progress-circle-bg"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                  />
+                  <circle
+                    className="progress-circle-value"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                    strokeDasharray="364.4"
+                    strokeDashoffset={364.4 * (1 - project.pageSpeed.performance / 100)}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-bold">{project.pageSpeed.performance}</span>
+                </div>
+              </div>
+              <span className="mt-4 text-lg font-medium">Performance</span>
+            </div>
+            <div className="pagespeed-item flex flex-col items-center">
+              <div className="relative w-32 h-32">
+                <svg className="w-full h-full progress-circle">
+                  <circle
+                    className="progress-circle-bg"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                  />
+                  <circle
+                    className="progress-circle-value"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                    strokeDasharray="364.4"
+                    strokeDashoffset={364.4 * (1 - project.pageSpeed.accessibility / 100)}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-bold">{project.pageSpeed.accessibility}</span>
+                </div>
+              </div>
+              <span className="mt-4 text-lg font-medium">Accessibility</span>
+            </div>
+            <div className="pagespeed-item flex flex-col items-center">
+              <div className="relative w-32 h-32">
+                <svg className="w-full h-full progress-circle">
+                  <circle
+                    className="progress-circle-bg"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                  />
+                  <circle
+                    className="progress-circle-value"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                    strokeDasharray="364.4"
+                    strokeDashoffset={364.4 * (1 - project.pageSpeed.bestPractices / 100)}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-bold">{project.pageSpeed.bestPractices}</span>
+                </div>
+              </div>
+              <span className="mt-4 text-lg font-medium">Best Practices</span>
+            </div>
+            <div className="pagespeed-item flex flex-col items-center">
+              <div className="relative w-32 h-32">
+                <svg className="w-full h-full progress-circle">
+                  <circle
+                    className="progress-circle-bg"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                  />
+                  <circle
+                    className="progress-circle-value"
+                    strokeWidth="8"
+                    r="58"
+                    cx="64"
+                    cy="64"
+                    strokeDasharray="364.4"
+                    strokeDashoffset={364.4 * (1 - project.pageSpeed.seo / 100)}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-bold">{project.pageSpeed.seo}</span>
+                </div>
+              </div>
+              <span className="mt-4 text-lg font-medium">SEO</span>
+            </div>
+          </div>
+        )}
+
+        {/* Project Description */}
+        <div className="project-content prose prose-invert max-w-none">
+          <div dangerouslySetInnerHTML={{ 
+            __html: project.content.replace(
+              /<div class="span4[^>]*>[\s\S]*?<\/div>/g,
+              ''
+            )
+          }} />
         </div>
 
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            {project.title}
-          </h1>
-          <div className="flex items-center gap-4 text-foreground/80">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-1 bg-background rounded-full text-xs font-medium border border-border">
-                {project.year}
-              </span>
-              <span className="px-2 py-1 bg-background rounded-full text-xs font-medium border border-border">
-                {project.department}
-              </span>
-              {project.mainTechnology && (
-                <span className="px-2 py-1 bg-background rounded-full text-xs font-medium border border-border">
-                  {project.mainTechnology}
+        {/* Technologies */}
+        {technologies.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-6">Technologies utilisées</h2>
+            <div className="tech-tag-container">
+              {technologies.map((tech, index) => (
+                <span key={index} className="tech-tag">
+                  {tech}
                 </span>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <div 
-          className="prose prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: project.content }}
-        />
-
-        {project.pageSpeed && (
-          <div className="mt-12 p-6 bg-background/50 rounded-xl border border-border">
-            <h2 className="text-xl font-bold text-foreground mb-4">
-              PageSpeed Insights
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex flex-col items-center">
-                <div className="relative w-16 h-16">
-                  <svg className="transform -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeDasharray={`${project.pageSpeed.performance}, 100`}
-                      className="text-primary"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
-                    {project.pageSpeed.performance}
-                  </span>
-                </div>
-                <span className="text-sm text-foreground/80 mt-2">Performance</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="relative w-16 h-16">
-                  <svg className="transform -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeDasharray={`${project.pageSpeed.accessibility}, 100`}
-                      className="text-primary"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
-                    {project.pageSpeed.accessibility}
-                  </span>
-                </div>
-                <span className="text-sm text-foreground/80 mt-2">Accessibilité</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="relative w-16 h-16">
-                  <svg className="transform -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeDasharray={`${project.pageSpeed.bestPractices}, 100`}
-                      className="text-primary"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
-                    {project.pageSpeed.bestPractices}
-                  </span>
-                </div>
-                <span className="text-sm text-foreground/80 mt-2">Bonnes pratiques</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="relative w-16 h-16">
-                  <svg className="transform -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeDasharray={`${project.pageSpeed.seo}, 100`}
-                      className="text-primary"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
-                    {project.pageSpeed.seo}
-                  </span>
-                </div>
-                <span className="text-sm text-foreground/80 mt-2">SEO</span>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {project.projectUrl && (
-          <div className="mt-8">
-            <a
-              href={project.projectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              <span>Voir le projet</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          </div>
-        )}
-      </article>
+        {/* Project Gallery */}
+        <div className="project-gallery">
+          {project.content.match(/<img[^>]+src="([^"]+)"[^>]*>/g)?.map((img, index) => {
+            const src = img.match(/src="([^"]+)"/)?.[1]
+            if (!src) return null
+            return (
+              <div key={index} className="gallery-item">
+                <img src={src} alt={`${project.title} screenshot ${index + 1}`} />
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 } 

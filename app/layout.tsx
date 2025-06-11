@@ -4,6 +4,7 @@ import { LanguageProvider } from './contexts/LanguageContext'
 import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
 import './globals.css'
+import './styles/custom.css'
 
 const inter = Inter({ subsets: ['latin'] })
 const poppins = Poppins({ 
@@ -15,6 +16,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'Nicolas Gruwe - Développeur WordPress & Full Stack Expert',
   description: 'Développeur freelance avec +13 ans d\'expérience. Spécialisé en WordPress, ReactJS, VueJS. Idéal pour renfort technique ou sous-traitance.',
+  metadataBase: new URL('https://nicolas-gruwe.fr'),
   openGraph: {
     title: 'Renfort Technique pour Agences – Développeur Freelance Web',
     description: 'Besoin d\'un renfort fiable pour vos projets clients ? Sites performants, respect des délais, livrables pro.',
