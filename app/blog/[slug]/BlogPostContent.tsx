@@ -178,7 +178,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight mt-6 md:mt-0"
+              className="text-3xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight mt-10 md:mt-0"
               dangerouslySetInnerHTML={{ __html: post.title.rendered }}
             />
             <motion.div 
@@ -222,7 +222,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-all hover:translate-x-[-4px] mb-12 group"
+          className="inline-flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-all hover:translate-x-[-4px] mb-6 md:mb-12 group"
         >
           <ArrowLeft className="w-5 h-5 transition-transform group-hover:scale-110" />
           <span className="font-medium">{language === 'fr' ? 'Retour au blog' : 'Back to blog'}</span>
