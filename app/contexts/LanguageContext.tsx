@@ -1,11 +1,13 @@
-import React, { createContext, useContext, useState } from 'react';
+'use client'
 
-type Language = 'en' | 'fr';
+import React, { createContext, useContext, useState } from 'react'
+
+type Language = 'en' | 'fr'
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  language: Language
+  setLanguage: (lang: Language) => void
+  t: (key: string) => string
 }
 
 const translations = {
@@ -110,32 +112,32 @@ const translations = {
   fr: {
     // Navigation
     'nav.home': 'Accueil',
-    'nav.about': 'À propos',
+    'nav.about': 'À Propos',
     'nav.portfolio': 'Portfolio',
     'nav.contact': 'Contact',
 
     // Home
     'home.title': 'Nicolas Gruwe',
     'home.subtitle': 'Développeur WordPress & Expert Full Stack',
-    'home.description': 'Spécialisé dans le développement sur mesure. Du développement de thèmes et plugins personnalisés aux intégrations complexes, je transforme votre vision digitale en expériences puissantes et évolutives. Avec une expertise en PHP, React et technologies web modernes, je livre des solutions qui dépassent le développement WordPress traditionnel.',
-    'home.cta.work': 'En savoir plus',
-    'home.cta.contact': 'Me contacter',
+    'home.description': 'Spécialisé dans le développement sur mesure. Du développement de thèmes et plugins personnalisés aux intégrations complexes, je transforme votre vision numérique en expériences puissantes et évolutives. Avec une expertise en PHP, React et technologies web modernes, je livre des solutions qui vont au-delà du développement WordPress traditionnel.',
+    'home.cta.work': 'En Savoir Plus',
+    'home.cta.contact': 'Me Contacter',
 
     // About
     'about.title': 'Création',
     'about.title.highlight': "d'Expériences Digitales",
-    'about.description': "Avec plus de dix ans d'expérience en développement WordPress, je transforme des défis complexes en solutions élégantes centrées sur l'utilisateur.",
+    'about.description': "Avec plus d'une décennie d'expérience en développement WordPress, je transforme les défis complexes en solutions élégantes centrées sur l'utilisateur.",
     'about.journey.title': 'Parcours Professionnel',
-    'about.journey.description': 'Une chronologie de ma progression et de mes étapes clés.',
+    'about.journey.description': 'Une chronologie de ma progression et des étapes clés.',
     'about.expertise.title': 'Expertise Technique',
     'about.expertise.description': 'Survolez les compétences pour voir les niveaux de maîtrise.',
     'about.testimonials.title': 'Témoignages Clients',
     'about.testimonials.description': 'Ce que disent mes clients de notre collaboration.',
-    'about.cta.title': "Prêt à Créer Quelque Chose d'Incroyable ?",
+    'about.cta.title': 'Prêt à Créer Quelque Chose de Génial ?',
     'about.cta.description': "Collaborons pour donner vie à votre vision. Que vous ayez besoin d'une solution WordPress personnalisée, d'une application web ou d'une transformation digitale, je suis là pour vous aider.",
     'about.stats.tea': 'Tasses de Thé',
     'about.stats.clients': 'Clients Satisfaits',
-    'about.stats.experience': "Ans d'Expérience",
+    'about.stats.experience': "Années d'Expérience",
     'about.stats.success': 'Taux de Réussite',
     'about.cta.features.tailored': 'Solutions WordPress Sur Mesure',
     'about.cta.features.agile': 'Processus de développement agile',
@@ -205,28 +207,28 @@ const translations = {
     'achievement.portfolio-master.title': 'Maître du Portfolio',
     'achievement.portfolio-master.description': 'Découvert 20 projets uniques'
   }
-};
+}
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('fr');
+export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const [language, setLanguage] = useState<Language>('fr')
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['en']] || key;
-  };
+    return translations[language][key as keyof typeof translations['en']] || key
+  }
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
-  );
-};
+  )
+}
 
 export const useLanguage = () => {
-  const context = useContext(LanguageContext);
+  const context = useContext(LanguageContext)
   if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error('useLanguage must be used within a LanguageProvider')
   }
-  return context;
-};
+  return context
+} 

@@ -1,0 +1,234 @@
+## Mission principale
+Refactoriser un portfolio React existant vers Next.js avec SSR complet, déployé sur Vercel. Le contenu (portfolio items, articles blog) provient d'API externes et les routes doivent être générées dynamiquement.
+
+## Architecture SSR prioritaire
+
+### 1. Migration vers Next.js App Router (13/14+)
+- Convertir les composants React vers la structure Next.js App Router
+- Implémenter Server Components par défaut
+- Utiliser Client Components uniquement quand nécessaire ('use client')
+- Optimiser pour le SSR avec données API
+
+### 2. Modal Routes + SSR (Pattern complexe)
+- Utiliser les Parallel Routes Next.js (@modal)
+- SSR pour les deux contextes : modal ET page standalone
+- Navigation interceptée pour l'UX modal
+- Partage des composants entre modal et page
+- Gestion du state de navigation (shallow routing)
+
+### 3. Navigation intelligente
+- Intercept Routes pour ouvrir en modal depuis la liste
+- Direct access pour URL directe (page standalone)
+- Back button behavior intelligent
+- Preload des données modal au hover
+- Gestion du focus et de l'accessibilité
+
+### 4. SEO double contexte
+- Métadonnées identiques pour modal et page standalone
+- Canonical URLs pour éviter duplicate content
+- Open Graph optimal pour partage direct
+- Structured data cohérent
+
+### 3. Gestion des données API
+- Utiliser fetch() natif avec cache Next.js
+- Implémenter la revalidation des données (ISR)
+- Gérer les états de loading/error côté serveur
+- Optimiser les appels API (batch requests, cache)
+
+### 4. Structure Next.js optimisée avec Modal Routes
+```
+app/
+├── layout.tsx (Root layout avec SEO)
+├── page.tsx (Homepage avec liste portfolio)
+├── portfolio/
+│   └── [slug]/
+│       └── page.tsx (Page standalone SSR)
+├── @modal/ (Parallel route pour modals)
+│   └── portfolio/
+│       └── [slug]/
+│           └── page.tsx (Modal SSR)
+├── blog/
+│   ├── page.tsx (Liste articles SSR)
+│   └── [slug]/
+│       └── page.tsx (Article SSR)
+├── api/ (si besoin d'API routes internes)
+└── components/
+    ├── PortfolioModal.tsx (Client component)
+    ├── PortfolioCard.tsx (Server component)
+    └── PortfolioDetail.tsx (Shared component)
+```
+
+## Priorités de refactoring SSR
+
+### 1. Data fetching côté serveur
+- Remplacer useEffect + useState par des fetch serveur
+- Implémenter generateStaticParams pour toutes les routes dynamiques
+- Utiliser Streaming et Suspense pour les données lentes
+- Gérer les fallbacks et l'ISR
+
+### 2. SEO et métadonnées dynamiques
+- generateMetadata() pour chaque page avec données API
+- Open Graph et Twitter Cards dynamiques
+- Sitemap.xml généré automatiquement
+- Structured Data (JSON-LD) pour les articles/projets
+
+### 3. Performance SSR
+- Optimiser les Core Web Vitals (LCP, FID, CLS)
+- Lazy loading intelligent des images avec next/image
+- Code splitting automatique Next.js
+- Preload des données critiques
+
+### 4. Cache et revalidation
+- Configuration ISR par page/section
+- Cache des appels API avec Next.js Cache
+- Stratégies de revalidation (time-based, on-demand)
+- Gestion des erreurs de cache
+
+## Instructions de migration spécifiques
+
+### Architecture Modal + SSR avancée
+```typescript
+// Composant partagé pour le contenu
+// components/PortfolioDetail.tsx (Server Component)
+export default function PortfolioDetail({ item, isModal = false }) {
+  return (
+    <div className={isModal ? 'modal-content' : 'page-content'}>
+      <h1>{item.title}</h1>
+      <Image src={item.image} alt={item.title} priority={!isModal} />
+      <p>{item.description}</p>
+      {/* Contenu identique, styling différent */}
+    </div>
+  )
+}
+
+// Navigation intelligente
+// components/PortfolioCard.tsx (Server Component avec Link)
+export default function PortfolioCard({ item }) {
+  return (
+    <Link 
+      href={`/portfolio/${item.slug}`}
+      scroll={false} // Empêche le scroll pour modal
+    >
+      <div>
+        <h3>{item.title}</h3>
+        <Image src={item.thumbnail} alt={item.title} />
+      </div>
+    </Link>
+  )
+}
+
+// Modal client avec fermeture
+// components/PortfolioModalWrapper.tsx ('use client')
+'use client'
+export default function PortfolioModalWrapper({ children }) {
+  const router = useRouter()
+  
+  return (
+    <div className="modal-overlay" onClick={() => router.back()}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <button onClick={() => router.back()}>×</button>
+        {children}
+      </div>
+    </div>
+  )
+}
+```
+
+### Routes parallèles pour Modal + Page standalone
+```typescript
+// app/layout.tsx - Layout principal avec modal slot
+export default function RootLayout({
+  children,
+  modal, // Parallel route slot
+}: {
+  children: React.ReactNode
+  modal: React.ReactNode
+}) {
+  return (
+    <html>
+      <body>
+        {children}
+        {modal} {/* Modal overlay quand route active */}
+      </body>
+    </html>
+  )
+}
+
+// app/@modal/portfolio/[slug]/page.tsx - Modal SSR
+export async function generateStaticParams() {
+  const items = await fetch('API_URL/portfolio').then(res => res.json())
+  return items.map(item => ({ slug: item.slug }))
+}
+
+export default async function PortfolioModal({ params }: { params: { slug: string } }) {
+  const item = await fetch(`API_URL/portfolio/${params.slug}`)
+  return <PortfolioModalClient item={item} />
+}
+
+// app/portfolio/[slug]/page.tsx - Page standalone SSR
+export default async function PortfolioPage({ params }: { params: { slug: string } }) {
+  const item = await fetch(`API_URL/portfolio/${params.slug}`)
+  return <PortfolioDetail item={item} />
+}
+```
+
+### Gestion des erreurs SSR
+- not-found.tsx pour les routes inexistantes
+- error.tsx pour les erreurs de fetch API
+- loading.tsx pour les états de chargement
+- Fallbacks gracieux pour l'ISR
+
+## Configuration Vercel optimisée
+
+### Déploiement
+- Configuration vercel.json pour ISR
+- Variables d'environnement pour les API keys
+- Edge Functions si besoin de géolocalisation
+- Monitoring des performances Vercel Analytics
+
+### Cache headers
+- Configuration des headers de cache
+- CDN optimization pour les assets statiques
+- API route caching si API internes
+
+## Migration progressive
+
+### Phase 1: Structure Next.js
+- Créer la structure App Router
+- Migrer la homepage en SSR
+- Configurer les layouts et métadonnées de base
+
+### Phase 2: Routes dynamiques
+- Implémenter portfolio/[slug] avec generateStaticParams
+- Implémenter blog/[slug] avec ISR
+- Tester la génération de routes
+
+### Phase 3: Optimisation SSR
+- Optimiser les performances (Core Web Vitals)
+- Implémenter le cache et revalidation
+- Finaliser SEO et structured data
+
+## Commandes Cursor spécialisées
+
+### Analyse de migration
+"Analyse mes composants React actuels et identifie lesquels doivent être Server Components vs Client Components pour une migration Next.js optimale"
+
+### Génération de routes
+"Crée les fonctions generateStaticParams et generateMetadata pour mes routes portfolio et blog basées sur cette structure API [data]"
+
+### Optimisation SSR
+"Optimise ce composant [nom] pour le SSR Next.js en éliminant les hydratation mismatches et en optimisant les Core Web Vitals"
+
+## Technologies Next.js à privilégier
+- App Router (pas Pages Router)
+- Server Components par défaut
+- next/image pour toutes les images
+- next/font pour les polices optimisées
+- Streaming avec Suspense
+- TypeScript pour la type safety des API
+
+## Points critiques Vercel
+- Fonctions serverless optimisées (cold start)
+- Edge Runtime quand approprié
+- ISR avec revalidation intelligente
+- Monitoring des performances en production
