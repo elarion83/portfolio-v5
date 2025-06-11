@@ -221,7 +221,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                 <img
                   src={project.logoUrl}
                   alt={`${project.title} logo`}
-                  className={`min-h-[150px] w-auto object-contain ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
+                  className={`min-w-[150px] h-auto object-contain ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
                 />
               )}
             </div>
