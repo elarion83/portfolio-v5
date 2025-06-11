@@ -33,8 +33,36 @@ async function getProjects() {
   }
 
   const data = await res.json()
+
+  interface WPResponse {
+    id: number;
+    title: {
+      rendered: string;
+    };
+    excerpt?: {
+      rendered: string;
+    };
+    content: {
+      rendered: string;
+    };
+    acf?: {
+      annee?: string;
+      image_background?: string;
+      logo_url?: string;
+      logo_sombre?: boolean;
+      socle_technique?: string;
+      url_projet?: string;
+      informations_pagespeed?: {
+        performance: string;
+        accessibilite: string;
+        bonnes: string;
+        seo: string;
+      };
+    };
+    department_name?: string;
+  }
   
-  const formattedProjects = data.map((item: any) => ({
+  const formattedProjects = data.map((item: WPResponse) => ({
     id: item.id.toString(),
     title: item.title.rendered.replace(/\s*\(\d{4}\)$/, ''),
     slug: item.title.rendered
@@ -59,7 +87,7 @@ async function getProjects() {
     } : null
   }))
 
-  return formattedProjects.sort((a, b) => {
+  return formattedProjects.sort((a: Project, b: Project) => {
     if (a.year === 'N/A') return 1
     if (b.year === 'N/A') return -1
     
@@ -129,7 +157,7 @@ export default async function PortfolioPage() {
         {/* Projects Grid */}
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {projects.map((project: Project) => (
               <Link
                 key={project.id}
                 href={`/portfolio/${project.slug}`}

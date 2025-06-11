@@ -420,8 +420,10 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
       <AnimatePresence>
         {achievement && (
           <AchievementPopup
-            achievement={achievement}
+            achievementId={achievement.id}
+            isVisible={!!achievement}
             onClose={() => setAchievement(null)}
+            level={achievement.level}
           />
         )}
       </AnimatePresence>
