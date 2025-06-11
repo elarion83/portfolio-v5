@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { BlogPostContent } from './BlogPostContent'
-import { generateMetadata } from '@/app/utils/metadata'
 
 interface BlogPost {
   id: number
@@ -55,17 +54,6 @@ async function getAllPosts() {
 
   return res.json()
 }
-
-export const metadata = generateMetadata({
-  title: {
-    fr: 'Blog - Nicolas Gruwe',
-    en: 'Blog - Nicolas Gruwe'
-  },
-  description: {
-    fr: 'Découvrez mes articles sur le développement web, WordPress, React, et plus encore.',
-    en: 'Read my articles about web development, WordPress, React, and more.'
-  }
-})
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPost(params.slug)
