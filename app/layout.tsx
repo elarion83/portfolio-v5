@@ -5,6 +5,7 @@ import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
 import './globals.css'
 import './styles/custom.css'
+import './styles/pages.css'
 
 const inter = Inter({ subsets: ['latin'] })
 const poppins = Poppins({ 

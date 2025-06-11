@@ -75,7 +75,7 @@ export default async function BlogPage() {
   const posts = await getPosts()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#261939] to-gray-900 py-16 px-4 relative">
+    <div className="min-h-screen bg-[#261939] blog-page">
       <BlogContent initialPosts={posts} />
     </div>
   )

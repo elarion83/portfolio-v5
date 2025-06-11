@@ -188,26 +188,27 @@ export default async function ProjectPage({ params }: { params: { slug: string }
             {/* Back Button */}
             <Link 
               href="/portfolio" 
-              className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-[#261939]/80 backdrop-blur-sm rounded-full text-white border-2 border-[#e28d1d] hover:bg-[#e28d1d] transition-all duration-300"
+              className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-[#261939]/80 backdrop-blur-sm rounded-full text-white border-2 border-[#e28d1d] hover:bg-[#e28d1d] transition-all duration-300 md:text-base text-sm"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Retour au portfolio
+              <ArrowLeft className="w-4 h-4 md:block hidden" />
+              <span className="md:inline hidden">Retour au portfolio</span>
+              <ArrowLeft className="w-4 h-4 md:hidden" />
             </Link>
 
             {/* Project Meta */}
             <div className="flex flex-wrap items-center gap-4 mb-8 project-meta">
-              <div className="meta-badge">
-                <Calendar className="w-5 h-5 text-primary" />
+              <div className="meta-badge text-sm md:text-base px-2 py-1 md:px-3 md:py-1.5">
+                <Calendar className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                 <span className="text-white">{project.year}</span>
               </div>
               {project.mainTechnology && (
-                <div className="meta-badge">
-                  <Code className="w-5 h-5 text-primary" />
+                <div className="meta-badge text-sm md:text-base px-2 py-1 md:px-3 md:py-1.5">
+                  <Code className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   <span className="text-white">{project.mainTechnology}</span>
                 </div>
               )}
-              <div className="meta-badge">
-                <Briefcase className="w-5 h-5 text-primary" />
+              <div className="meta-badge text-sm md:text-base px-2 py-1 md:px-3 md:py-1.5">
+                <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                 <span className="text-white">{project.department}</span>
               </div>
             </div>

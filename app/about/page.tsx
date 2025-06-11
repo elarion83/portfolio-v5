@@ -71,7 +71,7 @@ const timeline = [
   }
 ];
 
-export default function About() {
+export default function AboutPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [isLoadingTestimonials, setIsLoadingTestimonials] = useState(true)
@@ -183,7 +183,7 @@ export default function About() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#261939] to-gray-900">
+    <div className="min-h-screen bg-[#261939] about-page">
       {/* Hero Section */}
       <div className="relative h-[60vh] overflow-hidden">
         <div 
