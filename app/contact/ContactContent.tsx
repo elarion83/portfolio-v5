@@ -321,6 +321,12 @@ export function ContactContent() {
         </div>
       </div>
       <ConstellationBackground />
+
+      <AnimatePresence>
+        {showSuccessAnimation && (
+          <EmailSuccessAnimation onComplete={() => setShowSuccessAnimation(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 } 

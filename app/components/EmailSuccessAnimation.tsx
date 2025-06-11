@@ -3,19 +3,19 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
-import { useLanguage } from '@/app/contexts/LanguageContext'
+import { useLanguage } from '../contexts/LanguageContext'
 
 interface EmailSuccessAnimationProps {
-  onComplete: () => void;
+  onComplete: () => void
 }
 
 export function EmailSuccessAnimation({ onComplete }: EmailSuccessAnimationProps) {
-  const { t } = useLanguage();
+  const { t } = useLanguage()
 
   React.useEffect(() => {
-    const timer = setTimeout(onComplete, 3000);
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+    const timer = setTimeout(onComplete, 3000)
+    return () => clearTimeout(timer)
+  }, [onComplete])
 
   return (
     <motion.div
@@ -65,7 +65,7 @@ export function EmailSuccessAnimation({ onComplete }: EmailSuccessAnimationProps
           <p className="text-gray-300">{t('email.success.description')}</p>
         </motion.div>
 
-        {/* Decorative particles */}
+        {/* Particules décoratives */}
         {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
@@ -99,5 +99,5 @@ export function EmailSuccessAnimation({ onComplete }: EmailSuccessAnimationProps
         ))}
       </div>
     </motion.div>
-  );
+  )
 } 
