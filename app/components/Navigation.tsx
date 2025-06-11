@@ -63,22 +63,22 @@ export function Navigation() {
       <motion.div
         initial={false}
         animate={{ x: isOpen ? '0%' : '100%' }}
-        className="fixed inset-y-0 right-0 z-40 w-64 bg-[#261939] shadow-xl md:hidden"
+        className="fixed inset-y-0 right-0 z-40 w-full bg-[#261939]/80 backdrop-blur-md md:hidden"
       >
-        <nav className="flex flex-col gap-2 p-8 mt-16">
+        <nav className="flex flex-col items-center justify-center h-full gap-8">
           {menuItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-2 px-6 py-3 rounded-lg transition-all ${
                 pathname === item.path
-                  ? 'bg-[#e28d1d] text-white'
-                  : 'text-gray-300 hover:bg-white/10'
+                  ? 'text-[#e28d1d] scale-110'
+                  : 'text-white hover:text-[#e28d1d] hover:scale-105'
               }`}
               onClick={() => setIsOpen(false)}
             >
-              <item.icon className="w-5 h-5" />
-              <span>{item.label}</span>
+              <item.icon className="w-6 h-6" />
+              <span className="text-sm font-medium">{item.label}</span>
             </Link>
           ))}
         </nav>

@@ -44,6 +44,21 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
 
   return (
     <div className="min-h-screen bg-[#261939] relative">
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: 'url(/img/portfolio.webp)',
+          backgroundBlendMode: 'overlay',
+          backgroundAttachment: 'fixed',
+          backgroundColor: 'rgba(38, 25, 57, 0.95)',
+          height: '100vh',
+          width: '100%'
+        }}
+        aria-hidden="true"
+      >
+        <link rel="preload" href="/img/portfolio.webp" as="image" />
+      </div>
+      <div className="fixed inset-0 bg-gradient-to-b from-[#261939]/80 via-transparent to-[#261939]/80" />
       <div className="py-12 px-4 relative z-10">
         {/* Hero Section */}
         <div className="max-w-7xl mx-auto mb-8 text-center">
@@ -53,26 +68,36 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
         </div>
 
         {/* Filters */}
-        <div className="max-w-7xl mx-auto mb-8">
-          <div className="flex flex-wrap gap-2 justify-center">
+        <div className="max-w-7xl mx-auto mb-12">
+          <div className="flex flex-wrap gap-2 justify-center px-4 md:px-0">
             <button 
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-full ${filter === 'all' ? 'bg-[#e28d1d]' : 'bg-[#261939] border border-gray-600/30'} text-white flex items-center gap-2 transition-colors duration-300`}
+              className={`px-4 py-2 rounded-full transition-all duration-300 hover:border-[#e28d1d] border-2 ${
+                filter === 'all' 
+                ? 'bg-[#e28d1d] border-[#e28d1d]' 
+                : 'bg-[#261939]/40 backdrop-blur-sm border-transparent'
+              } text-white flex items-center gap-2 min-w-[120px] justify-center`}
             >
               <Filter className="w-4 h-4" />
               {t('portfolio.filter.all')}
-              <span className="bg-white/20 px-2 rounded-full">{initialProjects.length}</span>
+              <span className="bg-white/20 px-2 rounded-full text-sm">{initialProjects.length}</span>
             </button>
-            {Object.entries(departments).map(([dept, count]) => (
-              <button
-                key={dept}
-                onClick={() => setFilter(dept)}
-                className={`px-4 py-2 rounded-full ${filter === dept ? 'bg-[#e28d1d]' : 'bg-[#261939] border border-gray-600/30'} text-white flex items-center gap-2 transition-colors duration-300`}
-              >
-                {dept}
-                <span className="bg-white/20 px-2 rounded-full">{count}</span>
-              </button>
-            ))}
+            <div className="w-full md:w-auto flex flex-wrap justify-center gap-2 mt-2 md:mt-0">
+              {Object.entries(departments).map(([dept, count]) => (
+                <button
+                  key={dept}
+                  onClick={() => setFilter(dept)}
+                  className={`px-4 py-2 rounded-full transition-all duration-300 hover:border-[#e28d1d] border-2 ${
+                    filter === dept 
+                    ? 'bg-[#e28d1d] border-[#e28d1d]' 
+                    : 'bg-[#261939]/40 backdrop-blur-sm border-transparent'
+                  } text-white flex items-center gap-2 min-w-[120px] justify-center`}
+                >
+                  {dept}
+                  <span className="bg-white/20 px-2 rounded-full text-sm">{count}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { PortfolioContent } from '../components/PortfolioContent'
+import { decodeHtmlEntities } from '../utils/textUtils'
 
 interface Project {
   id: string

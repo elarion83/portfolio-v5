@@ -5,18 +5,14 @@ import { motion } from 'framer-motion'
 import { Star, Trophy, Award, Crown, Sparkles } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
 
-interface Achievement {
-  id: string
-  threshold: number
-  level: number
-}
-
 interface AchievementPopupProps {
-  achievement: Achievement
+  achievementId: string
+  isVisible: boolean
+  level: number
   onClose: () => void
 }
 
-export function AchievementPopup({ achievement, onClose }: AchievementPopupProps) {
+export function AchievementPopup({ achievementId, isVisible, level, onClose }: AchievementPopupProps) {
   const { language } = useLanguage()
   
   useEffect(() => {
@@ -24,16 +20,18 @@ export function AchievementPopup({ achievement, onClose }: AchievementPopupProps
     return () => clearTimeout(timer)
   }, [onClose])
 
-  const icon = achievement.level === 1 ? <Star className="w-6 h-6 text-white" /> :
-              achievement.level === 2 ? <Trophy className="w-6 h-6 text-white" /> :
-              achievement.level === 3 ? <Award className="w-6 h-6 text-white" /> :
-              achievement.level === 4 ? <Crown className="w-6 h-6 text-white" /> :
+  const icon = level === 1 ? <Star className="w-6 h-6 text-white" /> :
+              level === 2 ? <Trophy className="w-6 h-6 text-white" /> :
+              level === 3 ? <Award className="w-6 h-6 text-white" /> :
+              level === 4 ? <Crown className="w-6 h-6 text-white" /> :
               <Sparkles className="w-6 h-6 text-white" />
 
-  const particles = Array.from({ length: achievement.level * 2 }, (_, i) => ({
-    angle: (Math.PI * 2 * i) / (achievement.level * 2),
+  const particles = Array.from({ length: level * 2 }, (_, i) => ({
+    angle: (Math.PI * 2 * i) / (level * 2),
     delay: i * 0.1
   }))
+
+  if (!isVisible) return null
 
   return (
     <motion.div
@@ -79,7 +77,7 @@ export function AchievementPopup({ achievement, onClose }: AchievementPopupProps
                     }}
                     className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full -translate-x-1/2 -translate-y-1/2"
                     style={{
-                      background: `hsl(${(360 / achievement.level) * i}, 70%, 50%)`,
+                      background: `hsl(${(360 / level) * i}, 70%, 50%)`,
                       filter: 'blur(1px)'
                     }}
                   />
@@ -93,16 +91,16 @@ export function AchievementPopup({ achievement, onClose }: AchievementPopupProps
               </h3>
               <p className="text-white text-lg font-bold">
                 {language === 'fr' ? 
-                  achievement.id === 'star-explorer' ? 'Explorateur d\'étoiles' :
-                  achievement.id === 'star-voyager' ? 'Voyageur stellaire' :
-                  achievement.id === 'star-commander' ? 'Commandant des étoiles' :
-                  achievement.id === 'star-admiral' ? 'Amiral galactique' :
+                  achievementId === 'star-explorer' ? 'Explorateur d\'étoiles' :
+                  achievementId === 'star-voyager' ? 'Voyageur stellaire' :
+                  achievementId === 'star-commander' ? 'Commandant des étoiles' :
+                  achievementId === 'star-admiral' ? 'Amiral galactique' :
                   'Maître de la galaxie'
                   :
-                  achievement.id === 'star-explorer' ? 'Star Explorer' :
-                  achievement.id === 'star-voyager' ? 'Star Voyager' :
-                  achievement.id === 'star-commander' ? 'Star Commander' :
-                  achievement.id === 'star-admiral' ? 'Star Admiral' :
+                  achievementId === 'star-explorer' ? 'Star Explorer' :
+                  achievementId === 'star-voyager' ? 'Star Voyager' :
+                  achievementId === 'star-commander' ? 'Star Commander' :
+                  achievementId === 'star-admiral' ? 'Star Admiral' :
                   'Galactic Master'
                 }
               </p>

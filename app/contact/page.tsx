@@ -2,11 +2,8 @@ import { Metadata } from 'next'
 import { ContactContent } from './ContactContent'
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Collaborer avec un Développeur Freelance – Contact Agences',
-    template: '%s | Nicolas Gruwe'
-  },
-  description: 'Contactez-moi pour discuter de votre projet : développement sur mesure, renfort ponctuel ou mission longue.',
+  title: 'Contact - Nicolas Gruwe',
+  description: 'Contactez-moi pour discuter de vos projets de développement web, création de thèmes WordPress ou plugins personnalisés.',
   alternates: {
     canonical: 'https://nicolas-gruwe.fr/contact'
   },
@@ -26,6 +23,6 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Contact() {
+export default function ContactPage() {
   return <ContactContent />
 } 

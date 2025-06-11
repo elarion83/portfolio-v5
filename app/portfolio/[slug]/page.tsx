@@ -1,8 +1,20 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Facebook, Twitter, Linkedin, ExternalLink, Calendar, Code, Briefcase } from 'lucide-react'
+import { Calendar, Code, Briefcase, Eye, ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import '@/app/styles/project.css'
+
+// Fonction pour nettoyer le HTML et les entités
+function decodeHtmlEntities(text: string) {
+  return text?.replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'") || text;
+}
 
 interface Project {
   id: string
@@ -45,7 +57,7 @@ async function getAllProjects() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, ''),
     description: item.excerpt?.rendered.replace(/<[^>]*>/g, '') || '',
-    content: item.content.rendered,
+    content: decodeHtmlEntities(item.content.rendered),
     year: item.acf?.annee || 'N/A',
     imageUrl: item.acf?.image_background || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f',
     logoUrl: item.acf?.logo_url || '',
@@ -142,231 +154,168 @@ export default async function ProjectPage({ params }: { params: { slug: string }
   }
 
   // Extract technologies from content
-  const techMatches = project.content.match(/<li><a>([^<]+)<\/a><\/li>/g)
-  const technologies = techMatches ? techMatches.map(match => match.replace(/<li><a>|<\/a><\/li>/g, '')) : []
+  const techMatch = project.content.match(/<li><a>(.*?)<\/a><\/li>/g)
+  const technologies = techMatch ? techMatch.map(t => t.replace(/<li><a>(.*?)<\/a><\/li>/, '$1')) : []
+
+  // Traiter le contenu
+  const contentParts = project.content.split('<div class="span4 offset">');
+  const mainContent = contentParts[0];
+
+  // Extraire les images
+  const imageMatches = project.content.match(/<img[^>]+src="([^"]+)"[^>]*>/g) || [];
+  const uniqueImages = Array.from(new Set(imageMatches
+    .map(img => {
+      const srcMatch = img.match(/src="([^"]+)"/);
+      return srcMatch ? srcMatch[1] : null;
+    })
+    .filter((src): src is string => src !== null)
+  ));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#261939]">
       {/* Hero Section */}
-      <section className="project-hero">
+      <div className="project-hero">
         <img
           src={project.imageUrl}
-          alt={project.title}
+          alt={decodeHtmlEntities(project.title)}
           className="project-hero-image"
         />
         <div className="project-hero-overlay" />
         
         {/* Hero Content */}
-        <div className="relative z-10 h-full flex flex-col justify-end px-4 py-12 max-w-7xl mx-auto">
-          {/* Top Badges */}
-          <div className="absolute top-4 left-4 flex items-center gap-4">
-            <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-white rounded-lg font-medium flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {project.year}
+        <div className="absolute inset-0 z-10 flex flex-col justify-end px-4 py-12">
+          <div className="max-w-7xl mx-auto w-full">
+            {/* Back Button */}
+            <Link 
+              href="/portfolio" 
+              className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-[#261939]/80 backdrop-blur-sm rounded-full text-white border-2 border-[#e28d1d] hover:bg-[#e28d1d] transition-all duration-300"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Retour au portfolio
+            </Link>
+
+            {/* Project Meta */}
+            <div className="flex flex-wrap items-center gap-4 mb-8 project-meta">
+              <div className="meta-badge">
+                <Calendar className="w-5 h-5 text-primary" />
+                <span className="text-white">{project.year}</span>
+              </div>
+              {project.mainTechnology && (
+                <div className="meta-badge">
+                  <Code className="w-5 h-5 text-primary" />
+                  <span className="text-white">{project.mainTechnology}</span>
+                </div>
+              )}
+              <div className="meta-badge">
+                <Briefcase className="w-5 h-5 text-primary" />
+                <span className="text-white">{project.department}</span>
+              </div>
             </div>
-            {project.mainTechnology && (
-              <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-white rounded-lg font-medium flex items-center gap-2">
-                <Code className="w-4 h-4" />
-                {project.mainTechnology}
+
+            {/* Title and Logo */}
+            <div className="flex items-end justify-between">
+              <h1 className="project-title mb-0">
+                {decodeHtmlEntities(project.title)}
+              </h1>
+              {project.logoUrl && (
+                <img
+                  src={project.logoUrl}
+                  alt={`${project.title} logo`}
+                  className={`h-20 ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Project Description */}
+          <div className="lg:col-span-2">
+            <div className="glass-card p-8 mb-12 project-content">
+              <div className="prose prose-invert max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: mainContent }} />
+              </div>
+            </div>
+
+            {/* Project Images */}
+            {uniqueImages.length > 0 && (
+              <div className="project-images">
+                {uniqueImages.map((src, index) => (
+                  <div key={`img-${src}-${index}`} className="project-image glass-card">
+                    <img 
+                      src={src} 
+                      alt={`${project.title} screenshot ${index + 1}`} 
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <span className="text-white text-sm font-medium">Vue {index + 1}</span>
+                      <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                        <Eye className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-            <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm text-white rounded-lg font-medium flex items-center gap-2">
-              <Briefcase className="w-4 h-4" />
-              {project.department}
-            </div>
           </div>
 
-          {/* Social Links */}
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <a href="#" className="p-2 bg-background/80 backdrop-blur-sm text-white rounded-full hover:bg-primary/80 transition-colors">
-              <Facebook className="w-4 h-4" />
-            </a>
-            <a href="#" className="p-2 bg-background/80 backdrop-blur-sm text-white rounded-full hover:bg-primary/80 transition-colors">
-              <Twitter className="w-4 h-4" />
-            </a>
-            <a href="#" className="p-2 bg-background/80 backdrop-blur-sm text-white rounded-full hover:bg-primary/80 transition-colors">
-              <Linkedin className="w-4 h-4" />
-            </a>
-          </div>
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            {/* PageSpeed Insights */}
+            {project.pageSpeed && (
+              <div className="glass-card p-8 mb-8">
+                <h2 className="text-2xl font-bold text-white mb-8">Performance</h2>
+                <div className="space-y-6">
+                  {Object.entries(project.pageSpeed).map(([key, value], index) => (
+                    <div key={key} className="pagespeed-item">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-400 capitalize">
+                          {key === 'bestPractices' ? 'Best Practices' : key}
+                        </span>
+                        <span className="text-white font-medium">{value}%</span>
+                      </div>
+                      <div className="progress-bar">
+                        <div 
+                          className="progress-fill"
+                          style={{ '--score': `${value}%` } as React.CSSProperties}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* Project Logo */}
-          {project.logoUrl && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img
-                src={project.logoUrl}
-                alt={`${project.title} logo`}
-                className={`h-32 ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
-              />
-            </div>
-          )}
+            {/* Technologies */}
+            {technologies.length > 0 && (
+              <div className="glass-card p-8 mb-8">
+                <h2 className="text-2xl font-bold text-white mb-6">Technologies</h2>
+                <div className="tech-grid">
+                  {technologies.map((tech, index) => (
+                    <span key={index} className="tech-tag">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* Title and CTA */}
-          <div className="flex items-end justify-between">
-            <h1 className="project-title text-5xl font-bold text-white mb-0">
-              {project.title}
-            </h1>
+            {/* Project Link */}
             {project.projectUrl && (
-              <a 
+              <a
                 href={project.projectUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="project-meta flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                className="glass-button w-full py-4 px-6 flex items-center justify-center gap-2 text-white font-medium"
               >
                 <span>Voir le projet</span>
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-5 h-5" />
               </a>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {/* PageSpeed Scores */}
-        {project.pageSpeed && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-            <div className="pagespeed-item flex flex-col items-center">
-              <div className="relative w-32 h-32">
-                <svg className="w-full h-full progress-circle">
-                  <circle
-                    className="progress-circle-bg"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                  />
-                  <circle
-                    className="progress-circle-value"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                    strokeDasharray="364.4"
-                    strokeDashoffset={364.4 * (1 - project.pageSpeed.performance / 100)}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-bold">{project.pageSpeed.performance}</span>
-                </div>
-              </div>
-              <span className="mt-4 text-lg font-medium">Performance</span>
-            </div>
-            <div className="pagespeed-item flex flex-col items-center">
-              <div className="relative w-32 h-32">
-                <svg className="w-full h-full progress-circle">
-                  <circle
-                    className="progress-circle-bg"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                  />
-                  <circle
-                    className="progress-circle-value"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                    strokeDasharray="364.4"
-                    strokeDashoffset={364.4 * (1 - project.pageSpeed.accessibility / 100)}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-bold">{project.pageSpeed.accessibility}</span>
-                </div>
-              </div>
-              <span className="mt-4 text-lg font-medium">Accessibility</span>
-            </div>
-            <div className="pagespeed-item flex flex-col items-center">
-              <div className="relative w-32 h-32">
-                <svg className="w-full h-full progress-circle">
-                  <circle
-                    className="progress-circle-bg"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                  />
-                  <circle
-                    className="progress-circle-value"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                    strokeDasharray="364.4"
-                    strokeDashoffset={364.4 * (1 - project.pageSpeed.bestPractices / 100)}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-bold">{project.pageSpeed.bestPractices}</span>
-                </div>
-              </div>
-              <span className="mt-4 text-lg font-medium">Best Practices</span>
-            </div>
-            <div className="pagespeed-item flex flex-col items-center">
-              <div className="relative w-32 h-32">
-                <svg className="w-full h-full progress-circle">
-                  <circle
-                    className="progress-circle-bg"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                  />
-                  <circle
-                    className="progress-circle-value"
-                    strokeWidth="8"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                    strokeDasharray="364.4"
-                    strokeDashoffset={364.4 * (1 - project.pageSpeed.seo / 100)}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-bold">{project.pageSpeed.seo}</span>
-                </div>
-              </div>
-              <span className="mt-4 text-lg font-medium">SEO</span>
-            </div>
-          </div>
-        )}
-
-        {/* Project Description */}
-        <div className="project-content prose prose-invert max-w-none">
-          <div dangerouslySetInnerHTML={{ 
-            __html: project.content.replace(
-              /<div class="span4[^>]*>[\s\S]*?<\/div>/g,
-              ''
-            )
-          }} />
-        </div>
-
-        {/* Technologies */}
-        {technologies.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold mb-6">Technologies utilisées</h2>
-            <div className="tech-tag-container">
-              {technologies.map((tech, index) => (
-                <span key={index} className="tech-tag">
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Project Gallery */}
-        <div className="project-gallery">
-          {project.content.match(/<img[^>]+src="([^"]+)"[^>]*>/g)?.map((img, index) => {
-            const src = img.match(/src="([^"]+)"/)?.[1]
-            if (!src) return null
-            return (
-              <div key={index} className="gallery-item">
-                <img src={src} alt={`${project.title} screenshot ${index + 1}`} />
-              </div>
-            )
-          })}
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { BlogContent } from './BlogContent'
+import { decodeHtmlEntities } from '../utils/textUtils'
 
 interface BlogPost {
   id: number

@@ -28,7 +28,10 @@ export const metadata: Metadata = {
     title: 'Renfort Technique pour Agences – Développeur Freelance Web',
     description: 'Besoin d\'un renfort fiable pour vos projets clients ? Sites performants, respect des délais, livrables pro.',
     card: 'summary_large_image'
-  }
+  },
+  icons: {
+    icon: 'https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico',
+  },
 }
 
 export default function RootLayout({
@@ -38,6 +41,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
+      <head>
+        <link rel="icon" href="https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico" />
+      </head>
       <body className={`${inter.className} ${poppins.variable} bg-background text-foreground`}>
         <LanguageProvider>
           <div className="relative overflow-x-hidden w-full">

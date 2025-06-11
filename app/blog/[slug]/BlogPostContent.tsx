@@ -165,52 +165,56 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#261939] to-gray-900">
-      <div className="relative h-[50vh] overflow-hidden">
+      <div className="relative h-[60vh] overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-[3px]"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-700 ease-out hover:scale-110"
           style={{ 
-            backgroundImage: `url(${post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg'})`,
-            transform: 'scale(1.1)'
+            backgroundImage: `url(${post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg'})`
           }}
         />
-        <div className="absolute inset-0 bg-[#261939]/90 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#261939]/70 via-[#261939]/80 to-[#261939]" />
         <div className="absolute inset-0 flex items-center justify-center p-8">
-          <div className="max-w-4xl w-full mx-auto text-center">
+          <div className="max-w-4xl w-full mx-auto text-center space-y-6">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold text-white mb-4"
+              className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight"
               dangerouslySetInnerHTML={{ __html: post.title.rendered }}
             />
-            <div className="flex items-center justify-center gap-4 text-gray-300">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <time dateTime={post.date}>{formatDate(post.date)}</time>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-wrap items-center justify-center gap-6 text-gray-300"
+            >
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm">
+                <Calendar className="w-5 h-5 text-[#e28d1d]" />
+                <time dateTime={post.date} className="text-sm font-medium">{formatDate(post.date)}</time>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm">
                 <button
                   onClick={() => handleShare('facebook')}
-                  className="p-2 text-gray-400 hover:text-[#e28d1d] transition-colors"
+                  className="p-1.5 text-gray-400 hover:text-[#e28d1d] transition-all hover:scale-110"
                   title="Share on Facebook"
                 >
-                  <Facebook className="w-4 h-4" />
+                  <Facebook className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleShare('twitter')}
-                  className="p-2 text-gray-400 hover:text-[#e28d1d] transition-colors"
+                  className="p-1.5 text-gray-400 hover:text-[#e28d1d] transition-all hover:scale-110"
                   title="Share on Twitter"
                 >
-                  <Twitter className="w-4 h-4" />
+                  <Twitter className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleShare('linkedin')}
-                  className="p-2 text-gray-400 hover:text-[#e28d1d] transition-colors"
+                  className="p-1.5 text-gray-400 hover:text-[#e28d1d] transition-all hover:scale-110"
                   title="Share on LinkedIn"
                 >
-                  <Linkedin className="w-4 h-4" />
+                  <Linkedin className="w-5 h-5" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -218,42 +222,132 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-all hover:translate-x-[-4px] mb-12 group"
         >
-          <ArrowLeft className="w-5 h-5" />
-          {language === 'fr' ? 'Retour au blog' : 'Back to blog'}
+          <ArrowLeft className="w-5 h-5 transition-transform group-hover:scale-110" />
+          <span className="font-medium">{language === 'fr' ? 'Retour au blog' : 'Back to blog'}</span>
         </Link>
 
-        <article className="prose prose-invert max-w-none">
+        <article className="prose prose-invert prose-lg max-w-none">
+          <style jsx global>{`
+            .prose {
+              color: #e5e7eb;
+            }
+            .prose h2 {
+              color: white;
+              font-size: 2rem;
+              margin-top: 2.5rem;
+              margin-bottom: 1.5rem;
+              font-weight: 700;
+              line-height: 1.3;
+              letter-spacing: -0.025em;
+            }
+            .prose h3 {
+              color: white;
+              font-size: 1.5rem;
+              margin-top: 2rem;
+              margin-bottom: 1rem;
+              font-weight: 600;
+            }
+            .prose p {
+              margin-top: 1.5rem;
+              margin-bottom: 1.5rem;
+              line-height: 1.8;
+            }
+            .prose a {
+              color: #e28d1d;
+              text-decoration: none;
+              transition: all 0.2s;
+            }
+            .prose a:hover {
+              color: #f4a340;
+            }
+            .prose strong {
+              color: white;
+              font-weight: 600;
+            }
+            .prose blockquote {
+              border-left-color: #e28d1d;
+              background-color: rgba(255, 255, 255, 0.05);
+              padding: 1rem 1.5rem;
+              margin: 2rem 0;
+              border-radius: 0.5rem;
+            }
+            .prose blockquote p {
+              margin: 0;
+              font-style: italic;
+              color: #e5e7eb;
+            }
+            .prose ul, .prose ol {
+              margin-top: 1.5rem;
+              margin-bottom: 1.5rem;
+              padding-left: 1.5rem;
+            }
+            .prose li {
+              margin-top: 0.5rem;
+              margin-bottom: 0.5rem;
+            }
+            .prose img {
+              border-radius: 0.75rem;
+              margin: 2rem auto;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .prose code {
+              background-color: rgba(255, 255, 255, 0.1);
+              color: #e28d1d;
+              padding: 0.2rem 0.4rem;
+              border-radius: 0.25rem;
+              font-size: 0.875em;
+            }
+            .prose pre {
+              background-color: #1a1a1a !important;
+              border-radius: 0.75rem;
+              padding: 1.5rem !important;
+              margin: 2rem 0;
+              overflow-x: auto;
+            }
+            .prose pre code {
+              background-color: transparent;
+              color: inherit;
+              padding: 0;
+              font-size: 0.875em;
+            }
+          `}</style>
           <div dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
         </article>
 
-        <div className="mt-12 border-t border-gray-800 pt-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="mt-16 border-t border-white/10 pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             {navigation.previous && (
               <Link
                 href={`/blog/${navigation.previous.slug}`}
-                className="flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-colors"
+                className="group flex items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:translate-x-[-4px] max-w-[300px]"
               >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="text-sm">{navigation.previous.title}</span>
+                <ArrowLeft className="w-5 h-5 text-[#e28d1d] transition-transform group-hover:scale-110" />
+                <div>
+                  <div className="text-sm text-gray-400 mb-1">{language === 'fr' ? 'Article précédent' : 'Previous article'}</div>
+                  <div className="text-white font-medium line-clamp-1">{navigation.previous.title}</div>
+                </div>
               </Link>
             )}
             {navigation.next && (
               <Link
                 href={`/blog/${navigation.next.slug}`}
-                className="flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-colors ml-auto"
+                className="group flex items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:translate-x-[4px] ml-auto max-w-[300px]"
               >
-                <span className="text-sm">{navigation.next.title}</span>
-                <ArrowRight className="w-5 h-5" />
+                <div className="text-right">
+                  <div className="text-sm text-gray-400 mb-1">{language === 'fr' ? 'Article suivant' : 'Next article'}</div>
+                  <div className="text-white font-medium line-clamp-1">{navigation.next.title}</div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-[#e28d1d] transition-transform group-hover:scale-110" />
               </Link>
             )}
           </div>
         </div>
 
-        <div className="mt-12 border-t border-gray-800 pt-8">
-          <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-2">
-            <MessageCircle className="w-6 h-6" />
+        <div className="mt-16 border-t border-white/10 pt-8">
+          <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+            <MessageCircle className="w-6 h-6 text-[#e28d1d]" />
             {language === 'fr' ? 'Commentaires' : 'Comments'}
           </h2>
           <CommentList comments={comments} />
