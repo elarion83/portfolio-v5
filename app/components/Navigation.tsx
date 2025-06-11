@@ -50,12 +50,13 @@ export function Navigation() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 right-4 z-50 p-3 bg-[#261939] rounded-full md:hidden"
+        className="fixed top-4 right-4 z-50 p-4 bg-[#261939] rounded-full md:hidden"
+        aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
       >
         {isOpen ? (
-          <X className="w-6 h-6 text-[#e28d1d]" />
+          <X className="w-7 h-7 text-[#e28d1d]" />
         ) : (
-          <Menu className="w-6 h-6 text-[#e28d1d]" />
+          <Menu className="w-7 h-7 text-[#e28d1d]" />
         )}
       </button>
 
