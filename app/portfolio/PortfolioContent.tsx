@@ -7,8 +7,8 @@ import {
   Linkedin, Folder, ExternalLink, Gauge, Code
 } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
-import { LoadingSpinner } from '@/components/LoadingSpinner'
-import { AchievementPopup } from '@/components/AchievementPopup'
+import LoadingSpinner from '@/app/components/LoadingSpinner'
+import { AchievementPopup } from '@/app/components/AchievementPopup'
 
 interface Project {
   id: string
