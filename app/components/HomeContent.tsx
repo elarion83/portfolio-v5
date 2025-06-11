@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import * as Icons from 'lucide-react'
 import Link from 'next/link'
-import { useLanguage } from '../contexts/LanguageContext'
+import { useLanguage } from '@/app/contexts/LanguageContext'
 
 export function HomeContent() {
   const { t, language } = useLanguage()
