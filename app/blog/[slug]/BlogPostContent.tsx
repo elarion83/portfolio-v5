@@ -222,9 +222,9 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-all hover:translate-x-[-4px] mb-6 md:mb-12 group"
+          className="inline-flex items-center gap-1.5 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-all hover:translate-x-[-4px] mb-6 md:mb-12 group text-sm md:text-base"
         >
-          <ArrowLeft className="w-5 h-5 transition-transform group-hover:scale-110" />
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:scale-110" />
           <span className="font-medium">{language === 'fr' ? 'Retour au blog' : 'Back to blog'}</span>
         </Link>
 
@@ -253,6 +253,12 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
               margin-top: 1.5rem;
               margin-bottom: 1.5rem;
               line-height: 1.8;
+            }
+            .prose p:first-child {
+              margin-top: 0;
+            }
+            .prose h2:first-child {
+              margin-top: 0;
             }
             .prose a {
               color: #e28d1d;
