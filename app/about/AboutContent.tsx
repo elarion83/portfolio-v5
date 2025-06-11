@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Code, Briefcase, Award, Users, Coffee, CheckCircle, ArrowRight, Star, ChevronLeft, ChevronRight, Calendar, Building } from 'lucide-react'
-import { useLanguage } from '../contexts/LanguageContext'
-import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { useLanguage } from '@/app/contexts/LanguageContext'
+import { LoadingSpinner } from '@/app/components/LoadingSpinner'
 
 interface Testimonial {
   content: {

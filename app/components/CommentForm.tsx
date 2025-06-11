@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Send, AlertCircle } from 'lucide-react';
-import type { CommentFormData } from '../types';
-import { useLanguage } from '../contexts/LanguageContext';
-import { CommentSuccessAnimation } from './CommentSuccessAnimation';
+'use client'
+
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Send, AlertCircle } from 'lucide-react'
+import type { CommentFormData } from '@/app/types'
+import { useLanguage } from '@/app/contexts/LanguageContext'
+import { CommentSuccessAnimation } from './CommentSuccessAnimation'
 
 interface CommentFormProps {
   postId: number;
   onCommentSubmitted: () => void;
 }
 
-export const CommentForm: React.FC<CommentFormProps> = ({ postId, onCommentSubmitted }) => {
+export function CommentForm({ postId, onCommentSubmitted }: CommentFormProps) {
   const { language } = useLanguage();
   const [formData, setFormData] = useState<CommentFormData>({
     author_name: '',
@@ -201,4 +203,4 @@ export const CommentForm: React.FC<CommentFormProps> = ({ postId, onCommentSubmi
       </form>
     </>
   );
-};
+} 

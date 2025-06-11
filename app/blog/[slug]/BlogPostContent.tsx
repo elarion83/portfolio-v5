@@ -1,74 +1,170 @@
 'use client'
 
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Calendar, Share2, Facebook, Twitter, Linkedin, MessageCircle, CalendarPlus, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import { useLanguage } from '../../contexts/LanguageContext'
-
-interface BlogPost {
-  id: number
-  title: {
-    rendered: string
-  }
-  content: {
-    rendered: string
-  }
-  excerpt: {
-    rendered: string
-  }
-  date: string
-  modified: string
-  slug: string
-  _embedded?: {
-    'wp:featuredmedia'?: Array<{
-      source_url: string
-    }>
-  }
-}
+import { useLanguage } from '@/app/contexts/LanguageContext'
+import { LoadingSpinner } from '@/app/components/LoadingSpinner'
+import { CommentList } from '@/app/components/CommentList'
+import { CommentForm } from '@/app/components/CommentForm'
+import type { BlogPost, Comment } from '@/app/types'
 
 interface PostNavigation {
   previous?: {
-    title: string
-    slug: string
-  }
+    title: string;
+    slug: string;
+  };
   next?: {
-    title: string
-    slug: string
-  }
+    title: string;
+    slug: string;
+  };
 }
 
-interface BlogPostContentProps {
-  post: BlogPost
-  navigation: PostNavigation
-}
+export function BlogPostContent({ params }: { params: { slug: string } }) {
+  const postId = params.slug;
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [navigation, setNavigation] = useState<PostNavigation>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { language } = useLanguage();
 
-export function BlogPostContent({ post, navigation }: BlogPostContentProps) {
-  const { language } = useLanguage()
+  useEffect(() => {
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink && postId) {
+      canonicalLink.setAttribute('href', `https://nicolas-gruwe.fr/blog/${postId}`);
+    }
+  }, [postId]);
+
+  const fetchComments = async (postId: number) => {
+    try {
+      const response = await fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/comments?post=${postId}&order=desc`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+      const data = await response.json();
+      setComments(data);
+    } catch (err) {
+      console.error('Error fetching comments:', err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const [postResponse, allPostsResponse] = await Promise.all([
+          fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/posts?slug=${postId}&_embed`),
+          fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?per_page=100&_fields=title,slug')
+        ]);
+
+        if (!postResponse.ok || !allPostsResponse.ok) {
+          throw new Error('Post not found');
+        }
+
+        const [postData, allPosts] = await Promise.all([
+          postResponse.json(),
+          allPostsResponse.json()
+        ]);
+
+        if (postData.length === 0) {
+          throw new Error('Post not found');
+        }
+
+        setPost(postData[0]);
+        fetchComments(postData[0].id);
+        
+        // Set up navigation
+        const currentIndex = allPosts.findIndex((p: any) => p.slug === postId);
+        if (currentIndex !== -1) {
+          const nav: PostNavigation = {};
+          if (currentIndex > 0) {
+            nav.previous = {
+              title: allPosts[currentIndex - 1].title.rendered,
+              slug: allPosts[currentIndex - 1].slug
+            };
+          }
+          if (currentIndex < allPosts.length - 1) {
+            nav.next = {
+              title: allPosts[currentIndex + 1].title.rendered,
+              slug: allPosts[currentIndex + 1].slug
+            };
+          }
+          setNavigation(nav);
+        }
+      } catch (err) {
+        console.error('Error fetching post:', err);
+        setError('Post not found');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postId]);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat('fr-FR', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
-    }).format(date)
-  }
+    }).format(date);
+  };
 
   const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
-    const url = `https://nicolas-gruwe.fr/blog/${post.slug}`
-    const text = post.title.rendered
+    if (!post) return;
+
+    const url = `https://nicolas-gruwe.fr/blog/${post.slug}`;
+    const text = post.title.rendered;
 
     const urls = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
       twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-    }
+    };
 
-    window.open(urls[platform], '_blank', 'width=600,height=400')
+    window.open(urls[platform], '_blank', 'width=600,height=400');
+  };
+
+  const handleCommentSubmitted = () => {
+    if (post) {
+      fetchComments(post.id);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
+  if (error || !post) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#261939]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white mb-4">{error}</h2>
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            {language === 'fr' ? 'Retour au blog' : 'Back to blog'}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const postTitle = post.title.rendered;
+  const postDescription = post.excerpt.rendered.replace(/<[^>]*>/g, '');
+  const postImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.jpg';
+  const postUrl = `https://nicolas-gruwe.fr/blog/${post.slug}`;
+
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-[#261939] to-gray-900">
       <div className="relative h-[50vh] overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-[3px]"
@@ -86,7 +182,7 @@ export function BlogPostContent({ post, navigation }: BlogPostContentProps) {
               className="text-4xl md:text-5xl font-bold text-white mb-4"
               dangerouslySetInnerHTML={{ __html: post.title.rendered }}
             />
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-gray-400">
+            <div className="flex items-center justify-center gap-4 text-gray-300">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 <time dateTime={post.date}>{formatDate(post.date)}</time>
@@ -128,96 +224,42 @@ export function BlogPostContent({ post, navigation }: BlogPostContentProps) {
           {language === 'fr' ? 'Retour au blog' : 'Back to blog'}
         </Link>
 
-        <article className="bg-white/5 backdrop-blur-sm rounded-xl overflow-hidden border border-white/10">
-          <div className="p-8">
-            <div 
-              className="prose prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-            />
-
-            {/* CTA Section */}
-            <div className="mt-12 p-8 bg-[#261939]/80 backdrop-blur-md rounded-xl border border-[#e28d1d]/20">
-              <div className="flex flex-col lg:flex-row gap-8 items-center">
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    {language === 'fr' ? 'Besoin d\'aide pour votre projet ?' : 'Need help with your project?'}
-                  </h3>
-                  <p className="text-gray-300 mb-6">
-                    {language === 'fr' 
-                      ? 'Réservez un appel gratuit de 30 minutes pour discuter de vos besoins et découvrir comment je peux vous aider à atteindre vos objectifs.'
-                      : 'Book a free 30-minute call to discuss your needs and discover how I can help you achieve your goals.'}
-                  </p>
-                  <ul className="space-y-3 mb-6">
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <span className="w-1.5 h-1.5 bg-[#e28d1d] rounded-full" />
-                      {language === 'fr' ? 'Expertise technique approfondie' : 'Deep technical expertise'}
-                    </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <span className="w-1.5 h-1.5 bg-[#e28d1d] rounded-full" />
-                      {language === 'fr' ? 'Solutions sur mesure' : 'Custom solutions'}
-                    </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <span className="w-1.5 h-1.5 bg-[#e28d1d] rounded-full" />
-                      {language === 'fr' ? 'Accompagnement personnalisé' : 'Personalized support'}
-                    </li>
-                  </ul>
-                </div>
-                <div className="flex-shrink-0">
-                  <a
-                    href="https://calendly.com/gruwe-nicolas/30min"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#e28d1d] text-white rounded-full font-semibold hover:bg-[#e28d1d]/90 transition-colors"
-                  >
-                    <CalendarPlus className="w-5 h-5" />
-                    {language === 'fr' ? 'Réserver mon appel gratuit' : 'Book my free call'}
-                    <ArrowRight className="w-5 h-5" />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+        <article className="prose prose-invert max-w-none">
+          <div dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
         </article>
 
-        {/* Post Navigation */}
-        <nav className="mt-12 flex flex-col sm:flex-row justify-between gap-4">
-          {navigation.previous && (
-            <Link
-              href={`/blog/${navigation.previous.slug}`}
-              className="group flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-[#e28d1d]/30 transition-colors"
-            >
-              <div className="flex items-center gap-3 text-gray-400 group-hover:text-[#e28d1d] transition-colors mb-2">
+        <div className="mt-12 border-t border-gray-800 pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            {navigation.previous && (
+              <Link
+                href={`/blog/${navigation.previous.slug}`}
+                className="flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-colors"
+              >
                 <ArrowLeft className="w-5 h-5" />
-                <span className="text-sm font-medium">
-                  {language === 'fr' ? 'Article précédent' : 'Previous Post'}
-                </span>
-              </div>
-              <h3 
-                className="text-white group-hover:text-[#e28d1d] transition-colors line-clamp-2"
-                dangerouslySetInnerHTML={{ __html: navigation.previous.title }}
-              />
-            </Link>
-          )}
-          
-          {navigation.next && (
-            <Link
-              href={`/blog/${navigation.next.slug}`}
-              className="group flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-[#e28d1d]/30 transition-colors text-right"
-            >
-              <div className="flex items-center justify-end gap-3 text-gray-400 group-hover:text-[#e28d1d] transition-colors mb-2">
-                <span className="text-sm font-medium">
-                  {language === 'fr' ? 'Article suivant' : 'Next Post'}
-                </span>
+                <span className="text-sm">{navigation.previous.title}</span>
+              </Link>
+            )}
+            {navigation.next && (
+              <Link
+                href={`/blog/${navigation.next.slug}`}
+                className="flex items-center gap-2 text-[#e28d1d] hover:text-[#e28d1d]/80 transition-colors ml-auto"
+              >
+                <span className="text-sm">{navigation.next.title}</span>
                 <ArrowRight className="w-5 h-5" />
-              </div>
-              <h3 
-                className="text-white group-hover:text-[#e28d1d] transition-colors line-clamp-2"
-                dangerouslySetInnerHTML={{ __html: navigation.next.title }}
-              />
-            </Link>
-          )}
-        </nav>
+              </Link>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-12 border-t border-gray-800 pt-8">
+          <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-2">
+            <MessageCircle className="w-6 h-6" />
+            {language === 'fr' ? 'Commentaires' : 'Comments'}
+          </h2>
+          <CommentList comments={comments} />
+          <CommentForm postId={post.id} onCommentSubmitted={handleCommentSubmitted} />
+        </div>
       </div>
-    </>
-  )
+    </div>
+  );
 } 

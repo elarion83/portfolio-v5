@@ -1,13 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { MessageSquare } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+'use client'
+
+import React from 'react'
+import { motion } from 'framer-motion'
+import { MessageSquare } from 'lucide-react'
+import { useLanguage } from '@/app/contexts/LanguageContext'
 
 interface CommentSuccessAnimationProps {
   onComplete: () => void;
 }
 
-export const CommentSuccessAnimation: React.FC<CommentSuccessAnimationProps> = ({ onComplete }) => {
+export function CommentSuccessAnimation({ onComplete }: CommentSuccessAnimationProps) {
   const { language } = useLanguage();
 
   React.useEffect(() => {
@@ -103,4 +105,4 @@ export const CommentSuccessAnimation: React.FC<CommentSuccessAnimationProps> = (
       </div>
     </motion.div>
   );
-};
+} 

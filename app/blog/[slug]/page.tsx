@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { BlogPostContent } from './BlogPostContent'
+import { generateMetadata } from '@/app/utils/metadata'
 
 interface BlogPost {
   id: number
@@ -55,6 +56,17 @@ async function getAllPosts() {
   return res.json()
 }
 
+export const metadata = generateMetadata({
+  title: {
+    fr: 'Blog - Nicolas Gruwe',
+    en: 'Blog - Nicolas Gruwe'
+  },
+  description: {
+    fr: 'Découvrez mes articles sur le développement web, WordPress, React, et plus encore.',
+    en: 'Read my articles about web development, WordPress, React, and more.'
+  }
+})
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPost(params.slug)
   const postTitle = post.title.rendered
@@ -103,28 +115,6 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const [post, allPosts] = await Promise.all([
-    getPost(params.slug),
-    getAllPosts()
-  ])
-
-  // Set up navigation
-  const currentIndex = allPosts.findIndex((p: any) => p.slug === params.slug)
-  const navigation = {
-    previous: currentIndex > 0 ? {
-      title: allPosts[currentIndex - 1].title.rendered,
-      slug: allPosts[currentIndex - 1].slug
-    } : undefined,
-    next: currentIndex < allPosts.length - 1 ? {
-      title: allPosts[currentIndex + 1].title.rendered,
-      slug: allPosts[currentIndex + 1].slug
-    } : undefined
-  }
-
-  return (
-    <div className="min-h-screen bg-[#261939]">
-      <BlogPostContent post={post} navigation={navigation} />
-    </div>
-  )
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  return <BlogPostContent params={params} />
 } 

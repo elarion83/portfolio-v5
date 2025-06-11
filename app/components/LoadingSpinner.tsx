@@ -1,7 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+'use client'
 
-export const LoadingSpinner: React.FC = () => {
+import React from 'react'
+import { motion } from 'framer-motion'
+
+export function LoadingSpinner() {
   return (
     <div className="flex justify-center items-center min-h-[400px]">
       <div className="w-16 h-16 relative">
@@ -36,4 +38,4 @@ export const LoadingSpinner: React.FC = () => {
       </div>
     </div>
   );
-};
+} 

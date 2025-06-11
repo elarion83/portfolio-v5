@@ -1,5 +1,5 @@
-import { generateMetadata } from '../utils/metadata'
-import { HomeContent } from '../components/HomeContent'
+import { generateMetadata } from '@/app/utils/metadata'
+import { HomeContent } from './components/HomeContent'
 
 export const metadata = generateMetadata({
   title: {

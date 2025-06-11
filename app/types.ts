@@ -57,4 +57,4 @@ export interface BlogPost {
       source_url: string;
     }>;
   };
-}
+} 

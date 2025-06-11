@@ -1,14 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, User } from 'lucide-react';
-import type { Comment } from '../types';
-import { useLanguage } from '../contexts/LanguageContext';
+'use client'
+
+import React from 'react'
+import { motion } from 'framer-motion'
+import { Calendar, User } from 'lucide-react'
+import type { Comment } from '@/app/types'
+import { useLanguage } from '@/app/contexts/LanguageContext'
 
 interface CommentListProps {
   comments: Comment[];
 }
 
-export const CommentList: React.FC<CommentListProps> = ({ comments }) => {
+export function CommentList({ comments }: CommentListProps) {
   const { language } = useLanguage();
 
   const formatDate = (dateString: string) => {
@@ -51,4 +53,4 @@ export const CommentList: React.FC<CommentListProps> = ({ comments }) => {
       ))}
     </div>
   );
-};
+} 
