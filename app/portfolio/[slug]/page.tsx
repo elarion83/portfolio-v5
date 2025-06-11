@@ -264,6 +264,19 @@ export default async function ProjectPage({ params }: { params: { slug: string }
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
+            {/* Project Link */}
+            {project.projectUrl && (
+              <a
+                href={project.projectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-button w-full py-4 px-6 flex items-center justify-center gap-2 text-white font-medium"
+              >
+                <span>Voir le projet</span>
+                <ExternalLink className="w-5 h-5" />
+              </a>
+            )}
+
             {/* PageSpeed Insights */}
             {project.pageSpeed && (
               <div className="glass-card p-8 mb-8">
@@ -301,19 +314,6 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* Project Link */}
-            {project.projectUrl && (
-              <a
-                href={project.projectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="glass-button w-full py-4 px-6 flex items-center justify-center gap-2 text-white font-medium"
-              >
-                <span>Voir le projet</span>
-                <ExternalLink className="w-5 h-5" />
-              </a>
             )}
           </div>
         </div>

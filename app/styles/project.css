@@ -63,6 +63,7 @@
   border: 1px solid rgba(226, 141, 29, 0.3);
   border-radius: 12px;
   transition: all 0.3s ease;
+  margin-bottom: 2rem;
 }
 
 .glass-button:hover {
@@ -105,9 +106,9 @@
   inset: 0;
   background: linear-gradient(
     165deg,
-    rgba(38, 25, 57, 0.8) 0%,
-    rgba(38, 25, 57, 0.9) 50%,
-    rgba(38, 25, 57, 0.95) 100%
+    rgba(38, 25, 57, 0.6) 0%,
+    rgba(38, 25, 57, 0.7) 50%,
+    rgba(38, 25, 57, 0.8) 100%
   );
   z-index: 1;
 }

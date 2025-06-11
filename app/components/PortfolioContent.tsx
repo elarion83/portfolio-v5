@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Filter, Calendar, Code, Briefcase } from 'lucide-react'
+import { Filter, Calendar, Code, Briefcase, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/app/contexts/LanguageContext'
@@ -29,6 +29,7 @@ interface Project {
 
 export function PortfolioContent({ initialProjects }: { initialProjects: Project[] }) {
   const [filter, setFilter] = useState('all')
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
   const { t, language } = useLanguage()
 
   // Get unique departments and their counts
@@ -41,6 +42,11 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
   const filteredProjects = initialProjects.filter(project => 
     filter === 'all' || project.department === filter
   )
+
+  const handleFilterClick = (newFilter: string) => {
+    setFilter(newFilter)
+    setIsMobileFilterOpen(false)
+  }
 
   return (
     <div className="min-h-screen bg-[#261939] relative">
@@ -67,8 +73,8 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
           </h1>
         </div>
 
-        {/* Filters */}
-        <div className="max-w-7xl mx-auto mb-12">
+        {/* Filters - Desktop & Tablet */}
+        <div className="max-w-7xl mx-auto mb-12 hidden sm:block">
           <div className="flex flex-wrap gap-2 justify-center px-4 md:px-0">
             <button 
               onClick={() => setFilter('all')}
@@ -99,6 +105,62 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Filters - Mobile */}
+        <div className="sm:hidden mb-8 px-4">
+          <button
+            onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+            className="w-full px-4 py-3 rounded-lg bg-[#261939]/40 backdrop-blur-sm border-2 border-[#e28d1d] text-white flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4" />
+              <span>{filter === 'all' ? t('portfolio.filter.all') : filter}</span>
+            </div>
+            <motion.div
+              animate={{ rotate: isMobileFilterOpen ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronDown className="w-5 h-5" />
+            </motion.div>
+          </button>
+
+          <AnimatePresence>
+            {isMobileFilterOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute left-4 right-4 mt-2 p-2 bg-[#261939]/95 backdrop-blur-md rounded-lg border border-[#e28d1d]/20 shadow-xl z-50"
+              >
+                <button
+                  onClick={() => handleFilterClick('all')}
+                  className={`w-full px-4 py-3 rounded-lg flex items-center justify-between ${
+                    filter === 'all'
+                      ? 'bg-[#e28d1d] text-white'
+                      : 'text-white hover:bg-white/5'
+                  }`}
+                >
+                  <span>{t('portfolio.filter.all')}</span>
+                  <span className="bg-white/20 px-2 rounded-full text-sm">{initialProjects.length}</span>
+                </button>
+                {Object.entries(departments).map(([dept, count]) => (
+                  <button
+                    key={dept}
+                    onClick={() => handleFilterClick(dept)}
+                    className={`w-full px-4 py-3 rounded-lg flex items-center justify-between ${
+                      filter === dept
+                        ? 'bg-[#e28d1d] text-white'
+                        : 'text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <span>{dept}</span>
+                    <span className="bg-white/20 px-2 rounded-full text-sm">{count}</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Projects Grid */}
