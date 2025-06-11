@@ -22,45 +22,54 @@ interface Project {
   } | null
 }
 
-async function getProject(slug: string): Promise<Project | null> {
+async function getAllProjects() {
   const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=50', {
     next: { revalidate: 3600 }
   })
   
   if (!res.ok) {
-    return null
+    throw new Error('Failed to fetch projects')
   }
 
   const data = await res.json()
   
-  const project = data
-    .map((item: any) => ({
-      id: item.id.toString(),
-      title: item.title.rendered.replace(/\s*\(\d{4}\)$/, ''),
-      slug: item.title.rendered
-        .toLowerCase()
-        .replace(/\s*\(\d{4}\)$/, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, ''),
-      description: item.excerpt?.rendered.replace(/<[^>]*>/g, '') || '',
-      content: item.content.rendered,
-      year: item.acf?.annee || 'N/A',
-      imageUrl: item.acf?.image_background || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f',
-      logoUrl: item.acf?.logo_url || '',
-      isDarkLogo: item.acf?.logo_sombre === true,
-      department: item.department_name || 'Other',
-      mainTechnology: item.acf?.socle_technique || '',
-      projectUrl: item.acf?.url_projet || '',
-      pageSpeed: item.acf?.informations_pagespeed ? {
-        performance: parseInt(item.acf.informations_pagespeed.performance) || 'n.a',
-        accessibility: parseInt(item.acf.informations_pagespeed.accessibilite) || 'n.a',
-        bestPractices: parseInt(item.acf.informations_pagespeed.bonnes) || 'n.a',
-        seo: parseInt(item.acf.informations_pagespeed.seo) || 'n.a'
-      } : null
-    }))
-    .find((p: Project) => p.slug === slug)
+  return data.map((item: any) => ({
+    id: item.id.toString(),
+    title: item.title.rendered.replace(/\s*\(\d{4}\)$/, ''),
+    slug: item.title.rendered
+      .toLowerCase()
+      .replace(/\s*\(\d{4}\)$/, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, ''),
+    description: item.excerpt?.rendered.replace(/<[^>]*>/g, '') || '',
+    content: item.content.rendered,
+    year: item.acf?.annee || 'N/A',
+    imageUrl: item.acf?.image_background || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f',
+    logoUrl: item.acf?.logo_url || '',
+    isDarkLogo: item.acf?.logo_sombre === true,
+    department: item.department_name || 'Other',
+    mainTechnology: item.acf?.socle_technique || '',
+    projectUrl: item.acf?.url_projet || '',
+    pageSpeed: item.acf?.informations_pagespeed ? {
+      performance: parseInt(item.acf.informations_pagespeed.performance) || 'n.a',
+      accessibility: parseInt(item.acf.informations_pagespeed.accessibilite) || 'n.a',
+      bestPractices: parseInt(item.acf.informations_pagespeed.bonnes) || 'n.a',
+      seo: parseInt(item.acf.informations_pagespeed.seo) || 'n.a'
+    } : null
+  }))
+}
 
-  return project || null
+async function getProject(slug: string): Promise<Project | null> {
+  const projects = await getAllProjects()
+  return projects.find((p: Project) => p.slug === slug) || null
+}
+
+export async function generateStaticParams() {
+  const projects = await getAllProjects()
+  
+  return projects.map((project: Project) => ({
+    slug: project.slug
+  }))
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
