@@ -260,10 +260,8 @@ export function ConstellationBackground() {
         style={{ background: 'transparent', zIndex: '1' }}
       />
       <AchievementPopup
-        achievementId={achievement?.id || ''}
-        isVisible={!!achievement}
+        achievement={achievement || { id: '', threshold: 0, level: 1 }}
         onClose={() => setAchievement(null)}
-        level={achievement?.level || 1}
       />
     </>
   )
