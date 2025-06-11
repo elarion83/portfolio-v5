@@ -353,7 +353,7 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
                         <img
                           src={selectedProject.logoUrl}
                           alt={`${selectedProject.title} logo`}
-                          className={`h-12 ${selectedProject.isDarkLogo ? 'brightness-0 invert' : ''}`}
+                          className={`min-h-[150px] w-auto object-contain ${selectedProject.isDarkLogo ? 'brightness-0 invert' : ''}`}
                         />
                       </div>
                     )}
