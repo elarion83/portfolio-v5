@@ -108,6 +108,14 @@ export const metadata: Metadata = {
     siteName: 'Nicolas Gruwe',
     locale: 'fr_FR',
     type: 'website',
+    images: [
+      {
+        url: 'https://www.nicolas-gruwe.fr/img/portfolio.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Portfolio de Nicolas Gruwe',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

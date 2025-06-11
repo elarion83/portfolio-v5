@@ -51,7 +51,15 @@ export const metadata: Metadata = {
     description: 'Articles orientés développement WordPress, bonne pratiques, outils pour agences.',
     url: 'https://nicolas-gruwe.fr/blog',
     siteName: 'Nicolas Gruwe - Blog',
-    type: 'website'
+    type: 'website',
+    images: [
+      {
+        url: 'https://www.nicolas-gruwe.fr/img/portfolio.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Blog de Nicolas Gruwe',
+      },
+    ],
   },
   twitter: {
     title: 'Blog Technique WordPress – Pour Freelances & Agences',

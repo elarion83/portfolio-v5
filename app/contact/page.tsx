@@ -14,6 +14,14 @@ export const metadata: Metadata = {
     siteName: 'Nicolas Gruwe - Développeur Freelance',
     locale: 'fr_FR',
     type: 'website',
+    images: [
+      {
+        url: 'https://www.nicolas-gruwe.fr/img/contact.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Contactez Nicolas Gruwe',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
