@@ -178,7 +178,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight"
+              className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight mt-6 md:mt-0"
               dangerouslySetInnerHTML={{ __html: post.title.rendered }}
             />
             <motion.div 
