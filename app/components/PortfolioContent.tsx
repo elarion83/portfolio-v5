@@ -5,6 +5,8 @@ import { Filter, Calendar, Code, Briefcase, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/app/contexts/LanguageContext'
+import { blurSensitiveWord } from '@/app/utils/textUtils'
+import { BlurredTitle } from '@/app/components/BlurredTitle'
 
 interface Project {
   id: string
@@ -226,7 +228,7 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
 
                       <div className="absolute bottom-4 left-4 right-4 z-20">
                         <h2 className="text-xl font-bold text-white mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] text-shadow">
-                          {project.title}
+                          <BlurredTitle title={project.title} />
                         </h2>
                         <div className="flex items-center gap-2">
                           <div className="px-3 py-1 bg-[#e28d1d] rounded-full text-white text-sm font-medium flex items-center gap-1.5">

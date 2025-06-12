@@ -109,4 +109,10 @@
 
 .animate-slide-in {
   animation: slideIn 0.5s ease-out;
+}
+
+.blur-text {
+  filter: blur(4px);
+  user-select: none;
+  cursor: not-allowed;
 } 

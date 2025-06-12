@@ -3,18 +3,7 @@ import { notFound } from 'next/navigation'
 import { Calendar, Code, Briefcase, Eye, ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import '@/app/styles/project.css'
-
-// Fonction pour nettoyer le HTML et les entités
-function decodeHtmlEntities(text: string) {
-  return text?.replace(/&rsquo;/g, "'")
-    .replace(/&lsquo;/g, "'")
-    .replace(/&rdquo;/g, '"')
-    .replace(/&ldquo;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&apos;/g, "'") || text;
-}
+import { BlurredTitle } from '@/app/components/BlurredTitle'
 
 interface Project {
   id: string
@@ -57,7 +46,7 @@ async function getAllProjects() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, ''),
     description: item.excerpt?.rendered.replace(/<[^>]*>/g, '') || '',
-    content: decodeHtmlEntities(item.content.rendered),
+    content: item.content.rendered,
     year: item.acf?.annee || 'N/A',
     imageUrl: item.acf?.image_background || '/img/portfolio.webp',
     logoUrl: item.acf?.logo_url || '',
@@ -177,7 +166,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
       <div className="project-hero pt-5 md:pt-0">
         <img
           src={project.imageUrl}
-          alt={decodeHtmlEntities(project.title)}
+          alt={project.title}
           className="project-hero-image"
         />
         <div className="project-hero-overlay" />
@@ -198,7 +187,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
             {/* Title and Logo */}
             <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2 md:gap-0">
               <h1 className="project-title mb-0">
-                {decodeHtmlEntities(project.title)}
+                <BlurredTitle title={project.title} />
               </h1>
               {project.logoUrl && (
                 <img
