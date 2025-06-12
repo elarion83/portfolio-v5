@@ -46,10 +46,10 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose }: A
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.3 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      className="fixed bottom-4 left-4 z-[9999]"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 50 }}
+      className="fixed bottom-4 right-4 bg-[#261939]/95 backdrop-blur-sm border-2 border-[#e28d1d] rounded-lg p-4 shadow-lg z-[100]"
     >
       <div className="bg-[#261939]/90 backdrop-blur-sm rounded-lg border border-[#e28d1d]/20 shadow-xl">
         <div className="relative">

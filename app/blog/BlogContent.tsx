@@ -31,7 +31,7 @@ interface BlogContentProps {
 }
 
 export function BlogContent({ initialPosts }: BlogContentProps) {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -54,15 +54,13 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
       <div className="fixed inset-0 z-0">
         <ConstellationBackground />
       </div>
-      <div className="max-w-7xl mx-auto relative z-10">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold text-white mb-12 title-neon text-center"
-        >
-          Blog
-        </motion.h1>
-
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="mb-16 text-center mt-8">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 title-neon">
+            {t('blog.title')}
+          </h1>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {initialPosts.map((post, index) => {
             const isFeature = index === 0

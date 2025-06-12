@@ -1,4 +1,7 @@
+'use client'
+
 import { Metadata } from 'next'
+import { useLanguage } from '../contexts/LanguageContext'
 import { BlogContent } from './BlogContent'
 import { decodeHtmlEntities } from '../utils/textUtils'
 
