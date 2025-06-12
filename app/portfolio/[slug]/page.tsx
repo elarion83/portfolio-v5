@@ -250,6 +250,9 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                       src={src} 
                       alt={`${project.title} screenshot ${index + 1}`} 
                       loading="lazy"
+                      width={1200}
+                      height={800}
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                       <span className="text-white text-sm font-medium">Vue {index + 1}</span>

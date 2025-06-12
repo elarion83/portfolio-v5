@@ -41,7 +41,14 @@ function decodeHtmlEntities(text: string): string {
 
 async function getProjects() {
   const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=50', {
-    next: { revalidate: 3600 } // Revalidate every hour
+    next: { 
+      revalidate: 86400, // Revalidate every 24 hours instead of 1 hour
+      tags: ['portfolio'] 
+    },
+    headers: {
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Accept': 'application/json',
+    }
   })
   
   if (!res.ok) {
