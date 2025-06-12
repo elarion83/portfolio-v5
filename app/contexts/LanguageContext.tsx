@@ -144,7 +144,7 @@ const translations = {
     'about.cta.features.support': 'Support & Maintenance Continus',
     'about.cta.button': 'Démarrer Votre Projet',
     'about.cta.note': 'Sans engagement - Discutons de votre vision',
-    'about.cta.calendly': "30min appel",
+    'about.cta.calendly': "30min. gratuit",
 
     // Portfolio
     'portfolio.title': 'Portfolio – Développeur WordPress freelance & plugins sur mesure',

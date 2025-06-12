@@ -5,8 +5,6 @@ import { Filter, Calendar, Code, Briefcase, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/app/contexts/LanguageContext'
-import { blurSensitiveWord } from '@/app/utils/textUtils'
-import { BlurredTitle } from '@/app/components/BlurredTitle'
 
 interface Project {
   id: string
@@ -197,6 +195,7 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
                         width={600}
                         height={315}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
                       />
                       
                       {/* Technology Badge */}
@@ -227,8 +226,17 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
                       )}
 
                       <div className="absolute bottom-4 left-4 right-4 z-20">
-                        <h2 className="text-xl font-bold text-white mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] text-shadow">
-                          <BlurredTitle title={project.title} />
+                        <h2 className={`text-xl font-bold text-white mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] text-shadow`}>
+                          {project.id === '1602' ? (
+                            <span
+                              className="glitch-title blur-[2px]"
+                              data-text={project.title}
+                            >
+                              {project.title}
+                            </span>
+                          ) : (
+                            project.title
+                          )}
                         </h2>
                         <div className="flex items-center gap-2">
                           <div className="px-3 py-1 bg-[#e28d1d] rounded-full text-white text-sm font-medium flex items-center gap-1.5">

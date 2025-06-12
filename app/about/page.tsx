@@ -71,6 +71,20 @@ const timeline = [
   }
 ];
 
+// Fonction utilitaire pour injecter les liens dans la description
+function linkifyDescription(description: string) {
+  const parts = description.split(/(www\.banquepopulaire\.fr|www\.caisse-epargne\.fr)/g)
+  return parts.map((part, i) => {
+    if (part === 'www.caisse-epargne.fr') {
+      return <Link key={i} href="/portfolio/caisse-d-rsquo-epargne" className="text-[#e28d1d] underline hover:text-[#fff] transition-colors">{part}</Link>
+    }
+    if (part === 'www.banquepopulaire.fr') {
+      return <Link key={i} href="/portfolio/banque-populaire" className="text-[#e28d1d] underline hover:text-[#fff] transition-colors">{part}</Link>
+    }
+    return part
+  })
+}
+
 export default function AboutPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
@@ -184,7 +198,7 @@ export default function AboutPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#261939] about-page pt-0 md:pt-12">
+    <div className="min-h-screen bg-[#261939] about-page pt-0">
       {/* Hero Section */}
       <div className="relative h-[60vh] overflow-hidden">
         <div 
@@ -407,7 +421,11 @@ export default function AboutPage() {
                         <Building className="w-4 h-4" />
                         <span>{item.company}</span>
                       </div>
-                      <p className="text-gray-400">{language == 'en' ? item.description_en : item.description}</p>
+                      <p className="text-gray-400">
+                        {language == 'en'
+                          ? item.description_en
+                          : linkifyDescription(item.description)}
+                      </p>
                     </div>
                   </motion.div>
                 </div>

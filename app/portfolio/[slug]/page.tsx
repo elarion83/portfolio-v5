@@ -3,7 +3,18 @@ import { notFound } from 'next/navigation'
 import { Calendar, Code, Briefcase, Eye, ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import '@/app/styles/project.css'
-import { BlurredTitle } from '@/app/components/BlurredTitle'
+
+// Fonction pour nettoyer le HTML et les entités
+function decodeHtmlEntities(text: string) {
+  return text?.replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'") || text;
+}
 
 interface Project {
   id: string
@@ -46,7 +57,7 @@ async function getAllProjects() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, ''),
     description: item.excerpt?.rendered.replace(/<[^>]*>/g, '') || '',
-    content: item.content.rendered,
+    content: decodeHtmlEntities(item.content.rendered),
     year: item.acf?.annee || 'N/A',
     imageUrl: item.acf?.image_background || '/img/portfolio.webp',
     logoUrl: item.acf?.logo_url || '',
@@ -166,7 +177,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
       <div className="project-hero pt-5 md:pt-0">
         <img
           src={project.imageUrl}
-          alt={project.title}
+          alt={decodeHtmlEntities(project.title)}
           className="project-hero-image"
         />
         <div className="project-hero-overlay" />
@@ -186,8 +197,17 @@ export default async function ProjectPage({ params }: { params: { slug: string }
 
             {/* Title and Logo */}
             <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2 md:gap-0">
-              <h1 className="project-title mb-0">
-                <BlurredTitle title={project.title} />
+              <h1 className={`project-title mb-0 ${project.id === '1602' ? 'filter blur-[4px] contrast-[0.7]' : ''}`}>
+                {project.id === '1602' ? (
+                  <span       
+                    className="glitch-title blur-6"
+                    data-text={decodeHtmlEntities(project.title)}
+                  >
+                    {decodeHtmlEntities(project.title)}
+                  </span>
+                ) : (
+                  decodeHtmlEntities(project.title)
+                )}
               </h1>
               {project.logoUrl && (
                 <img
@@ -222,9 +242,23 @@ export default async function ProjectPage({ params }: { params: { slug: string }
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 -mt-20 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          
           {/* Project Description */}
           <div className="lg:col-span-2">
+            
+          {project.id === '1602' && (
+                <div className="mb-8 px-6 py-4 rounded-xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-lg shadow-lg flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-red-500/80 to-pink-500/80 shadow-md flex items-center justify-center relative">
+                    <svg className="absolute -top-1 -right-1 w-4 h-4 text-white/80" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+                    <span className="text-white font-bold text-base z-10">18+</span>
+                  </div>
+                  <p className="text-white/90 text-sm md:text-base font-medium">
+                    Ce projet contient du contenu réservé aux adultes. La discrétion est de mise.
+                  </p>
+                </div>
+              )}
             <div className="glass-card p-8 mb-12 project-content">
+              
               <div className="prose prose-invert max-w-none">
                 <div dangerouslySetInnerHTML={{ __html: mainContent }} />
               </div>
