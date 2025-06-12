@@ -79,6 +79,7 @@ export function HomeContent() {
                 whileHover={{ scale: 1.05, x: 10 }}
                 whileTap={{ scale: 0.95 }}
                 className="text-shadow px-5 sm:px-6 py-2 sm:py-2.5 bg-[#e28d1d] text-shadow-ng rounded-full text-white font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow text-sm"
+                aria-label={t('home.cta.work')}
               >
                 {t('home.cta.work')} <Icons.ArrowRight className="w-4 h-4" aria-hidden="true" />
               </motion.button>
@@ -88,6 +89,7 @@ export function HomeContent() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-5 sm:px-6 py-2 sm:py-2.5 border-2 border-[#e28d1d] text-[#e28d1d] rounded-full font-semibold hover:bg-[#e28d1d] hover:text-white transition-colors text-sm"
+                aria-label={language === 'fr' ? 'Voir mes projets' : 'View My Work'}
               >
                 {language === 'fr' ? 'Voir mes projets' : 'View My Work'}
               </motion.button>

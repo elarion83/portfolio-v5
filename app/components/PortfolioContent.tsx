@@ -112,9 +112,11 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
           <button
             onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
             className="w-full px-4 py-3 rounded-lg bg-[#261939]/40 backdrop-blur-sm border-2 border-[#e28d1d] text-white flex items-center justify-between"
+            aria-label="Ouvrir les filtres de projets"
+            aria-expanded={isMobileFilterOpen}
           >
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4" />
+              <Filter className="w-4 h-4" aria-hidden="true" />
               <span>{filter === 'all' ? t('portfolio.filter.all') : filter}</span>
             </div>
             <motion.div

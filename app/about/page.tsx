@@ -175,6 +175,7 @@ export default function AboutPage() {
               className={`w-3 h-3 rounded-full transition-colors ${
                 index === activeTestimonial ? 'bg-[#e28d1d]' : 'bg-gray-600'
               }`}
+              aria-label={`Voir le témoignage ${index + 1}`}
             />
           ))}
         </div>

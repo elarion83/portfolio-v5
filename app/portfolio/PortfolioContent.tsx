@@ -225,6 +225,8 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
             <button
               onClick={() => setIsCompanyFilterOpen(!isCompanyFilterOpen)}
               className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 text-white hover:bg-white/10 transition-colors"
+              aria-label="Filtrer les projets par entreprise"
+              aria-expanded={isCompanyFilterOpen}
             >
               <Filter className="w-4 h-4" />
               <span className="font-medium">
@@ -380,18 +382,21 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
                         <button
                           onClick={() => handleShare('facebook')}
                           className="p-2 bg-background/80 backdrop-blur-sm rounded-full text-foreground hover:bg-background transition-colors"
+                          aria-label="Partager sur Facebook"
                         >
                           <Facebook className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleShare('twitter')}
                           className="p-2 bg-background/80 backdrop-blur-sm rounded-full text-foreground hover:bg-background transition-colors"
+                          aria-label="Partager sur Twitter"
                         >
                           <Twitter className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleShare('linkedin')}
                           className="p-2 bg-background/80 backdrop-blur-sm rounded-full text-foreground hover:bg-background transition-colors"
+                          aria-label="Partager sur LinkedIn"
                         >
                           <Linkedin className="w-5 h-5" />
                         </button>
