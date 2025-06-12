@@ -54,7 +54,7 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
       <div className="fixed inset-0 z-0">
         <ConstellationBackground />
       </div>
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10 py-16">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

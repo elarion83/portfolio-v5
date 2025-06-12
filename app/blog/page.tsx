@@ -75,7 +75,7 @@ export default async function BlogPage() {
   const posts = await getPosts()
 
   return (
-    <div className="min-h-screen bg-[#261939] blog-page">
+    <div className="min-h-screen bg-[#261939] blog-page flex-1">
       <BlogContent initialPosts={posts} />
     </div>
   )
