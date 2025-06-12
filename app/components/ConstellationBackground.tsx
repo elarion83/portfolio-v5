@@ -257,7 +257,7 @@ export function ConstellationBackground() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'transparent', zIndex: '1' }}
+        style={{ background: 'transparent', zIndex: 1 }}
       />
       <AchievementPopup
         achievementId={achievement?.id || ''}
