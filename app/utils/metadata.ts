@@ -25,12 +25,21 @@ export function generateMetadata(config: MetadataConfig): Metadata {
       locale: 'fr_FR',
       alternateLocale: 'en_US',
       siteName: 'Nicolas Gruwe',
+      images: [
+        {
+          url: 'https://www.nicolas-gruwe.fr/img/home.webp',
+          width: 1200,
+          height: 630,
+          alt: 'Nicolas Gruwe - Développeur WordPress & Full Stack',
+        },
+      ],
     },
     twitter: {
       title: config.title.fr,
       description: config.description.fr,
       card: 'summary_large_image',
       creator: '@nicolasgruwe',
+      images: ['https://www.nicolas-gruwe.fr/img/home.webp'],
     },
     alternates: {
       canonical: 'https://nicolas-gruwe.fr',
