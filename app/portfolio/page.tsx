@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { PortfolioContent } from '../components/PortfolioContent'
-import { decodeHtmlEntities } from '../utils/textUtils'
 
 interface Project {
   id: string
@@ -21,6 +20,23 @@ interface Project {
     bestPractices: number
     seo: number
   } | null
+}
+
+function decodeHtmlEntities(text: string): string {
+  if (!text) return '';
+  
+  return text
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&#038;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'");
 }
 
 async function getProjects() {
@@ -64,7 +80,7 @@ async function getProjects() {
   
   const formattedProjects = data.map((item: WPResponse) => ({
     id: item.id.toString(),
-    title: item.title.rendered.replace(/\s*\(\d{4}\)$/, ''),
+    title: decodeHtmlEntities(item.title.rendered.replace(/\s*\(\d{4}\)$/, '')),
     slug: item.title.rendered
       .toLowerCase()
       .replace(/\s*\(\d{4}\)$/, '')
