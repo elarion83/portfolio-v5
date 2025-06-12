@@ -46,22 +46,22 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose }: A
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 50 }}
-      className="fixed bottom-4 right-4 bg-[#261939]/95 backdrop-blur-sm border-2 border-[#e28d1d] rounded-lg p-4 shadow-lg z-[100]"
+      initial={{ opacity: 0, y: 50, scale: 0.3 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+      className="fixed bottom-4 left-4 z-[9999]"
     >
       <div className="bg-[#261939]/90 backdrop-blur-sm rounded-lg border border-[#e28d1d]/20 shadow-xl">
         <div className="relative">
           {/* Progress bar */}
           <motion.div
-            initial={{ width: "100%" }}
-            animate={{ width: "0%" }}
+            initial={{ width: "100%", zIndex:9999 }}
+            animate={{ width: "0%", zIndex:9999 }}
             transition={{ duration: 5, ease: "linear" }}
             className="absolute bottom-0 left-0 h-0.5 bg-[#e28d1d]"
           />
           
-          <div className="p-3 flex items-start gap-2">
+          <div className="p-3 flex items-start gap-2 ">
             <div className="relative flex-shrink-0 w-10 h-10">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#e28d1d] to-[#e28d1d]/80 rounded-full" />
