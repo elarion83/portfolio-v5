@@ -2,7 +2,6 @@
 
 /* Mobile padding for about and blog pages */
 @media (max-width: 768px) {
-  .about-page,
   .blog-page {
     padding-top: 5rem;
   }

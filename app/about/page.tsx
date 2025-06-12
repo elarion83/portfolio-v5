@@ -184,7 +184,7 @@ export default function AboutPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#261939] about-page">
+    <div className="min-h-screen bg-[#261939] about-page pt-0 md:pt-12">
       {/* Hero Section */}
       <div className="relative h-[60vh] overflow-hidden">
         <div 
@@ -494,20 +494,11 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <Link href="/contact">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-12 py-4 bg-[#e28d1d] rounded-full text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-              >
-                Contact
-              </motion.button>
-            </Link>
             <Link href="https://calendly.com/gruwe-nicolas/30min">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-12 ml-1 py-4 bg-[#e28d1d] rounded-full text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="px-12 py-4 bg-[#e28d1d] rounded-full text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 {t('about.cta.calendly')}
               </motion.button>

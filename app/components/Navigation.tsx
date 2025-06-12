@@ -71,7 +71,7 @@ export function Navigation() {
             <Link
               key={item.path}
               href={item.path}
-              className={`flex flex-col items-center gap-2 px-6 py-3 rounded-lg transition-all ${
+              className={`flex flex-row items-center gap-2 px-6 py-3 rounded-lg transition-all ${
                 pathname === item.path
                   ? 'text-[#e28d1d] scale-110'
                   : 'text-white hover:text-[#e28d1d] hover:scale-105'
@@ -79,7 +79,7 @@ export function Navigation() {
               onClick={() => setIsOpen(false)}
             >
               <item.icon className="w-6 h-6" />
-              <span className="text-sm font-medium">{item.label}</span>
+              <span className="text-base font-medium">{item.label}</span>
             </Link>
           ))}
         </nav>

@@ -174,7 +174,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
   return (
     <div className="min-h-screen bg-[#261939]">
       {/* Hero Section */}
-      <div className="project-hero">
+      <div className="project-hero pt-5 md:pt-0">
         <img
           src={project.imageUrl}
           alt={decodeHtmlEntities(project.title)}
@@ -183,38 +183,20 @@ export default async function ProjectPage({ params }: { params: { slug: string }
         <div className="project-hero-overlay" />
         
         {/* Hero Content */}
-        <div className="absolute inset-0 z-10 flex flex-col justify-end px-4 py-12">
-          <div className="max-w-7xl mx-auto w-full">
+        <div className="absolute inset-0 z-10 flex mt-6 flex-col justify-end px-4 py-12">
+          <div className="max-w-7xl mt-6 mx-auto w-full">
             {/* Back Button */}
             <Link 
               href="/portfolio" 
-              className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-[#261939]/80 backdrop-blur-sm rounded-full text-white border-2 border-[#e28d1d] hover:bg-[#e28d1d] transition-all duration-300 md:text-base text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 mt-6 mb-6 bg-[#261939]/80 backdrop-blur-sm rounded-full text-white border-2 border-[#e28d1d] hover:bg-[#e28d1d] transition-all duration-300 md:text-base text-sm order-first md:order-none"
             >
               <ArrowLeft className="w-4 h-4 md:block hidden" />
               <span className="md:inline hidden">Retour au portfolio</span>
               <ArrowLeft className="w-4 h-4 md:hidden" />
             </Link>
 
-            {/* Project Meta */}
-            <div className="flex flex-wrap items-center gap-4 mb-8 project-meta">
-              <div className="meta-badge text-sm md:text-base px-2 py-1 md:px-3 md:py-1.5">
-                <Calendar className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                <span className="text-white">{project.year}</span>
-              </div>
-              {project.mainTechnology && (
-                <div className="meta-badge text-sm md:text-base px-2 py-1 md:px-3 md:py-1.5">
-                  <Code className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                  <span className="text-white">{project.mainTechnology}</span>
-                </div>
-              )}
-              <div className="meta-badge text-sm md:text-base px-2 py-1 md:px-3 md:py-1.5">
-                <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                <span className="text-white">{project.department}</span>
-              </div>
-            </div>
-
             {/* Title and Logo */}
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-2 md:gap-0">
               <h1 className="project-title mb-0">
                 {decodeHtmlEntities(project.title)}
               </h1>
@@ -222,9 +204,27 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                 <img
                   src={project.logoUrl}
                   alt={`${project.title} logo`}
-                  className={`w-[150px] h-auto object-contain ${project.isDarkLogo ? 'brightness-0 invert' : ''}`}
+                  className={`w-[150px] h-auto object-contain ${project.isDarkLogo ? 'brightness-0 invert' : ''} hidden md:block`}
                 />
               )}
+            </div>
+
+            {/* Project Meta + Back Button (mobile) */}
+            <div className="flex flex-row items-center gap-2 md:mb-8 mt-2 md:mt-0 project-meta md:flex-wrap md:items-center md:gap-4">
+              <div className="meta-badge text-[0.7rem] md:text-base px-1 py-0.5 md:px-3 md:py-1.5">
+                <Calendar className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
+                <span className="text-white">{project.year}</span>
+              </div>
+              {project.mainTechnology && (
+                <div className="meta-badge text-[0.7rem] md:text-base px-1 py-0.5 px-1 md:px-3 md:py-1.5">
+                  <Code className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
+                  <span className="text-white">{project.mainTechnology}</span>
+                </div>
+              )}
+              <div className="meta-badge text-[0.7rem] md:text-base px-1 py-0.5 md:px-3 md:py-1.5">
+                <Briefcase className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
+                <span className="text-white">{project.department}</span>
+              </div>
             </div>
           </div>
         </div>

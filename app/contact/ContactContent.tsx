@@ -218,12 +218,23 @@ export function ContactContent() {
             className="lg:pl-8"
           >
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Créons Quelque Chose{' '}
-              <span className="text-[#e28d1d]">d'Extraordinaire</span>
+              {language === 'fr' ? (
+                <>
+                  Créons Quelque Chose{' '}
+                  <span className="text-[#e28d1d]">d'Extraordinaire</span>
+                </>
+              ) : (
+                <>
+                  Let's Create Something{' '}
+                  <span className="text-[#e28d1d]">Extraordinary</span>
+                </>
+              )}
             </h1>
 
             <p className="text-gray-300 mb-12 text-lg">
-              Que vous ayez besoin d'un thème WordPress personnalisé, du développement de plugins ou d'une solution web complète, je suis là pour vous aider à concrétiser vos idées.
+              {language === 'fr'
+                ? "Que vous ayez besoin d'un thème WordPress personnalisé, du développement de plugins ou d'une solution web complète, je suis là pour vous aider à concrétiser vos idées."
+                : "Whether you need a custom WordPress theme, plugin development, or a complete web solution, I'm here to help bring your ideas to life."}
             </p>
 
             <div className="space-y-8">
@@ -279,8 +290,8 @@ export function ContactContent() {
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-white font-medium mb-1">Location</h3>
-                  <p className="text-gray-300">À distance, mondial</p>
+                  <h3 className="text-white font-medium mb-1">{language === 'fr' ? 'Localisation' : 'Location'}</h3>
+                  <p className="text-gray-300">{language === 'fr' ? 'À distance, mondial' : 'Remote, worldwide'}</p>
                 </div>
               </motion.div>
             </div>
