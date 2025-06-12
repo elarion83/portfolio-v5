@@ -73,7 +73,7 @@ async function getProjects() {
     description: item.excerpt?.rendered || '',
     content: item.content.rendered,
     year: item.acf?.annee || 'N/A',
-    imageUrl: item.acf?.image_background || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f',
+    imageUrl: item.acf?.image_background || '/img/portfolio.webp',
     logoUrl: item.acf?.logo_url || '',
     isDarkLogo: item.acf?.logo_sombre === true,
     department: item.department_name || 'Other',

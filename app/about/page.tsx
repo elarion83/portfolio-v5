@@ -224,14 +224,12 @@ export default function AboutPage() {
       {/* Stats Section */}
       <div className="relative py-20">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-fixed"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ 
             backgroundImage: 'url(/img/about3.webp)',
-            backgroundBlendMode: 'overlay'
+            filter: 'brightness(0.2)'
           }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#261939] via-[#261939]/90 to-transparent" />
-        </div>
+        />
 
         <div className="relative max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -423,7 +421,7 @@ export default function AboutPage() {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ 
-            backgroundImage: 'url(https://images.unsplash.com/photo-1522071820081-009f0129c71c)',
+            backgroundImage: 'url(/img/about3.webp)',
             filter: 'brightness(0.2)'
           }}
         />

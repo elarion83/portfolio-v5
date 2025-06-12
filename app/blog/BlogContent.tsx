@@ -81,7 +81,7 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
                 <Link href={`/blog/${post.slug}`} className="block h-full">
                   <div className="absolute inset-0">
                     <img
-                      src={post._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d'}
+                      src={post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.webp'}
                       alt={post.title.rendered}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
