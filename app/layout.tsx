@@ -23,7 +23,15 @@ export const metadata: Metadata = {
     description: 'Besoin d\'un renfort fiable pour vos projets clients ? Sites performants, respect des délais, livrables pro.',
     url: 'https://nicolas-gruwe.fr',
     siteName: 'Nicolas Gruwe - Développeur WordPress & Full Stack',
-    type: 'website'
+    type: 'website',
+    images: [
+      {
+        url: 'https://www.nicolas-gruwe.fr/img/home.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Nicolas Gruwe - Développeur WordPress & Full Stack',
+      },
+    ],
   },
   twitter: {
     title: 'Renfort Technique pour Agences – Développeur Freelance Web',
