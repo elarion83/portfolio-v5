@@ -9,6 +9,7 @@ import LoadingSpinner from '@/app/components/LoadingSpinner'
 import { CommentList } from '@/app/components/CommentList'
 import { CommentForm } from '@/app/components/CommentForm'
 import type { BlogPost, Comment } from '@/app/types'
+import { BlogCTA } from '@/app/components/BlogCTA'
 
 interface PostNavigation {
   previous?: {
@@ -320,6 +321,8 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
             }
           `}</style>
           <div dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
+          
+          <BlogCTA />
         </article>
 
         <div className="mt-16 border-t border-white/10 pt-8">

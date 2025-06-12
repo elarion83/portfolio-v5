@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { BlogPostContent } from './BlogPostContent'
 import { decodeHtmlEntities } from '../../utils/textUtils'
+import { BlogCTA } from '@/app/components/BlogCTA'
 
 interface BlogPost {
   id: number
