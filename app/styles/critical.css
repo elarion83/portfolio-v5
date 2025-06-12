@@ -1,0 +1,74 @@
+/* Critical CSS pour le H1 de la home */
+.critical-h1 {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px rgba(226, 141, 29, 0.5);
+  font-display: swap;
+}
+
+@media (min-width: 640px) {
+  .critical-h1 {
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .critical-h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .critical-h1 {
+    font-size: 3.75rem;
+  }
+}
+
+/* Animation optimisée */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.critical-h1 {
+  animation: fadeInUp 0.6s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* Animations des éléments non critiques */
+.animate-on-mount {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.animate-on-mount.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Délais d'animation */
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+} 

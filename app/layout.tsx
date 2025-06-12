@@ -6,12 +6,23 @@ import { Navigation } from './components/Navigation'
 import './globals.css'
 import './styles/custom.css'
 import './styles/pages.css'
+import './styles/critical.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Optimisation des polices
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial']
+})
+
 const poppins = Poppins({ 
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-poppins'
+  variable: '--font-poppins',
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial']
 })
 
 export const metadata: Metadata = {
@@ -32,7 +43,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: 'https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico',
-  },
+  }
 }
 
 export default function RootLayout({
@@ -41,19 +52,45 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${poppins.variable} font-sans`}>
       <head>
-        <link rel="icon" href="https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico" />
+        {/* Préchargement des ressources critiques */}
+        <link 
+          rel="preload" 
+          href="/img/home.webp" 
+          as="image" 
+          type="image/webp"
+          fetchPriority="high"
+        />
+        <link 
+          rel="preload" 
+          href="/styles/critical.css" 
+          as="style"
+        />
+        <link 
+          rel="preconnect" 
+          href="https://portfolio.deussearch.fr"
+        />
+        
+        {/* Style critique injecté directement */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* Styles critiques pour éviter le FOUC */
+          .critical-h1 {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          @media (prefers-reduced-motion: no-preference) {
+            .critical-h1 {
+              animation: fadeInUp 0.6s ease-out forwards;
+            }
+          }
+        `}} />
       </head>
-      <body className={`${inter.className} ${poppins.variable} bg-background text-foreground`}>
+      <body className={inter.className}>
         <LanguageProvider>
-          <div className="relative overflow-x-hidden w-full">
-            <LanguageSwitch />
-            <Navigation />
-            <main className="content-container">
-              {children}
-            </main>
-          </div>
+          <Navigation />
+          {children}
+          <LanguageSwitch />
         </LanguageProvider>
       </body>
     </html>
