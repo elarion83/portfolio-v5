@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Sitemap
 Sitemap: https://nicolas-gruwe.fr/sitemap.xml
+
+# Interdire l'accès aux dossiers système
+Disallow: /.next/
+Disallow: /node_modules/
+Disallow: /_next/static/
