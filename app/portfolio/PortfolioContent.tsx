@@ -97,6 +97,7 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
   const viewedProjectsRef = useRef(new Set<string>())
   const achievedRef = useRef(new Set<string>())
   const { t, language } = useLanguage()
+  const [isLoading, setIsLoading] = useState(false)
 
   const departments = Array.from(
     new Set(
@@ -283,40 +284,44 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
 
         {/* Projects Grid */}
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <motion.div
-                key={project.id}
-                layoutId={`project-${project.id}`}
-                onClick={() => handleProjectClick(project)}
-                className="relative group cursor-pointer"
-              >
-                <div className="relative aspect-video overflow-hidden rounded-lg">
-                  <img
-                    src={project.imageUrl}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  
-                  {renderTechBadge(project)}
-                  {renderYearBadge(project.year)}
+          {isLoading ? (
+            <LoadingSpinner fullScreen />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProjects.map((project) => (
+                <motion.div
+                  key={project.id}
+                  layoutId={`project-${project.id}`}
+                  onClick={() => handleProjectClick(project)}
+                  className="relative group cursor-pointer"
+                >
+                  <div className="relative aspect-video overflow-hidden rounded-lg">
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    
+                    {renderTechBadge(project)}
+                    {renderYearBadge(project.year)}
 
-                  <div className="absolute bottom-4 left-4 right-4 z-20">
-                    <h3 className="text-xl font-bold text-white mb-2">
-                      {project.title}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-gray-300" />
-                      <span className="text-sm text-gray-300">
-                        {project.department}
-                      </span>
+                    <div className="absolute bottom-4 left-4 right-4 z-20">
+                      <h3 className="text-xl font-bold text-white mb-2">
+                        {project.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-gray-300" />
+                        <span className="text-sm text-gray-300">
+                          {project.department}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Project Modal */}

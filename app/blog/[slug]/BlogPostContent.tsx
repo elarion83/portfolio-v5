@@ -136,7 +136,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
+        <LoadingSpinner fullScreen />
       </div>
     );
   }
