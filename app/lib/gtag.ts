@@ -1,5 +1,5 @@
 // Google Analytics configuration
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-479398117'
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-GKXF35YJ15'
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = (url: string) => {
