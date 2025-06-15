@@ -25,7 +25,7 @@ module.exports = {
           loc: `/portfolio/${item.slug}`,
           changefreq: 'monthly',
           priority: 0.8,
-          lastmod: item.modified || new Date().toISOString()
+          lastmod: item.modified ? new Date(item.modified).toISOString() : new Date().toISOString()
         })
       }
     } catch (error) {
@@ -42,7 +42,7 @@ module.exports = {
           loc: `/blog/${post.slug}`,
           changefreq: 'monthly',
           priority: 0.8,
-          lastmod: post.modified || new Date().toISOString()
+          lastmod: post.modified ? new Date(post.modified).toISOString() : new Date().toISOString()
         })
       }
     } catch (error) {
