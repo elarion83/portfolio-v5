@@ -3,6 +3,8 @@ import { Inter, Poppins } from 'next/font/google'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
+import GoogleAnalytics from './components/GoogleAnalytics'
+import PageTracker from './components/PageTracker'
 import './globals.css'
 import './styles/custom.css'
 import './styles/pages.css'
@@ -54,7 +56,9 @@ export default function RootLayout({
         <link rel="icon" href="https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico" />
       </head>
       <body className={`${inter.className} ${poppins.variable} bg-background text-foreground`}>
+        <GoogleAnalytics />
         <LanguageProvider>
+          <PageTracker />
           <div className="relative overflow-x-hidden w-full">
             <LanguageSwitch />
             <Navigation />
