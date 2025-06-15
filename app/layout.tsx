@@ -5,6 +5,7 @@ import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
 import GoogleAnalytics from './components/GoogleAnalytics'
 import PageTracker from './components/PageTracker'
+import GoogleAnalyticsTest from './components/GoogleAnalyticsTest'
 import './globals.css'
 import './styles/custom.css'
 import './styles/pages.css'
@@ -65,6 +66,7 @@ export default function RootLayout({
             <main className="content-container">
               {children}
             </main>
+            <GoogleAnalyticsTest />
           </div>
         </LanguageProvider>
       </body>
