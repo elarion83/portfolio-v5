@@ -5,6 +5,7 @@ import { Filter, Calendar, Code, Briefcase, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/app/contexts/LanguageContext'
+import Image from 'next/image'
 
 interface Project {
   id: string
@@ -189,13 +190,14 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
                       {/* Voile sur toute la carte */}
                       <div className={`absolute inset-0 z-10 ${project.isDarkLogo ? 'bg-white/60' : 'bg-[#261939]/60'}`} />
                       
-                      <img
+                      <Image
                         src={project.imageUrl}
                         alt={project.title}
                         width={600}
                         height={315}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         loading="lazy"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       
                       {/* Technology Badge */}
@@ -217,10 +219,13 @@ export function PortfolioContent({ initialProjects }: { initialProjects: Project
                       {/* Logo */}
                       {project.logoUrl && (
                         <div className="absolute top-[calc(50%-25px)] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-full flex items-center justify-center">
-                          <img
+                          <Image
                             src={project.logoUrl}
                             alt={`${project.title} logo`}
+                            width={192}
+                            height={96}
                             className="w-48 h-24 object-contain"
+                            loading="lazy"
                           />
                         </div>
                       )}

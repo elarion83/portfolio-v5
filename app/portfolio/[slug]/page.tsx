@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { Calendar, Code, Briefcase, Eye, ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import '@/app/styles/project.css'
+import Image from 'next/image'
 
 // Fonction pour nettoyer le HTML et les entités
 function decodeHtmlEntities(text: string) {
@@ -269,13 +270,14 @@ export default async function ProjectPage({ params }: { params: { slug: string }
               <div className="project-images">
                 {uniqueImages.map((src, index) => (
                   <div key={`img-${src}-${index}`} className="project-image glass-card">
-                    <img 
-                      src={src} 
-                      alt={`${project.title} screenshot ${index + 1}`} 
+                    <Image
+                      src={src}
+                      alt={`${project.title} screenshot ${index + 1}`}
                       loading="lazy"
                       width={1200}
                       height={800}
                       className="w-full h-full object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                       <span className="text-white text-sm font-medium">Vue {index + 1}</span>

@@ -5,6 +5,7 @@ import { Calendar, ArrowRight, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '../contexts/LanguageContext'
 import { ConstellationBackground } from '@/app/components/ConstellationBackground'
+import Image from 'next/image'
 
 interface BlogPost {
   id: number
@@ -52,7 +53,7 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
   return (
     <>
       <div className="fixed inset-0 z-0">
-        <ConstellationBackground />
+        <ConstellationBackground showAchievements={false} />
       </div>
       <div className="max-w-7xl mx-auto relative z-10 py-16">
         <motion.h1
@@ -80,12 +81,14 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
               >
                 <Link href={`/blog/${post.slug}`} className="block h-full">
                   <div className="absolute inset-0">
-                    <img
+                    <Image
                       src={post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/img/blog.webp'}
                       alt={post.title.rendered}
                       width={800}
                       height={600}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#261939] via-[#261939]/80 to-transparent" />
                   </div>

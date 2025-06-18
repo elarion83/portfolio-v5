@@ -331,6 +331,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
               <Link
                 href={`/blog/${navigation.previous.slug}`}
                 className="group flex items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:translate-x-[-4px] max-w-[300px]"
+                title={`Article précédent : ${navigation.previous.title}`}
               >
                 <ArrowLeft className="w-5 h-5 text-[#e28d1d] transition-transform group-hover:scale-110" />
                 <div>
@@ -343,6 +344,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
               <Link
                 href={`/blog/${navigation.next.slug}`}
                 className="group flex items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:translate-x-[4px] ml-auto max-w-[300px]"
+                title={`Article suivant : ${navigation.next.title}`}
               >
                 <div className="text-right">
                   <div className="text-sm text-gray-400 mb-1">{language === 'fr' ? 'Article suivant' : 'Next article'}</div>

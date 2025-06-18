@@ -46,7 +46,11 @@ const ACHIEVEMENTS: Achievement[] = [
   }
 ]
 
-export function ConstellationBackground() {
+interface ConstellationBackgroundProps {
+  showAchievements?: boolean
+}
+
+export function ConstellationBackground({ showAchievements = true }: ConstellationBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const mouseRef = useRef({ x: 0, y: 0 })
   const isMouseInCanvas = useRef(false)
@@ -259,12 +263,14 @@ export function ConstellationBackground() {
         className="absolute inset-0 w-full h-full"
         style={{ background: 'transparent', zIndex: 1 }}
       />
-      <AchievementPopup
-        achievementId={achievement?.id || ''}
-        isVisible={!!achievement}
-        onClose={() => setAchievement(null)}
-        level={achievement?.level || 1}
-      />
+      {showAchievements && (
+        <AchievementPopup
+          achievementId={achievement?.id || ''}
+          isVisible={!!achievement}
+          onClose={() => setAchievement(null)}
+          level={achievement?.level || 1}
+        />
+      )}
     </>
   )
 } 

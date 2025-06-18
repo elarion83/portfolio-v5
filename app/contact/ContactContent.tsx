@@ -6,7 +6,6 @@ import { Mail, MapPin, Send, Linkedin, Github, ArrowRight, MessageCircle, CheckC
 import { useLanguage } from '../contexts/LanguageContext';
 import { EmailSuccessAnimation } from '../components/EmailSuccessAnimation';
 import Link from 'next/link';
-import { ConstellationBackground } from '../components/ConstellationBackground';
 
 interface FormData {
   name: string;
@@ -111,7 +110,7 @@ export function ContactContent() {
       />
       
       {/* Overlay gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#261939]/90 to-gray-900/90 z-0" />
+      <div className="fixed inset-0 bg-gradient-to-br from-[#261939]/50 to-gray-900/50 z-0" />
 
       {/* Contenu */}
       <div className="relative z-10">
@@ -331,7 +330,6 @@ export function ContactContent() {
           </motion.div>
         </div>
       </div>
-      <ConstellationBackground />
 
       <AnimatePresence>
         {showSuccessAnimation && (

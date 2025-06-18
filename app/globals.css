@@ -58,6 +58,152 @@
   .menu-item-text {
     text-shadow: 0 2px 6px #000;
   }
+
+  .prose table, .prose-custom table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(38, 25, 57, 0.95);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
+  }
+  .prose th, .prose-custom th {
+    background: #261939;
+    color: #e28d1d;
+    font-weight: 700;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid #e28d1d;
+    text-align: left;
+  }
+  .prose td, .prose-custom td {
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #3a2a4d;
+  }
+  .prose tr:last-child td, .prose-custom tr:last-child td {
+    border-bottom: none;
+  }
+  .prose tbody tr:hover td, .prose-custom tbody tr:hover td {
+    background: rgba(226, 141, 29, 0.08);
+    color: #e28d1d;
+    transition: background 0.2s, color 0.2s;
+  }
+  .prose thead, .prose-custom thead {
+    border-radius: 12px 12px 0 0;
+  }
+  .prose table, .prose-custom table {
+    font-size: 1rem;
+  }
+  @media (max-width: 640px) {
+    .prose table, .prose-custom table {
+      display: block;
+      overflow-x: auto;
+      font-size: 0.95rem;
+    }
+    .prose th, .prose-custom th, .prose td, .prose-custom td {
+      padding: 0.75rem 1rem;
+    }
+  }
+
+  .prose ul, .prose-custom ul, .prose ol, .prose-custom ol {
+    background: rgba(38, 25, 57, 0.7);
+    border-radius: 10px;
+    padding: 1.2rem 2rem 1.2rem 2.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
+  }
+  .prose ul, .prose-custom ul {
+    list-style: none;
+  }
+  .prose ul li, .prose-custom ul li {
+    position: relative;
+    padding-left: 1.5em;
+    margin-bottom: 0.75em;
+  }
+  .prose ul li::before, .prose-custom ul li::before {
+    content: '';
+    position: absolute;
+    left: 0.2em;
+    top: 0.7em;
+    width: 0.7em;
+    height: 0.7em;
+    background: linear-gradient(135deg, #e28d1d 60%, #fff 100%);
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(226,141,29,0.15);
+  }
+  .prose ol, .prose-custom ol {
+    list-style: decimal inside;
+    counter-reset: custom-counter;
+  }
+  .prose ol li, .prose-custom ol li {
+    position: relative;
+    padding-left: 0.5em;
+    margin-bottom: 0.75em;
+    color: #e28d1d;
+    font-weight: 500;
+  }
+  .prose ol li::marker, .prose-custom ol li::marker {
+    color: #fff;
+    font-weight: 700;
+  }
+  .prose li, .prose-custom li {
+    color: #fff;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    transition: color 0.2s;
+  }
+  .prose ul li:hover, .prose-custom ul li:hover, .prose ol li:hover, .prose-custom ol li:hover {
+    color: #e28d1d;
+  }
+  @media (max-width: 640px) {
+    .prose ul, .prose-custom ul, .prose ol, .prose-custom ol {
+      padding: 1rem 1rem 1rem 1.5rem;
+      font-size: 0.98rem;
+    }
+  }
+
+  /* Patch accessibilité boutons orange */
+  .btn-primary, .bg-[#e28d1d], .bg-primary, .button-orange, .cta-orange, .text-shadow-ng {
+    background-color: #e28d1d !important;
+    color: #181717 !important; /* Noir quasi pur pour contraste */
+    text-shadow: none !important;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    font-size: 1.08rem;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(38,25,57,0.10);
+    outline: none;
+    border: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:focus, .bg-[#e28d1d]:focus, .bg-primary:focus, .button-orange:focus, .cta-orange:focus {
+    outline: 3px solid #181717;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px #fff, 0 2px 8px rgba(38,25,57,0.10);
+  }
+  .btn-primary:hover, .bg-[#e28d1d]:hover, .bg-primary:hover, .button-orange:hover, .cta-orange:hover {
+    background-color: #b86e0e !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(38,25,57,0.18);
+  }
+  /* Pour les liens CTA principaux */
+  a.btn-primary, a.button-orange, a.cta-orange {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    font-size: 1.08rem;
+    border-radius: 9999px;
+    text-decoration: none;
+  }
 }
 
 @layer utilities {
