@@ -54,6 +54,10 @@
   .gradient-text {
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
+
+  .menu-item-text {
+    text-shadow: 0 2px 6px #000;
+  }
 }
 
 @layer utilities {

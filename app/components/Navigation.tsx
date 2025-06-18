@@ -18,7 +18,7 @@ const menuItems = [
     path: '/about',
     icon: User,
     label: 'About',
-    bgImage: '/img/about.webp'
+    bgImage: '/img/about.avif'
   },
   {
     path: '/portfolio',
@@ -30,7 +30,7 @@ const menuItems = [
     path: '/blog',
     icon: BookOpen,
     label: 'Blog',
-    bgImage: '/img/portfolio.webp'
+    bgImage: '/img/blog.avif'
   },
   {
     path: '/contact',
@@ -111,7 +111,7 @@ export function Navigation() {
                     <item.icon className="w-7 h-7" aria-hidden="true" />
                   </motion.div>
                   <motion.span
-                    className="text-base font-medium mt-1"
+                    className="text-base font-medium mt-1 menu-item-text"
                     animate={{
                       y: hoveredPath === item.path ? -2 : 0,
                       opacity: hoveredPath === item.path ? 1 : 0.8
