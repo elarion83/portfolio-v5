@@ -302,6 +302,17 @@ function AppContent({
   handleMobileKeyPress,
   handleMobileKeyRelease
 }) {
+  // État pour l'effet de particules du compteur
+  const [showCounterParticles, setShowCounterParticles] = useState(false);
+
+  // Fonction pour déclencher l'effet de particules vertes
+  const triggerCounterParticles = () => {
+    setShowCounterParticles(true);
+    setTimeout(() => {
+      setShowCounterParticles(false);
+    }, 2000); // Effet pendant 2 secondes
+  };
+
   // Formatage du temps
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -330,6 +341,8 @@ function AppContent({
         onClose={() => {
           setShowProjectModal(false);
           setCurrentProject(null);
+          // Déclencher l'effet de particules vertes sur le compteur
+          triggerCounterParticles();
         }}
       />
 
@@ -360,13 +373,21 @@ function AppContent({
           </div>
 
           {/* Compteur de projets - en bas à droite sur desktop */}
-          <div className="projects-counter">
+          <div className={`projects-counter ${showCounterParticles ? 'celebrating' : ''}`}>
             <div className="counter-icon">📁</div>
             <div className="counter-value">
               <span className="collected">{collectedProjects}</span>
               <span className="separator">/</span>
               <span className="total">{totalProjects}</span>
             </div>
+            {/* Particules vertes */}
+            {showCounterParticles && (
+              <div className="counter-particles">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className={`particle particle-${i}`}></div>
+                ))}
+              </div>
+            )}
           </div>
         </>
       )}

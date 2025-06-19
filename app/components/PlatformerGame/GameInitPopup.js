@@ -26,6 +26,7 @@ const translations = {
     company: "Entreprise",
     year: "Année",
     close: "Fermer",
+    pressEscapeToClose: "Échap pour fermer",
     // Contrôles de jeu
     movement: "Déplacement :",
     basicActions: "Actions de base :",
@@ -45,7 +46,9 @@ const translations = {
     movementShort: "Mouvement",
     actionsShort: "Actions",
     commandShort: "Commande",
-    controlsTooltip: "Cliquez pour voir tous les contrôles"
+    controlsTooltip: "Cliquez pour voir tous les contrôles",
+    // Bouton retour au site
+    backToSite: "← Retour au site"
   },
   en: {
     title: "Initialization",
@@ -67,6 +70,7 @@ const translations = {
     company: "Company",
     year: "Year",
     close: "Close",
+    pressEscapeToClose: "Esc to close",
     // Contrôles de jeu
     movement: "Movement:",
     basicActions: "Basic actions:",
@@ -86,7 +90,9 @@ const translations = {
     movementShort: "Movement",
     actionsShort: "Actions",
     commandShort: "Command",
-    controlsTooltip: "Click to see all controls"
+    controlsTooltip: "Click to see all controls",
+    // Bouton retour au site
+    backToSite: "← Back to site"
   }
 };
 
@@ -216,6 +222,15 @@ const GameInitPopup = ({ isVisible, onGameStart }) => {
     <div className="game-init-overlay">
       <div className="game-init-popup">
         <div className="game-init-content">
+          {/* Bouton retour au site discret en haut */}
+          <a 
+            href="/" 
+            className="back-to-site-btn"
+            title={t('backToSite')}
+          >
+            {t('backToSite')}
+          </a>
+          
           {/* Language switcher compact en haut */}
           <div className="language-switcher-compact">
             <button 

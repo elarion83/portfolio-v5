@@ -4,6 +4,7 @@ import { useLanguage } from './GameInitPopup';
 
 const ProjectPopup = ({ isVisible, projectData, onClose }) => {
   const [showContent, setShowContent] = useState(false);
+  const [showParticles, setShowParticles] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -17,17 +18,26 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
       window.addEventListener('keydown', handleEscape);
       // Réinitialiser l'état du contenu
       setShowContent(false);
+      setShowParticles(false);
+      
+      // Déclencher les particules dès l'ouverture
+      const particleTimer = setTimeout(() => {
+        setShowParticles(true);
+      }, 100); // Particules immédiatement visibles
+      
       // Délai avant d'afficher le contenu avec animation
-      const timer = setTimeout(() => {
+      const contentTimer = setTimeout(() => {
         setShowContent(true);
       }, 1000); // 1000ms = 1 seconde de délai pour n'afficher que le header
 
       return () => {
-        clearTimeout(timer);
+        clearTimeout(particleTimer);
+        clearTimeout(contentTimer);
         window.removeEventListener('keydown', handleEscape);
       };
     } else {
       setShowContent(false);
+      setShowParticles(false);
     }
   }, [isVisible]);
 
@@ -71,9 +81,25 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
             ? '0 0 25px rgba(16, 185, 129, 0.4), 0 0 50px rgba(52, 211, 153, 0.2), inset 0 0 15px rgba(110, 231, 183, 0.1)' 
             : '0 10px 30px rgba(0, 0, 0, 0.3)',
           // Transition fluide pour les changements de style
-          transition: 'border 0.5s ease, box-shadow 0.5s ease'
+          transition: 'border 0.5s ease, box-shadow 0.5s ease',
+          position: 'relative'
         }}
       >
+        {/* Particules d'ouverture */}
+        {showParticles && !showContent && (
+          <div className="popup-particles">
+            {[...Array(8)].map((_, i) => (
+              <div 
+                key={i} 
+                className={`popup-particle popup-particle-${i}`}
+                style={{
+                  left: '50%',
+                  top: '50%'
+                }}
+              />
+            ))}
+          </div>
+        )}
         <div className="game-init-content" style={{ flex: 1 }}>
           {/* Bouton de fermeture toujours visible */}
           <button 
@@ -214,6 +240,11 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
                 >
                   {t('continueAdventure')}
                 </button>
+              </div>
+              
+              {/* Instruction de fermeture discrète */}
+              <div className="project-close-hint">
+                <span>{t('pressEscapeToClose')}</span>
               </div>
             </div>
           </motion.div>
