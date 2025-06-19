@@ -9,6 +9,25 @@ import SpriteSheetManager from "./SpriteSheetManager";
 import { v4 } from "uuid";
 import { getRandomInteger } from "./random";
 import PortfolioItem from "./PortfolioItem";
+import { degreesToRadians } from "./util/MathUtil.js";
+
+// Fonction pour décoder les entités HTML (identique au portfolio)
+function decodeHtmlEntities(text) {
+  if (!text) return '';
+  
+  return text
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&#038;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'");
+}
 
 export default class Game {
   constructor(canvas, ctx, ssm) {
@@ -236,7 +255,7 @@ export default class Game {
         this.portfolioItems.push(
           new PortfolioItem(this, pos.x, pos.y, {
             id: project.id,
-            title: project.title.rendered,
+            title: decodeHtmlEntities(project.title.rendered),
             description: project.acf?.socle_technique || 'Projet',
             url: project.acf?.url_projet || project.link,
             type: 'web',
@@ -291,7 +310,7 @@ export default class Game {
         this.portfolioItems.push(
           new PortfolioItem(this, pos.x, pos.y, {
             id: newProject.id,
-            title: newProject.title.rendered,
+            title: decodeHtmlEntities(newProject.title.rendered),
             description: newProject.acf?.socle_technique || 'Projet',
             url: newProject.acf?.url_projet || newProject.link,
             type: 'web',

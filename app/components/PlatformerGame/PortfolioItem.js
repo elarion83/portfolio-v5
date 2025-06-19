@@ -161,7 +161,7 @@ export default class PortfolioItem extends GameObject {
 
   drawTooltip() {
     const ctx = this.game.ctx;
-    const [screenX, screenY] = this.game.camera.transformCoordinates(this.x + this.w / 2, this.y - 1.1);
+    const [screenX, screenY] = this.game.camera.transformCoordinates(this.x + this.w / 2, this.y - 0.3);
     ctx.save();
     const tooltipWidth = 320;
     const tooltipHeight = 120;
