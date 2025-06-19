@@ -301,6 +301,12 @@
   align-items: center;
   z-index: 1000;
   animation: fadeIn 0.5s ease-out;
+  transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.game-init-overlay.closing {
+  opacity: 0.7;
+  backdrop-filter: blur(5px);
 }
 
 .game-init-popup {
@@ -692,6 +698,13 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   animation: projectPopupAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.3s ease, opacity 0.3s ease, scale 0.3s ease;
+}
+
+.project-popup.closing {
+  transform: translateY(8px);
+  opacity: 0.3;
+  scale: 0.98;
 }
 
 .project-popup::before {
@@ -1124,10 +1137,33 @@
   padding: 12px 16px;
   z-index: 50;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  width: 140px; /* Largeur fixe pour alignement */
 }
 
 .timer-icon {
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #e28d1d;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.timer-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(226, 141, 29, 0.3);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(226, 141, 29, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .timer-value {
@@ -1153,12 +1189,35 @@
   padding: 12px 16px;
   z-index: 50;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  width: 140px; /* Même largeur que le timer */
+  overflow: hidden; /* Pour contenir la barre de progression */
 }
 
 .counter-icon {
-  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(16, 185, 129, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
   color: #10b981;
-  text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    0 0 12px rgba(16, 185, 129, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.counter-icon:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(16, 185, 129, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .counter-value {
@@ -1181,6 +1240,62 @@
 
 .counter-value .total {
   color: rgba(255, 255, 255, 0.6);
+}
+
+/* Barre de progression du compteur */
+.counter-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  z-index: -1;
+}
+
+.counter-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(16, 185, 129, 0.3) 0%,
+    rgba(16, 185, 129, 0.6) 50%,
+    rgba(52, 211, 153, 0.8) 100%
+  );
+  border-radius: 12px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    inset 0 0 10px rgba(16, 185, 129, 0.4),
+    0 0 20px rgba(16, 185, 129, 0.2);
+  position: relative;
+}
+
+.counter-progress-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 25%, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 50%, 
+    transparent 75%, 
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 20px 20px;
+  animation: progress-stripes 1s linear infinite;
+  border-radius: 12px;
+}
+
+@keyframes progress-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
 }
 
   /* Effet de célébration pour le compteur - BEAUCOUP PLUS VISIBLE */
@@ -1387,12 +1502,14 @@
     top: 20px;
     right: 20px;
     bottom: auto;
+    width: 120px; /* Largeur réduite sur mobile mais toujours harmonisée */
   }
   
   .projects-counter {
     top: 80px;
     right: 20px;
     bottom: auto;
+    width: 120px; /* Même largeur que le timer sur mobile */
   }
 }
 

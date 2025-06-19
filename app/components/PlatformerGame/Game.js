@@ -446,10 +446,10 @@ export default class Game {
       return;
     }
 
-    // Vérifier si 25 secondes se sont écoulées depuis la dernière collecte
+    // Vérifier si 10 secondes se sont écoulées depuis la dernière collecte
     const timeSinceLastCollection = (Date.now() - this.lastProjectCollectedTime) / 1000;
-    if (timeSinceLastCollection < 25) {
-      return; // Ne pas afficher l'indicateur si moins de 25 secondes
+    if (timeSinceLastCollection < 10) {
+      return; // Ne pas afficher l'indicateur si moins de 10 secondes
     }
 
     // Position du joueur

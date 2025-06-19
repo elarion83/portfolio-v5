@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Clock, FolderOpen } from "lucide-react";
 import Game from "./Game";
 import SpriteSheets from "./data/SpriteSheets";
 import SpriteSheetManager from "./SpriteSheetManager";
@@ -368,13 +369,24 @@ function AppContent({
         <>
           {/* Chrono - en bas à droite sur desktop, en haut à droite sur mobile */}
           <div className="game-timer">
-            <div className="timer-icon">⏱️</div>
+            <div className="timer-icon">
+              <Clock size={18} />
+            </div>
             <div className="timer-value">{formatTime(gameTime)}</div>
           </div>
 
           {/* Compteur de projets - en bas à droite sur desktop */}
           <div className={`projects-counter ${showCounterParticles ? 'celebrating' : ''}`}>
-            <div className="counter-icon">📁</div>
+            {/* Barre de progression en arrière-plan */}
+            <div className="counter-progress-bar">
+              <div 
+                className="counter-progress-fill"
+                style={{ width: `${totalProjects > 0 ? (collectedProjects / totalProjects) * 100 : 0}%` }}
+              ></div>
+            </div>
+            <div className="counter-icon">
+              <FolderOpen size={18} />
+            </div>
             <div className="counter-value">
               <span className="collected">{collectedProjects}</span>
               <span className="separator">/</span>

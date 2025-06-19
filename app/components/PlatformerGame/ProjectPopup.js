@@ -5,16 +5,21 @@ import { useLanguage } from './GameInitPopup';
 const ProjectPopup = ({ isVisible, projectData, onClose }) => {
   const [showContent, setShowContent] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
     const handleEscape = (event) => {
-      if (event.key === 'Escape' && isVisible) {
-        onClose();
+      if (event.key === 'Escape' && isVisible && !isClosing) {
+        startCloseAnimation();
+        setTimeout(() => onClose(), 300);
       }
     };
 
     if (isVisible) {
+      setShouldRender(true);
+      setIsClosing(false);
       window.addEventListener('keydown', handleEscape);
       // Réinitialiser l'état du contenu
       setShowContent(false);
@@ -35,22 +40,39 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
         clearTimeout(contentTimer);
         window.removeEventListener('keydown', handleEscape);
       };
-    } else {
-      setShowContent(false);
-      setShowParticles(false);
     }
-  }, [isVisible]);
+  }, [isVisible, shouldRender, isClosing]);
 
-  if (!isVisible || !projectData) return null;
+  const startCloseAnimation = () => {
+    if (!isClosing) {
+      setIsClosing(true);
+      setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, 300); // 300ms pour l'animation de fermeture
+    }
+  };
+
+  // Gérer la fermeture externe (quand isVisible devient false depuis le parent)
+  useEffect(() => {
+    if (!isVisible && shouldRender && !isClosing) {
+      startCloseAnimation();
+    }
+  }, [isVisible, shouldRender, isClosing]);
+
+  // Ne pas afficher si pas de données ou si la popup n'a jamais été visible
+  if (!projectData || (!isVisible && !shouldRender)) return null;
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      startCloseAnimation();
+      setTimeout(() => onClose(), 300);
     }
   };
 
   const handleCloseClick = () => {
-    onClose();
+    startCloseAnimation();
+    setTimeout(() => onClose(), 300);
   };
 
   const handleVisitProject = () => {
@@ -68,9 +90,9 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
   };
 
   return (
-    <div className="game-init-overlay" onClick={handleOverlayClick}>
+    <div className={`game-init-overlay ${isClosing ? 'closing' : ''}`} onClick={handleOverlayClick}>
       <div 
-        className={`project-popup ${!showContent ? 'phase-1' : 'phase-2'}`}
+        className={`project-popup ${!showContent ? 'phase-1' : 'phase-2'} ${isClosing ? 'closing' : ''}`}
         style={{ 
           minHeight: !showContent ? '90px' : 'auto',
           display: 'flex',
