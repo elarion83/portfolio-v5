@@ -126,7 +126,8 @@ export default class Game {
     this.portfolioItems = [];
     this.loadPortfolioItems();
     this.collectedProjectsCount = 0;
-    this.lastProjectCollectedTime = Date.now(); // Temps de la dernière collecte
+    this.lastProjectCollectedTime = Date.now();
+    this.nearProject = false; // Track if player is near any project // Temps de la dernière collecte
   }
 
   end() {
@@ -360,23 +361,33 @@ export default class Game {
       }
     }
 
-    var tileKeys = Object.keys(this.player.tiles);
-    for (var i = 0; i < tileKeys.length; i++) {
-      var tile = tileKeys[i];
-      var collisionFlag = this.player.tiles[tile];
-      var [x, y] = this.convertIndexToCoordinates(tile);
+    // Rendu des 5 dernières plateformes touchées en orange avec particules
+    for (var i = 0; i < this.player.tilesHistory.length; i++) {
+      var tileEntry = this.player.tilesHistory[i];
+      var tile = tileEntry.index;
+      var [x, y] = this.convertIndexToCoordinates(parseInt(tile));
+      
+      // Calculer l'intensité basée sur l'âge (plus récent = plus intense)
+      var intensity = Math.max(0.3, 1 - (i * 0.15)); // De 1.0 à 0.3
+      
+      // Récupérer le flag de collision pour cette tile
+      var collisionFlag = this.collisionMap[tile];
+      
       if (collisionFlag & 1) {
-        this.render.drawOrangeBorder(x, y, 0.05, 1, 'left');
+        this.render.drawOrangeBorder(x, y, 0.05, 1, 'left', intensity);
       }
       if (collisionFlag & 2) {
-        this.render.drawOrangeBorder(x + 0.95, y, 0.05, 1, 'right');
+        this.render.drawOrangeBorder(x + 0.95, y, 0.05, 1, 'right', intensity);
       }
       if (collisionFlag & 4) {
-        this.render.drawOrangeBorder(x, y, 1, 0.05, 'top');
+        this.render.drawOrangeBorder(x, y, 1, 0.05, 'top', intensity);
       }
       if (collisionFlag & 8) {
-        this.render.drawOrangeBorder(x, y + 0.95, 1, 0.05, 'bottom');
+        this.render.drawOrangeBorder(x, y + 0.95, 1, 0.05, 'bottom', intensity);
       }
+      
+      // Ajouter des particules orange subtiles autour de la plateforme
+      this.render.drawOrangePlatformParticles(x + 0.5, y + 0.5, intensity, delta);
     }
 
     // Aura dégressive autour du joueur

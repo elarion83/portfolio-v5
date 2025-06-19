@@ -70,13 +70,13 @@ export default class Render {
     this.game.ctx.restore();
   }
 
-  drawOrangeBorder(x, y, w, h, side) {
+  drawOrangeBorder(x, y, w, h, side, intensity = 1.0) {
     const [screenX, screenY, screenW, screenH] = this.game.camera.transformRect(x, y, w, h);
     
     // Sauvegarde du contexte
     this.game.ctx.save();
     
-    // Création d'un gradient orange pour les plateformes touchées
+    // Création d'un gradient orange pour les plateformes touchées avec intensité
     let gradient;
     if (side === 'left' || side === 'right') {
       gradient = this.game.ctx.createLinearGradient(screenX, screenY, screenX + screenW, screenY);
@@ -84,28 +84,28 @@ export default class Render {
       gradient = this.game.ctx.createLinearGradient(screenX, screenY, screenX, screenY + screenH);
     }
     
-    // Couleurs orange avec transparence
-    gradient.addColorStop(0, 'rgba(226, 141, 29, 0.4)');
-    gradient.addColorStop(0.3, 'rgba(226, 141, 29, 0.25)');
-    gradient.addColorStop(0.7, 'rgba(226, 141, 29, 0.15)');
-    gradient.addColorStop(1, 'rgba(226, 141, 29, 0.1)');
+    // Couleurs orange avec transparence basée sur l'intensité
+    gradient.addColorStop(0, `rgba(226, 141, 29, ${0.4 * intensity})`);
+    gradient.addColorStop(0.3, `rgba(226, 141, 29, ${0.25 * intensity})`);
+    gradient.addColorStop(0.7, `rgba(226, 141, 29, ${0.15 * intensity})`);
+    gradient.addColorStop(1, `rgba(226, 141, 29, ${0.1 * intensity})`);
     
     this.game.ctx.fillStyle = gradient;
     this.game.ctx.fillRect(screenX, screenY, screenW, screenH);
     
-    // Effet de brillance orange
+    // Effet de brillance orange proportionnel à l'intensité
     this.game.ctx.globalCompositeOperation = 'screen';
-    this.game.ctx.fillStyle = 'rgba(226, 141, 29, 0.2)';
+    this.game.ctx.fillStyle = `rgba(226, 141, 29, ${0.2 * intensity})`;
     this.game.ctx.fillRect(screenX, screenY, screenW, screenH);
     
-    // Bordure orange plus visible
+    // Bordure orange plus visible avec intensité
     this.game.ctx.globalCompositeOperation = 'source-over';
-    this.game.ctx.strokeStyle = 'rgba(226, 141, 29, 0.6)';
+    this.game.ctx.strokeStyle = `rgba(226, 141, 29, ${0.6 * intensity})`;
     this.game.ctx.lineWidth = 2;
     this.game.ctx.strokeRect(screenX, screenY, screenW, screenH);
     
-    // Effet de lueur orange
-    this.game.ctx.shadowColor = 'rgba(226, 141, 29, 0.3)';
+    // Effet de lueur orange avec intensité
+    this.game.ctx.shadowColor = `rgba(226, 141, 29, ${0.3 * intensity})`;
     this.game.ctx.shadowBlur = 4;
     this.game.ctx.strokeRect(screenX, screenY, screenW, screenH);
     
@@ -333,6 +333,51 @@ export default class Render {
     this.game.ctx.shadowColor = `rgba(226, 141, 29, ${opacity * 0.2})`;
     this.game.ctx.shadowBlur = 4;
     this.game.ctx.fill();
+    
+    // Restauration du contexte
+    this.game.ctx.restore();
+  }
+
+  // Particules orange subtiles autour des plateformes touchées
+  drawOrangePlatformParticles(centerX, centerY, intensity, delta) {
+    // Ne pas afficher de particules si l'intensité est trop faible
+    if (intensity < 0.4) return;
+
+    // Transformer les coordonnées pour l'écran
+    const [screenX, screenY] = this.game.camera.transformCoordinates(centerX, centerY);
+    
+    // Sauvegarde du contexte
+    this.game.ctx.save();
+    
+    // Nombre de particules basé sur l'intensité
+    const particleCount = Math.floor(intensity * 3 + 1); // 1 à 4 particules
+    const time = Date.now() * 0.001; // Temps pour l'animation
+    
+    for (let i = 0; i < particleCount; i++) {
+      // Animation circulaire pour chaque particule
+      const angle = (time * 0.5 + i * (Math.PI * 2 / particleCount)) % (Math.PI * 2);
+      const radius = this.game.camera.transformX(0.4 + Math.sin(time * 2 + i) * 0.1); // Rayon variable
+      
+      // Position de la particule
+      const particleX = screenX + Math.cos(angle) * radius;
+      const particleY = screenY + Math.sin(angle) * radius * 0.5; // Ellipse aplatie
+      
+      // Taille et opacité basées sur l'intensité et l'animation
+      const baseSize = this.game.camera.transformX(0.03);
+      const size = baseSize * (0.8 + 0.4 * Math.sin(time * 3 + i));
+      const opacity = intensity * 0.3 * (0.6 + 0.4 * Math.sin(time * 2.5 + i));
+      
+      // Dessiner la particule
+      this.game.ctx.fillStyle = `rgba(226, 141, 29, ${opacity})`;
+      this.game.ctx.beginPath();
+      this.game.ctx.arc(particleX, particleY, size, 0, Math.PI * 2);
+      this.game.ctx.fill();
+      
+      // Effet de lueur très subtil
+      this.game.ctx.shadowColor = `rgba(226, 141, 29, ${opacity * 0.5})`;
+      this.game.ctx.shadowBlur = size * 2;
+      this.game.ctx.fill();
+    }
     
     // Restauration du contexte
     this.game.ctx.restore();

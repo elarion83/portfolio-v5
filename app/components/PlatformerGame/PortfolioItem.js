@@ -14,6 +14,8 @@ export default class PortfolioItem extends GameObject {
     this.hovered = false;
     this.showTooltip = false;
     this.tooltipTimer = 0;
+    this.tooltipOpacity = 0; // Pour l'animation de fade
+    this.tooltipScale = 0.8; // Pour l'animation de scale
     
     // Animation
     this.floatOffset = Math.random() * Math.PI * 2;
@@ -66,8 +68,8 @@ export default class PortfolioItem extends GameObject {
     // Icône du projet
     this.drawProjectIcon(this.x + this.w / 2, currentY + this.h / 2, time);
     
-    // Tooltip si survolé
-    if (this.showTooltip) {
+    // Tooltip si survolé ou en animation de sortie
+    if (this.showTooltip || this.tooltipOpacity > 0) {
       this.drawTooltip();
     }
   }
@@ -163,13 +165,25 @@ export default class PortfolioItem extends GameObject {
     const ctx = this.game.ctx;
     const [screenX, screenY] = this.game.camera.transformCoordinates(this.x + this.w / 2, this.y - 0.3);
     ctx.save();
+    
+    // Animation d'entrée/sortie avec scale et opacité
+    const centerX = screenX;
+    const centerY = screenY - 60 - 18; // Centre de la tooltip
+    
+    ctx.translate(centerX, centerY);
+    ctx.scale(this.tooltipScale, this.tooltipScale);
+    ctx.translate(-centerX, -centerY);
+    
+    // Appliquer l'opacité de l'animation
+    ctx.globalAlpha = this.tooltipOpacity;
+    
     const tooltipWidth = 320;
     const tooltipHeight = 120;
     const tooltipX = screenX - tooltipWidth / 2;
     const tooltipY = screenY - tooltipHeight - 18;
     const radius = 18;
-    ctx.globalAlpha = 0.85;
-    ctx.fillStyle = 'rgba(30, 30, 40, 0.92)';
+    
+    // Créer le path de la tooltip
     ctx.beginPath();
     ctx.moveTo(tooltipX + radius, tooltipY);
     ctx.lineTo(tooltipX + tooltipWidth - radius, tooltipY);
@@ -181,7 +195,11 @@ export default class PortfolioItem extends GameObject {
     ctx.lineTo(tooltipX, tooltipY + radius);
     ctx.quadraticCurveTo(tooltipX, tooltipY, tooltipX + radius, tooltipY);
     ctx.closePath();
-    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    
+    // Fond simple et propre avec opacité animée
+    ctx.globalAlpha = this.tooltipOpacity * 0.85;
+    ctx.fillStyle = 'rgba(30, 30, 40, 0.92)';
+    ctx.shadowColor = `rgba(0,0,0,${this.tooltipOpacity * 0.25})`;
     ctx.shadowBlur = 16;
     ctx.fill();
     ctx.shadowBlur = 0;
@@ -216,21 +234,100 @@ export default class PortfolioItem extends GameObject {
       ctx.fill();
     }
     ctx.restore();
-    // Titre
-    ctx.globalAlpha = 1;
+    
+    // Bordure moderne et colorée autour de l'image ronde
+    ctx.save();
+    const circleCenterX = tooltipX + 54;
+    const circleCenterY = tooltipY + tooltipHeight / 2;
+    const circleRadius = 40;
+    
+    // Bordure extérieure sombre pour contraste
+    ctx.beginPath();
+    ctx.arc(circleCenterX, circleCenterY, circleRadius + 4, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Bordure principale colorée (orange du thème)
+    ctx.beginPath();
+    ctx.arc(circleCenterX, circleCenterY, circleRadius + 2, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(226, 141, 29, 0.8)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Bordure intérieure claire
+    ctx.beginPath();
+    ctx.arc(circleCenterX, circleCenterY, circleRadius + 0.5, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Reflet en haut (effet glassmorphism)
+    ctx.beginPath();
+    ctx.arc(circleCenterX, circleCenterY, circleRadius + 2, Math.PI * 1.2, Math.PI * 1.8);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.restore();
+    // Titre avec troncature
+    ctx.globalAlpha = this.tooltipOpacity;
     ctx.font = 'bold 17px Arial';
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'left';
-    ctx.fillText(this.projectData.title, tooltipX + 110, tooltipY + 38);
-    // Techno principale
+    
+    // Calculer la largeur disponible pour le titre
+    const availableWidth = tooltipWidth - 120; // 110px (marge gauche) + 10px (marge droite)
+    let titleText = this.projectData.title;
+    
+    // Mesurer la largeur du texte et tronquer si nécessaire
+    ctx.font = 'bold 17px Arial'; // S'assurer que la font est définie avant de mesurer
+    let textWidth = ctx.measureText(titleText).width;
+    
+    if (textWidth > availableWidth) {
+      // Tronquer le texte et ajouter "..."
+      while (textWidth > availableWidth - ctx.measureText('...').width && titleText.length > 0) {
+        titleText = titleText.slice(0, -1);
+        textWidth = ctx.measureText(titleText).width;
+      }
+      titleText += '...';
+    }
+    
+    ctx.fillText(titleText, tooltipX + 110, tooltipY + 38);
+    // Techno principale avec troncature
     ctx.font = '500 13px Arial';
     ctx.fillStyle = '#e28d1d';
-    ctx.fillText(this.projectData.description, tooltipX + 110, tooltipY + 60);
-    // Département (optionnel)
+    
+    let descriptionText = this.projectData.description;
+    let descTextWidth = ctx.measureText(descriptionText).width;
+    
+    if (descTextWidth > availableWidth) {
+      while (descTextWidth > availableWidth - ctx.measureText('...').width && descriptionText.length > 0) {
+        descriptionText = descriptionText.slice(0, -1);
+        descTextWidth = ctx.measureText(descriptionText).width;
+      }
+      descriptionText += '...';
+    }
+    
+    ctx.fillText(descriptionText, tooltipX + 110, tooltipY + 60);
+    
+    // Département (optionnel) avec troncature
     if (this.projectData.department) {
       ctx.font = '12px Arial';
       ctx.fillStyle = '#bdbdbd';
-      ctx.fillText(this.projectData.department, tooltipX + 110, tooltipY + 80);
+      
+      let departmentText = this.projectData.department;
+      let deptTextWidth = ctx.measureText(departmentText).width;
+      
+      if (deptTextWidth > availableWidth) {
+        while (deptTextWidth > availableWidth - ctx.measureText('...').width && departmentText.length > 0) {
+          departmentText = departmentText.slice(0, -1);
+          deptTextWidth = ctx.measureText(departmentText).width;
+        }
+        departmentText += '...';
+      }
+      
+      ctx.fillText(departmentText, tooltipX + 110, tooltipY + 80);
     }
     // Logo projet (optionnel)
     if (this.logoObj && this.logoLoaded) {
@@ -288,7 +385,18 @@ export default class PortfolioItem extends GameObject {
       Math.pow(playerCenter[1] - itemCenter[1], 2)
     );
     
-    if (distance < 1.5) {
+    const isNear = distance < 1.5;
+    
+    if (isNear) {
+      // Marquer ce projet comme proche
+      this.game.nearProject = true;
+      
+      // Émettre l'événement de proximité seulement si c'est un changement d'état
+      if (!this.hovered) {
+        console.log('📱 Émission événement proximité: TRUE pour', this.projectData.title);
+        window.dispatchEvent(new CustomEvent('projectProximity', { detail: { near: true } }));
+      }
+      
       this.hovered = true;
       this.tooltipTimer += delta;
       if (this.tooltipTimer > 0.3) { // Plus rapide pour l'apparition
@@ -300,9 +408,44 @@ export default class PortfolioItem extends GameObject {
         this.collect();
       }
     } else {
+      // Émettre l'événement de proximité si on s'éloigne de CE projet
+      if (this.hovered) {
+        console.log('📱 Émission événement proximité: FALSE pour', this.projectData.title);
+        
+        // Vérifier si aucun autre projet n'est proche avant d'émettre false
+        const anyProjectNear = this.game.portfolioItems.some(item => {
+          if (item === this) return false; // Ignorer ce projet
+          const itemPlayerCenter = this.game.player.getCenter();
+          const itemItemCenter = [item.x + item.w / 2, item.y + item.h / 2];
+          const itemDistance = Math.sqrt(
+            Math.pow(itemPlayerCenter[0] - itemItemCenter[0], 2) + 
+            Math.pow(itemPlayerCenter[1] - itemItemCenter[1], 2)
+          );
+          return itemDistance < 1.5;
+        });
+        
+        if (!anyProjectNear) {
+          this.game.nearProject = false;
+          window.dispatchEvent(new CustomEvent('projectProximity', { detail: { near: false } }));
+        }
+      }
+      
       this.hovered = false;
       this.showTooltip = false;
       this.tooltipTimer = 0;
+    }
+
+    // Animation de la tooltip (entrée/sortie fluide)
+    const animationSpeed = delta * 6; // Vitesse d'animation (plus élevé = plus rapide)
+    
+    if (this.showTooltip) {
+      // Animation d'entrée
+      this.tooltipOpacity = Math.min(1, this.tooltipOpacity + animationSpeed);
+      this.tooltipScale = Math.min(1, this.tooltipScale + animationSpeed * 0.8);
+    } else {
+      // Animation de sortie
+      this.tooltipOpacity = Math.max(0, this.tooltipOpacity - animationSpeed);
+      this.tooltipScale = Math.max(0.8, this.tooltipScale - animationSpeed * 0.8);
     }
   }
 

@@ -9,25 +9,35 @@ import SpriteSheet from "./SpriteSheet";
 import GameInitPopup, { LanguageProvider, useLanguage } from "./GameInitPopup";
 import GameControlsPopup from "./GameControlsPopup";
 import ProjectPopup from "./ProjectPopup";
+import SpeedrunPopup from "./SpeedrunPopup";
 import DesktopControls from "./DesktopControls";
 import MobileControls from "./MobileControls";
 import "./PlatformerGame.css";
 
 function App() {
-  var canvasRef = useRef();
-  var [isInitializing, setIsInitializing] = useState(true);
-  var [showControlsModal, setShowControlsModal] = useState(false);
-  var [showProjectModal, setShowProjectModal] = useState(false);
-  var [currentProject, setCurrentProject] = useState(null);
-  var [gameTime, setGameTime] = useState(0);
-  var [collectedProjects, setCollectedProjects] = useState(0);
-  var [totalProjects] = useState(39);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [showControlsModal, setShowControlsModal] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showSpeedrunModal, setShowSpeedrunModal] = useState(false);
+  const [currentProject, setCurrentProject] = useState(null);
+  const [menu, setMenu] = useState(false);
+  const canvasRef = useRef(null);
+  const gameRef = useRef(null);
+  const [gameTime, setGameTime] = useState(0);
+  const [gameStartTime, setGameStartTime] = useState(null);
+  const [gameMilliseconds, setGameMilliseconds] = useState(0);
+  const [collectedProjects, setCollectedProjects] = useState(0);
+  // Nombre de projets nécessaires : 5 en dev, 20 en production
+  const [totalProjects, setTotalProjects] = useState(process.env.NODE_ENV === 'development' ? 5 : 20);
+  const [gameCompleted, setGameCompleted] = useState(false);
+  const [finalTime, setFinalTime] = useState(null);
+  const [nearProject, setNearProject] = useState(false);
+  const [timerAlert, setTimerAlert] = useState(false);
+  const [lastMinute, setLastMinute] = useState(0);
 
   /**
    * Show menu
    */
-  var [menu, setMenu] = useState(false);
-  var gameRef = useRef();
 
   // Gestion des contrôles mobiles
   const handleMobileKeyPress = (key) => {
@@ -42,31 +52,101 @@ function App() {
     }
   };
 
-  // Chrono du jeu
+  // Timer avec millisecondes
   useEffect(() => {
     let interval;
-    if (!isInitializing && !menu) {
+    if (!isInitializing && !menu && !gameCompleted && gameStartTime) {
       interval = setInterval(() => {
-        setGameTime(prev => prev + 1);
-      }, 1000);
+        const now = Date.now();
+        const elapsed = now - gameStartTime;
+        setGameTime(Math.floor(elapsed / 1000));
+        setGameMilliseconds(elapsed);
+      }, 10); // Mise à jour toutes les 10ms pour la précision
     }
     return () => clearInterval(interval);
-  }, [isInitializing, menu]);
+  }, [isInitializing, menu, gameCompleted, gameStartTime]);
 
-  // Event listener pour la collecte de projets
+  // Assigner le gameTime à l'objet game pour l'animation du tooltip
+  useEffect(() => {
+    if (gameRef.current) {
+      gameRef.current.gameTime = gameTime;
+    }
+  }, [gameTime]);
+
+  // Détection des minutes écoulées pour l'animation rouge du chrono
+  useEffect(() => {
+    if (!isInitializing && !menu && !gameCompleted && gameStartTime && gameMilliseconds > 0) {
+      const currentMinute = Math.floor(gameMilliseconds / 60000);
+      
+      // Si une nouvelle minute vient de s'écouler (et ce n'est pas la première minute)
+      if (currentMinute > lastMinute && currentMinute > 0) {
+        setTimerAlert(true);
+        setLastMinute(currentMinute);
+        
+        // Retirer l'animation après 1.5s
+        setTimeout(() => {
+          setTimerAlert(false);
+        }, 1500);
+      }
+    }
+  }, [gameMilliseconds, lastMinute, isInitializing, menu, gameCompleted, gameStartTime]);
+
+  // Event listener pour la collecte de projets avec détection de fin de jeu
   useEffect(() => {
     const handleProjectCollected = () => {
-      setCollectedProjects(prev => prev + 1);
+      setCollectedProjects(prev => {
+        const newCount = prev + 1;
+        // Vérifier si c'est le dernier projet
+        if (newCount >= totalProjects) {
+          const completionTime = Date.now() - gameStartTime;
+          setFinalTime(completionTime);
+          setGameCompleted(true);
+          
+          // Déclencher l'événement de fin de jeu
+          setTimeout(() => {
+            setShowSpeedrunModal(true);
+            window.dispatchEvent(new CustomEvent('gameCompleted', { 
+              detail: { 
+                time: completionTime, 
+                projects: newCount 
+              } 
+            }));
+          }, 1500); // Délai pour laisser l'animation de collecte se terminer
+        }
+        return newCount;
+      });
     };
-    window.addEventListener("projectCollected", handleProjectCollected);
-    return () => window.removeEventListener("projectCollected", handleProjectCollected);
-  }, []);
 
-  // Formatage du temps
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    // Event listener pour la proximité des projets
+    const handleProjectProximity = (event) => {
+      console.log('📱 Réception événement proximité:', event.detail.near);
+      setNearProject(event.detail.near);
+    };
+
+    window.addEventListener("projectCollected", handleProjectCollected);
+    window.addEventListener("projectProximity", handleProjectProximity);
+    return () => {
+      window.removeEventListener("projectCollected", handleProjectCollected);
+      window.removeEventListener("projectProximity", handleProjectProximity);
+    };
+  }, [totalProjects, gameStartTime]);
+
+  // Formatage du temps avec millisecondes
+  const formatTime = (milliseconds) => {
+    const totalMs = Math.floor(milliseconds);
+    const mins = Math.floor(totalMs / 60000);
+    const secs = Math.floor((totalMs % 60000) / 1000);
+    const ms = totalMs % 1000;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+  };
+
+  // Formatage pour l'affichage en jeu (avec millisecondes)
+  const formatTimeSimple = (milliseconds) => {
+    const totalMs = Math.floor(milliseconds);
+    const mins = Math.floor(totalMs / 60000);
+    const secs = Math.floor((totalMs % 60000) / 1000);
+    const ms = totalMs % 1000; // Afficher les vraies millisecondes
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
   };
 
   useEffect(() => {
@@ -258,9 +338,38 @@ function App() {
   // Gestion du démarrage du jeu
   const handleGameStart = () => {
     setIsInitializing(false);
+    setGameStartTime(Date.now());
+    setGameTime(0);
+    setGameMilliseconds(0);
+    setCollectedProjects(0);
+    setGameCompleted(false);
+    setFinalTime(null);
+    setShowSpeedrunModal(false);
     if (gameRef.current) {
       gameRef.current.start();
     }
+  };
+
+  // Gestion du redémarrage depuis la popup speedrun
+  const handleRestart = () => {
+    setShowSpeedrunModal(false);
+    // Fermer aussi la ProjectPopup si elle est ouverte
+    setShowProjectModal(false);
+    setCurrentProject(null);
+    setIsInitializing(true);
+    setGameCompleted(false);
+    setFinalTime(null);
+    setCollectedProjects(0);
+    setGameTime(0);
+    setGameMilliseconds(0);
+    setGameStartTime(null);
+    setMenu(false);
+    // Redémarrer le jeu sera géré par l'utilisateur qui cliquera sur "Lancer le jeu"
+  };
+
+  // Gestion du retour au portfolio
+  const handleBackToSite = () => {
+    window.location.href = '/portfolio';
   };
 
   return (
@@ -272,16 +381,27 @@ function App() {
         setShowControlsModal={setShowControlsModal}
         showProjectModal={showProjectModal}
         setShowProjectModal={setShowProjectModal}
+        showSpeedrunModal={showSpeedrunModal}
+        setShowSpeedrunModal={setShowSpeedrunModal}
         currentProject={currentProject}
         setCurrentProject={setCurrentProject}
         menu={menu}
         setMenu={setMenu}
         canvasRef={canvasRef}
         gameTime={gameTime}
+        gameMilliseconds={gameMilliseconds}
         collectedProjects={collectedProjects}
         totalProjects={totalProjects}
+        gameCompleted={gameCompleted}
+        finalTime={finalTime}
+        formatTime={formatTime}
+        formatTimeSimple={formatTimeSimple}
+        handleRestart={handleRestart}
+        handleBackToSite={handleBackToSite}
         handleMobileKeyPress={handleMobileKeyPress}
         handleMobileKeyRelease={handleMobileKeyRelease}
+        nearProject={nearProject}
+        timerAlert={timerAlert}
       />
     </LanguageProvider>
   );
@@ -294,16 +414,27 @@ function AppContent({
   setShowControlsModal,
   showProjectModal,
   setShowProjectModal,
+  showSpeedrunModal,
+  setShowSpeedrunModal,
   currentProject,
   setCurrentProject,
   menu,
   setMenu,
   canvasRef,
   gameTime,
+  gameMilliseconds,
   collectedProjects,
   totalProjects,
+  gameCompleted,
+  finalTime,
+  formatTime,
+  formatTimeSimple,
+  handleRestart,
+  handleBackToSite,
   handleMobileKeyPress,
-  handleMobileKeyRelease
+  handleMobileKeyRelease,
+  nearProject,
+  timerAlert
 }) {
   // État pour l'effet de particules du compteur
   const [showCounterParticles, setShowCounterParticles] = useState(false);
@@ -314,13 +445,6 @@ function AppContent({
     setTimeout(() => {
       setShowCounterParticles(false);
     }, 2000); // Effet pendant 2 secondes
-  };
-
-  // Formatage du temps
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -349,6 +473,17 @@ function AppContent({
         }}
       />
 
+      {/* Modale de speedrun */}
+      <SpeedrunPopup 
+        isVisible={showSpeedrunModal}
+        finalTime={finalTime}
+        collectedProjects={collectedProjects}
+        totalProjects={totalProjects}
+        formatTime={formatTime}
+        onRestart={handleRestart}
+        onBackToSite={handleBackToSite}
+      />
+
       <div className={"main-menu" + (menu ? " main-menu-show" : "")}>
         <h1>Platformer</h1>
         <p>by: MichaelXF</p>
@@ -370,11 +505,11 @@ function AppContent({
       {!isInitializing && !menu && (
         <>
           {/* Chrono - en bas à droite sur desktop, en haut à droite sur mobile */}
-          <div className="game-timer">
+          <div className={`game-timer ${timerAlert ? 'minute-alert' : ''}`}>
             <div className="timer-icon">
               <Clock size={18} />
             </div>
-            <div className="timer-value">{formatTime(gameTime)}</div>
+            <div className="timer-value">{formatTimeSimple(gameMilliseconds)}</div>
           </div>
 
           {/* Compteur de projets - en bas à droite sur desktop */}
@@ -413,6 +548,7 @@ function AppContent({
       <MobileControls 
         onKeyPress={handleMobileKeyPress}
         onKeyRelease={handleMobileKeyRelease}
+        showCollectButton={nearProject}
       />
     </div>
   );

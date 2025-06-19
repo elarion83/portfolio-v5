@@ -35,6 +35,8 @@ export default class Player extends GameObject {
     this.game = game;
 
     this.tiles = {};
+    this.tilesHistory = []; // Historique des 5 dernières plateformes touchées
+    this.maxTilesHistory = 5;
 
     this.lastLandY = 0;
 
@@ -395,6 +397,32 @@ export default class Player extends GameObject {
     var wasOnGround = this.onGround;
 
     super.update(delta);
+    
+    // Gestion de l'historique des tiles touchées (pour les plateformes orange)
+    if (this.onGround && Object.keys(this.tiles).length > 0) {
+      const currentTiles = Object.keys(this.tiles);
+      
+      // Ajouter les nouvelles tiles à l'historique
+      for (const tileIndex of currentTiles) {
+        // Vérifier si cette tile n'est pas déjà dans l'historique récent
+        const existingIndex = this.tilesHistory.findIndex(entry => entry.index === tileIndex);
+        
+        if (existingIndex !== -1) {
+          // Mettre à jour le timestamp de la tile existante
+          this.tilesHistory[existingIndex].timestamp = Date.now();
+        } else {
+          // Ajouter la nouvelle tile
+          this.tilesHistory.push({
+            index: tileIndex,
+            timestamp: Date.now()
+          });
+        }
+      }
+      
+      // Trier par timestamp (plus récent en premier) et garder seulement les 5 dernières
+      this.tilesHistory.sort((a, b) => b.timestamp - a.timestamp);
+      this.tilesHistory = this.tilesHistory.slice(0, this.maxTilesHistory);
+    }
 
     if (!this.onGround && !this.ledgeHang) {
       this.gravityTick += delta;
@@ -443,5 +471,15 @@ export default class Player extends GameObject {
     // game boundaries
     this.x = Math.max(0, Math.min(this.game.levelWidth - this.w, this.x));
     this.y = Math.max(0, Math.min(this.game.levelHeight - this.h, this.y));
+    
+    // Repositionner le joueur s'il touche les 10px du bas de l'écran
+    const screenHeight = this.game.canvas.height / this.game.camera.zoom;
+    const playerBottomScreen = (this.y + this.h - this.game.camera.y) * this.game.camera.zoom;
+    
+    if (playerBottomScreen >= this.game.canvas.height - 10) {
+      // Repositionner le joueur plus haut dans le niveau
+      this.y = Math.max(0, this.y - 2); // Décaler de 2 unités vers le haut
+      this.velocityY = Math.min(this.velocityY, 0); // Arrêter la chute
+    }
   }
 }

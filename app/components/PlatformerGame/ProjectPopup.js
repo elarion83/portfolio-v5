@@ -35,7 +35,7 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
       // Délai avant d'afficher le contenu avec animation
       const contentTimer = setTimeout(() => {
         setShowContent(true);
-      }, 1000); // 1000ms = 1 seconde de délai pour n'afficher que le header
+      }, 2000); // 2000ms = 2 secondes de délai pour n'afficher que le header
 
       return () => {
         clearTimeout(particleTimer);
@@ -66,7 +66,8 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
   if (!projectData || (!isVisible && !shouldRender)) return null;
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
+    // Empêcher la fermeture sur mobile pendant la phase 1 (premières 2 secondes)
+    if (e.target === e.currentTarget && showContent) {
       startCloseAnimation();
       setTimeout(() => onClose(), 300);
     }
@@ -125,20 +126,55 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
           </div>
         )}
         <div className="game-init-content" style={{ flex: 1 }}>
-          {/* Bouton de fermeture toujours visible */}
+          {/* Bouton de fermeture moderne - masqué pendant la phase 1 */}
           <button 
-            className="project-popup-close-btn" 
+            className="project-popup-close-btn modern-close" 
             onClick={handleCloseClick}
             aria-label={t('close')}
             style={{
               position: 'absolute',
               top: '20px',
               right: '24px',
-              background: 'rgba(0, 0, 0, 0.6)',
-              zIndex: 20
+              zIndex: 20,
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              display: showContent ? 'flex' : 'none', // Masquer pendant la phase 1
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1))';
+              e.target.style.transform = 'scale(1.1) rotate(90deg)';
+              e.target.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))';
+              e.target.style.transform = 'scale(1) rotate(0deg)';
+              e.target.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
             }}
           >
-            ×
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="white" 
+              strokeWidth="2.5" 
+              strokeLinecap="round"
+              style={{
+                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))'
+              }}
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
 
           <motion.div 
@@ -157,6 +193,11 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
                   backgroundColor: 'rgba(38, 25, 57, 0.95)',
                   borderRadius: '20px 20px 0 0',
                   margin: '0',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
                   // Couleur verte moderne et vibrante pour la réussite
                   background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
                   WebkitBackgroundClip: 'text',
@@ -166,7 +207,7 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
                   filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))'
                 }}
               >
-              <b>   {t('projectCollected')} </b>
+                <b>{t('projectCollected')}</b>
               </h2>
             )}
           </motion.div>
@@ -220,11 +261,37 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
                 
                 {/* Logo projet */}
                 {projectData.logoUrl && (
-                  <div className="project-logo-corner">
+                  <div 
+                    className="project-logo-corner"
+                    style={{
+                      // Repositionner en haut à gauche quand la popup est ouverte
+                      left: showContent ? '24px' : 'auto',
+                      right: showContent ? 'auto' : '24px',
+                      top: '20px',
+                      transition: 'all 0.5s ease',
+                      // Supprimer l'encadré blanc et agrandir
+                      background: 'none',
+                      padding: '0',
+                      border: 'none',
+                      backdropFilter: 'none',
+                      width: showContent ? '80px' : '48px',
+                      height: showContent ? '80px' : '48px'
+                    }}
+                  >
                     <img 
                       src={projectData.logoUrl} 
                       alt={`Logo ${projectData.title}`}
                       className="project-logo"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        // Filtres pour faire ressortir le logo
+                        filter: showContent 
+                          ? 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.3)) brightness(1.1) contrast(1.2)'
+                          : 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4)) brightness(1.05)',
+                        transition: 'all 0.5s ease'
+                      }}
                     />
                   </div>
                 )}

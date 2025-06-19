@@ -56,7 +56,7 @@ const GameControlsPopup = ({ isVisible, onClose }) => {
               <ul className="controls-list">
                 <li>
                   <span className="control-keys">
-                    <kbd>←</kbd> et <kbd>→</kbd>
+                    <kbd>←</kbd> {t('moveAnd')} <kbd>→</kbd>
                   </span>
                   <span className="control-desc">{t('moveLeftRight')}</span>
                 </li>
@@ -116,7 +116,7 @@ const GameControlsPopup = ({ isVisible, onClose }) => {
                 </li>
                 <li>
                   <span className="control-keys">
-                    <kbd>-</kbd> et <kbd>=</kbd>
+                    <kbd>-</kbd> {t('moveAnd')} <kbd>=</kbd>
                   </span>
                   <span className="control-desc">{t('zoomCamera')}</span>
                 </li>
