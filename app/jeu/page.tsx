@@ -1,6 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import PlatformerGame from '../components/PlatformerGame/PlatformerGame'
+import '../styles/game-page.css'
 
 export const metadata: Metadata = {
   title: 'Jeu de Plateforme | Nicolas Gruwe - Développeur Web',
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function JeuPage() {
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-black">
+    <div className="game-page w-full h-screen flex items-center justify-center bg-black">
       <PlatformerGame />
     </div>
   )

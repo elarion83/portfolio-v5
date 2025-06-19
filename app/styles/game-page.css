@@ -1,0 +1,15 @@
+/* Masquer la navigation et le language switcher sur la page du jeu */
+.game-page .language-switch,
+.game-page nav {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease-out !important;
+}
+
+/* Alternative : masquer quand le body a la classe game-active */
+body.game-active .language-switch,
+body.game-active nav {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease-out !important;
+} 

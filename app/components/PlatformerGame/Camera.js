@@ -11,8 +11,11 @@ export default class Camera {
     this.game = game;
     this.startX = 0;
     this.startY = 0;
-    this.endX = 16;
-    this.endY = 11;
+    
+    // Dézoomer sur mobile pour une meilleure visibilité
+    const isMobile = window.innerWidth <= 768;
+    this.endX = isMobile ? 20 : 16;  // Plus large sur mobile
+    this.endY = isMobile ? 14 : 11;  // Plus haut sur mobile
 
     this.mut = [1, 1];
     this.followingObject = null;

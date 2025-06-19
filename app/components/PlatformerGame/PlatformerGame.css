@@ -68,7 +68,8 @@
 .desktop-controls {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 20px;
@@ -1141,8 +1142,9 @@
 /* Chrono du jeu */
 .game-timer {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-120%);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1193,8 +1195,9 @@
 /* Compteur de projets */
 .projects-counter {
   position: fixed;
-  bottom: 80px;
-  right: 20px;
+  top: 20px;
+  left: 50%;
+  transform: translateX(20%);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1573,18 +1576,39 @@
 /* Responsive pour mobile */
 @media (max-width: 768px) {
   .game-timer {
-    top: 20px;
-    left: 20px; /* Déplacé en haut à gauche */
+    top: auto !important;
+    bottom: 80px;
+    left: auto !important;
+    right: 10px;
+    transform: none !important;
+    top: 10px;
+    left: 10px; /* En haut à gauche */
     right: auto;
     bottom: auto;
-    width: 170px; /* Largeur augmentée sur mobile pour les millisecondes */
+    width: 130px; /* Plus petit sur mobile */
+    padding: 8px 12px; /* Padding réduit */
+  }
+  
+  .game-timer .timer-value {
+    font-size: 0.9rem; /* Texte plus petit */
   }
   
   .projects-counter {
-    top: 80px;
-    right: 20px;
+    top: auto !important;
+    bottom: 20px;
+    left: auto !important;
+    right: 10px;
+    transform: none !important;
+    top: 65px; /* Juste en dessous du timer */
+    left: 10px; /* Aussi à gauche */
+    right: auto;
     bottom: auto;
-    width: 170px; /* Même largeur que le timer sur mobile */
+    width: 130px; /* Plus petit sur mobile */
+    padding: 8px 12px; /* Padding réduit */
+  }
+  
+  .projects-counter .counter-value {
+    font-size: 0.9rem; /* Texte plus petit */
   }
   
   /* Supprimer les blocs de fond des icônes sur mobile */
@@ -1595,6 +1619,18 @@
     backdrop-filter: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    width: 24px !important; /* Icônes plus petites */
+    height: 24px !important;
+  }
+  
+  /* Corriger l'alignement des flèches de direction sur mobile */
+  .mobile-btn-left,
+  .mobile-btn-right {
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 5px; /* Remonter les icônes de 5px */
   }
 }
 
@@ -2387,4 +2423,554 @@
     width: 100%;
     justify-content: center;
   }
-} 
+}
+
+/* Sélecteur de difficulté */
+.difficulty-section {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.difficulty-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.difficulty-dropdown {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.difficulty-selector {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 2px solid rgba(226, 141, 29, 0.3);
+  border-radius: 12px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.difficulty-selector:hover {
+  border-color: rgba(226, 141, 29, 0.6);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.difficulty-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.difficulty-name {
+  flex: 1;
+  text-align: left;
+}
+
+.difficulty-arrow {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+  color: rgba(226, 141, 29, 0.8);
+}
+
+.difficulty-arrow.open {
+  transform: rotate(180deg);
+}
+
+.difficulty-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(30, 30, 40, 0.95);
+  border: 2px solid rgba(226, 141, 29, 0.3);
+  border-radius: 12px;
+  margin-top: 4px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.difficulty-option {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.difficulty-option:last-child {
+  border-bottom: none;
+}
+
+.difficulty-option:hover {
+  background: rgba(226, 141, 29, 0.1);
+  color: rgba(226, 141, 29, 1);
+}
+
+.difficulty-option.selected {
+  background: rgba(226, 141, 29, 0.2);
+  color: rgba(226, 141, 29, 1);
+}
+
+.difficulty-option-header {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.difficulty-option-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.difficulty-option-name {
+  flex: 1;
+}
+
+.difficulty-option-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 24px;
+  font-weight: 400;
+}
+
+.difficulty-option:hover .difficulty-option-desc {
+  color: rgba(226, 141, 29, 0.8);
+}
+
+@media (max-width: 768px) {
+  .difficulty-selector {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .difficulty-icon {
+    font-size: 16px;
+  }
+  
+  .difficulty-option {
+    padding: 10px 14px;
+  }
+  
+  .difficulty-option-desc {
+    font-size: 10px;
+    margin-left: 20px;
+  }
+}
+
+/* Popup de défaite */
+.death-popup {
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.95) 0%, rgba(101, 67, 33, 0.95) 100%);
+  border: 3px solid rgba(220, 20, 60, 0.8);
+  box-shadow: 
+    0 0 30px rgba(220, 20, 60, 0.6),
+    0 0 60px rgba(220, 20, 60, 0.4),
+    inset 0 0 20px rgba(139, 69, 19, 0.3);
+}
+
+.death-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 20px rgba(220, 20, 60, 0.8));
+  animation: deathPulse 2s ease-in-out infinite;
+}
+
+.death-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #dc143c;
+  margin-bottom: 10px;
+  text-shadow: 
+    0 0 20px rgba(220, 20, 60, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  animation: deathGlow 3s ease-in-out infinite alternate;
+}
+
+.death-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+.death-message {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-left: 4px solid #dc143c;
+}
+
+.death-message p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@keyframes deathPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(220, 20, 60, 0.8));
+  }
+  50% { 
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 30px rgba(220, 20, 60, 1));
+  }
+}
+
+@keyframes deathGlow {
+  0% {
+    text-shadow: 
+      0 0 20px rgba(220, 20, 60, 0.8),
+      0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  100% {
+    text-shadow: 
+      0 0 30px rgba(220, 20, 60, 1),
+      0 0 40px rgba(255, 100, 100, 0.6),
+      0 2px 6px rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* Nouveaux styles pour les étapes réorganisées */
+.step1-loading {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.step1-selection {
+  padding: 20px;
+}
+
+.gameplay-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 30px 0 25px 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gameplay-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 12px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.gameplay-block:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(226, 141, 29, 0.3);
+  transform: translateY(-2px);
+}
+
+.gameplay-icon {
+  font-size: 1.8rem;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(226, 141, 29, 0.15);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.gameplay-block h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.difficulty-section.compact {
+  margin: 20px 0 16px 0; /* Espace réduit */
+}
+
+.start-game-btn.compact {
+  margin: 16px auto 0 auto; /* Espace réduit et centré */
+  display: block;
+}
+
+/* Styles pour l'étape 2 */
+.step2-content {
+  padding: 20px;
+}
+
+.selected-difficulty-display {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.difficulty-icon-large {
+  font-size: 3rem;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(226, 141, 29, 0.15);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.difficulty-details {
+  flex: 1;
+}
+
+.difficulty-name-large {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.difficulty-desc-large {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+.step2-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.step2-actions .back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.step2-actions .back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.start-game-btn.primary {
+  background: linear-gradient(135deg, #e28d1d 0%, #f39c12 100%);
+  border: none;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-game-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(226, 141, 29, 0.4);
+}
+
+.final-countdown-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.final-countdown {
+  text-align: center;
+}
+
+.final-countdown-number {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #e28d1d;
+  text-shadow: 0 0 20px rgba(226, 141, 29, 0.5);
+  animation: countdownPulse 1s ease-in-out;
+}
+
+.start-game-btn.final {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.start-game-btn.final:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6);
+}
+
+/* Responsive pour les blocs gameplay */
+/* Mode Seigneur des Ténèbres pour GameInitPopup */
+.game-init-overlay.dark-lord-mode {
+  background: rgba(139, 0, 0, 0.3) !important;
+  backdrop-filter: blur(10px) hue-rotate(330deg) saturate(1.5);
+}
+
+.game-init-popup.dark-lord-mode {
+  background: linear-gradient(135deg, 
+    rgba(139, 0, 0, 0.15) 0%,
+    rgba(38, 25, 57, 0.95) 20%,
+    rgba(38, 25, 57, 0.95) 80%,
+    rgba(139, 0, 0, 0.15) 100%
+  ) !important;
+  border: 2px solid rgba(220, 20, 60, 0.6) !important;
+  box-shadow: 
+    0 0 30px rgba(220, 20, 60, 0.4),
+    0 0 60px rgba(139, 0, 0, 0.3),
+    inset 0 0 20px rgba(220, 20, 60, 0.1) !important;
+  animation: dark-lord-shake 0.3s ease-in-out infinite alternate;
+}
+
+.game-init-popup.dark-lord-mode::before {
+  background: linear-gradient(45deg, 
+    transparent 25%, 
+    rgba(220, 20, 60, 0.05) 25%, 
+    rgba(220, 20, 60, 0.05) 50%, 
+    transparent 50%, 
+    transparent 75%, 
+    rgba(220, 20, 60, 0.05) 75%
+  ) !important;
+  background-size: 20px 20px;
+  animation: dark-lord-pattern 2s linear infinite;
+}
+
+.game-init-popup.dark-lord-mode .game-init-title {
+  color: #ff6b6b !important;
+  text-shadow: 0 0 15px rgba(220, 20, 60, 0.8), 0 0 30px rgba(139, 0, 0, 0.6) !important;
+}
+
+.game-init-popup.dark-lord-mode .difficulty-selector {
+  border-color: rgba(220, 20, 60, 0.5) !important;
+  box-shadow: 0 0 15px rgba(220, 20, 60, 0.3) !important;
+}
+
+.game-init-popup.dark-lord-mode .start-game-btn {
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.8), rgba(139, 0, 0, 0.9)) !important;
+  border-color: rgba(220, 20, 60, 0.8) !important;
+  box-shadow: 0 0 20px rgba(220, 20, 60, 0.5) !important;
+}
+
+@keyframes dark-lord-shake {
+  0% { transform: translateX(0px) translateY(0px); }
+  25% { transform: translateX(-1px) translateY(-1px); }
+  50% { transform: translateX(1px) translateY(0px); }
+  75% { transform: translateX(0px) translateY(1px); }
+  100% { transform: translateX(-1px) translateY(0px); }
+}
+
+@keyframes dark-lord-pattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+/* Animation slideOutUp pour les conditions de victoire */
+@keyframes slideOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+}
+
+.victory-conditions-exit {
+  animation: slideOutUp 0.5s ease-in-out forwards;
+}
+
+@media (max-width: 768px) {
+  .gameplay-blocks {
+    margin: 20px 0 20px 0;
+    gap: 8px;
+  }
+  
+  .gameplay-block {
+    padding: 12px 8px;
+    gap: 6px;
+  }
+  
+  .gameplay-icon {
+    font-size: 1.4rem;
+    width: 35px;
+    height: 35px;
+  }
+  
+  .gameplay-block h4 {
+    font-size: 0.8rem;
+  }
+  
+  .selected-difficulty-display {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .difficulty-icon-large {
+    align-self: center;
+  }
+  
+  .step2-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .step2-actions .back-btn,
+  .start-game-btn.primary {
+    width: 100%;
+    text-align: center;
+  }
+}

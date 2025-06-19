@@ -10,6 +10,7 @@ import GameInitPopup, { LanguageProvider, useLanguage } from "./GameInitPopup";
 import GameControlsPopup from "./GameControlsPopup";
 import ProjectPopup from "./ProjectPopup";
 import SpeedrunPopup from "./SpeedrunPopup";
+import DeathPopup from "./DeathPopup";
 import DesktopControls from "./DesktopControls";
 import MobileControls from "./MobileControls";
 import "./PlatformerGame.css";
@@ -19,6 +20,7 @@ function App() {
   const [showControlsModal, setShowControlsModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showSpeedrunModal, setShowSpeedrunModal] = useState(false);
+  const [showDeathModal, setShowDeathModal] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [menu, setMenu] = useState(false);
   const canvasRef = useRef(null);
@@ -34,6 +36,9 @@ function App() {
   const [nearProject, setNearProject] = useState(false);
   const [timerAlert, setTimerAlert] = useState(false);
   const [lastMinute, setLastMinute] = useState(0);
+  const [restartKey, setRestartKey] = useState(0); // Clé pour forcer la réinitialisation
+  const [difficultyConfig, setDifficultyConfig] = useState(null);
+  const [extraInvincibilityTimer, setExtraInvincibilityTimer] = useState(null);
 
   /**
    * Show menu
@@ -72,6 +77,14 @@ function App() {
       gameRef.current.gameTime = gameTime;
     }
   }, [gameTime]);
+
+  // Gérer l'invincibilité globale selon les popups ouvertes
+  useEffect(() => {
+    if (gameRef.current) {
+      const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || extraInvincibilityTimer !== null;
+      gameRef.current.setPlayerInvincible(shouldBeInvincible);
+    }
+  }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, extraInvincibilityTimer]);
 
   // Détection des minutes écoulées pour l'animation rouge du chrono
   useEffect(() => {
@@ -150,6 +163,16 @@ function App() {
   };
 
   useEffect(() => {
+    // Ajouter classe au body pour masquer la navigation du site
+    document.body.classList.add('game-active');
+    
+    // Nettoyer la classe au démontage du composant
+    return () => {
+      document.body.classList.remove('game-active');
+    };
+  }, []);
+
+  useEffect(() => {
     var ssm = new SpriteSheetManager();
 
     Object.keys(SpriteSheets).forEach((spriteSheetName) => {
@@ -200,7 +223,7 @@ function App() {
       }
 
       // Fond glassmorphism au lieu du noir
-      drawGlassmorphismBackground(ctx, canvas.width, canvas.height, delta);
+      drawGlassmorphismBackground(ctx, canvas.width, canvas.height, delta, gameRef.current?.difficulty || difficultyConfig);
 
       if (game.active) {
         game.updateGame(delta);
@@ -211,13 +234,23 @@ function App() {
     }
 
     // Fonction pour dessiner le fond glassmorphism
-    function drawGlassmorphismBackground(ctx, width, height, delta) {
-      // Fond de base avec gradient
+    function drawGlassmorphismBackground(ctx, width, height, delta, difficulty) {
+      // Fond de base avec gradient - rouge en mode Seigneur des ténèbres
       const gradient = ctx.createLinearGradient(0, 0, width, height);
-      gradient.addColorStop(0, '#0f0f23');
-      gradient.addColorStop(0.3, '#1a1a2e');
-      gradient.addColorStop(0.7, '#16213e');
-      gradient.addColorStop(1, '#0f0f23');
+      
+      if (difficulty && difficulty.oneHitKill) {
+        // Background rouge sombre pour le mode Seigneur des ténèbres
+        gradient.addColorStop(0, '#2d0a0a'); // Rouge très sombre
+        gradient.addColorStop(0.3, '#4a1515'); // Rouge sombre
+        gradient.addColorStop(0.7, '#3d1212'); // Rouge moyen sombre
+        gradient.addColorStop(1, '#2d0a0a'); // Rouge très sombre
+      } else {
+        // Background bleu normal
+        gradient.addColorStop(0, '#0f0f23');
+        gradient.addColorStop(0.3, '#1a1a2e');
+        gradient.addColorStop(0.7, '#16213e');
+        gradient.addColorStop(1, '#0f0f23');
+      }
       
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
@@ -226,9 +259,12 @@ function App() {
       ctx.save();
       ctx.globalAlpha = 0.03;
       
+      // Couleurs selon la difficulté
+      const patternColor = (difficulty && difficulty.oneHitKill) ? '#ff6b6b' : '#ffffff';
+      
       // Grille de points
       const gridSize = 40;
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = patternColor;
       for (let x = 0; x < width; x += gridSize) {
         for (let y = 0; y < height; y += gridSize) {
           ctx.beginPath();
@@ -238,7 +274,7 @@ function App() {
       }
 
       // Lignes diagonales subtiles
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = patternColor;
       ctx.lineWidth = 0.5;
       ctx.globalAlpha = 0.02;
       
@@ -272,7 +308,12 @@ function App() {
         const y = Math.random() * height;
         const size = Math.random() * 2;
         
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5})`;
+        // Bruit rouge en mode Seigneur des ténèbres, blanc sinon
+        if (difficulty && difficulty.oneHitKill) {
+          ctx.fillStyle = `rgba(255, 107, 107, ${Math.random() * 0.5})`;
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5})`;
+        }
         ctx.fillRect(x, y, size, size);
       }
       ctx.restore();
@@ -309,6 +350,12 @@ function App() {
     };
     window.addEventListener("openProjectModal", handleProjectModal);
 
+    // Event listener pour la popup de défaite
+    const handleDeathModal = () => {
+      setShowDeathModal(true);
+    };
+    window.addEventListener("openDeathModal", handleDeathModal);
+
     // Event listener pour la touche Échap
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
@@ -327,6 +374,7 @@ function App() {
       window.removeEventListener("resize", cb);
       window.removeEventListener("openControlsModal", handleControlsModal);
       window.removeEventListener("openProjectModal", handleProjectModal);
+      window.removeEventListener("openDeathModal", handleDeathModal);
       window.removeEventListener("keydown", handleEscapeKey);
 
       active = false;
@@ -336,7 +384,9 @@ function App() {
   }, []);
 
   // Gestion du démarrage du jeu
-  const handleGameStart = () => {
+  const handleGameStart = (difficulty) => {
+    setDifficultyConfig(difficulty);
+    setTotalProjects(difficulty.projectsRequired);
     setIsInitializing(false);
     setGameStartTime(Date.now());
     setGameTime(0);
@@ -347,12 +397,19 @@ function App() {
     setShowSpeedrunModal(false);
     if (gameRef.current) {
       gameRef.current.start();
+      // Passer la configuration de difficulté au jeu
+      gameRef.current.setDifficulty(difficulty);
     }
+    // Déclencher l'invincibilité prolongée après fermeture de GameInitPopup (avec un petit délai)
+    setTimeout(() => {
+      triggerExtraInvincibility();
+    }, 100);
   };
 
   // Gestion du redémarrage depuis la popup speedrun
   const handleRestart = () => {
     setShowSpeedrunModal(false);
+    setShowDeathModal(false);
     // Fermer aussi la ProjectPopup si elle est ouverte
     setShowProjectModal(false);
     setCurrentProject(null);
@@ -364,12 +421,34 @@ function App() {
     setGameMilliseconds(0);
     setGameStartTime(null);
     setMenu(false);
+    setRestartKey(prev => prev + 1); // Incrémenter pour forcer la réinitialisation
     // Redémarrer le jeu sera géré par l'utilisateur qui cliquera sur "Lancer le jeu"
   };
 
   // Gestion du retour au portfolio
   const handleBackToSite = () => {
     window.location.href = '/portfolio';
+  };
+
+  // Fonction pour déclencher l'invincibilité prolongée
+  const triggerExtraInvincibility = () => {
+    // Effacer le timer précédent s'il existe
+    if (extraInvincibilityTimer) {
+      clearTimeout(extraInvincibilityTimer);
+    }
+    
+    // Créer un nouveau timer de 2 secondes
+    const timer = setTimeout(() => {
+      // Déclencher l'animation de disparition de l'aura
+      if (gameRef.current && typeof gameRef.current.triggerPlayerAuraFadeOut === 'function') {
+        gameRef.current.triggerPlayerAuraFadeOut();
+      } else {
+        console.warn('Game ou triggerPlayerAuraFadeOut non disponible');
+      }
+      setExtraInvincibilityTimer(null);
+    }, 2000);
+    
+    setExtraInvincibilityTimer(timer);
   };
 
   return (
@@ -383,6 +462,8 @@ function App() {
         setShowProjectModal={setShowProjectModal}
         showSpeedrunModal={showSpeedrunModal}
         setShowSpeedrunModal={setShowSpeedrunModal}
+        showDeathModal={showDeathModal}
+        setShowDeathModal={setShowDeathModal}
         currentProject={currentProject}
         setCurrentProject={setCurrentProject}
         menu={menu}
@@ -402,6 +483,8 @@ function App() {
         handleMobileKeyRelease={handleMobileKeyRelease}
         nearProject={nearProject}
         timerAlert={timerAlert}
+        restartKey={restartKey}
+        triggerExtraInvincibility={triggerExtraInvincibility}
       />
     </LanguageProvider>
   );
@@ -416,6 +499,8 @@ function AppContent({
   setShowProjectModal,
   showSpeedrunModal,
   setShowSpeedrunModal,
+  showDeathModal,
+  setShowDeathModal,
   currentProject,
   setCurrentProject,
   menu,
@@ -434,7 +519,9 @@ function AppContent({
   handleMobileKeyPress,
   handleMobileKeyRelease,
   nearProject,
-  timerAlert
+  timerAlert,
+  restartKey,
+  triggerExtraInvincibility
 }) {
   // État pour l'effet de particules du compteur
   const [showCounterParticles, setShowCounterParticles] = useState(false);
@@ -452,7 +539,8 @@ function AppContent({
       {/* Popup d'initialisation */}
       <GameInitPopup 
         isVisible={isInitializing} 
-        onGameStart={handleGameStart} 
+        onGameStart={handleGameStart}
+        resetKey={restartKey}
       />
 
       {/* Modale des contrôles */}
@@ -470,6 +558,10 @@ function AppContent({
           setCurrentProject(null);
           // Déclencher l'effet de particules vertes sur le compteur
           triggerCounterParticles();
+          // Déclencher l'invincibilité prolongée après fermeture de ProjectPopup (avec un petit délai)
+          setTimeout(() => {
+            triggerExtraInvincibility();
+          }, 100);
         }}
       />
 
@@ -480,6 +572,13 @@ function AppContent({
         collectedProjects={collectedProjects}
         totalProjects={totalProjects}
         formatTime={formatTime}
+        onRestart={handleRestart}
+        onBackToSite={handleBackToSite}
+      />
+
+      {/* Modale de défaite */}
+      <DeathPopup 
+        isVisible={showDeathModal}
         onRestart={handleRestart}
         onBackToSite={handleBackToSite}
       />

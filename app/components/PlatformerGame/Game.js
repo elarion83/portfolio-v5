@@ -128,10 +128,35 @@ export default class Game {
     this.collectedProjectsCount = 0;
     this.lastProjectCollectedTime = Date.now();
     this.nearProject = false; // Track if player is near any project // Temps de la dernière collecte
+    
+    // Configuration de difficulté par défaut
+    this.difficultyConfig = {
+      projectsRequired: 20,
+      enemyMultiplier: 1.0,
+      oneHitKill: false
+    };
   }
 
   end() {
     this.inputManager.end();
+  }
+
+  setDifficulty(config) {
+    this.difficultyConfig = config;
+    this.difficulty = config; // Aussi accessible via .difficulty
+    console.log('Difficulté configurée:', config);
+  }
+
+  setPlayerInvincible(isInvincible) {
+    this.playerInvincible = isInvincible;
+  }
+
+  triggerPlayerAuraFadeOut() {
+    if (this.player && typeof this.player.triggerAuraFadeOut === 'function') {
+      this.player.triggerAuraFadeOut();
+    } else {
+      console.warn('Player ou triggerAuraFadeOut non disponible dans Game');
+    }
   }
 
   spawnEntity() {
@@ -510,7 +535,9 @@ export default class Game {
     }
 
     this.spawnTick += delta;
-    if (this.spawnTick > 2) {
+    // Ajuster le taux de spawn selon la difficulté
+    const spawnRate = 2 / this.difficultyConfig.enemyMultiplier;
+    if (this.spawnTick > spawnRate) {
       this.spawnTick = 0;
 
       this.spawnEntity();

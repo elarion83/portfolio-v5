@@ -210,10 +210,24 @@ export default class Entity extends GameObject {
         this.colliding = true;
         this.game.camera.shake();
       } else {
+        // Vérifier si le joueur est invincible (popup projet ouverte)
+        if (this.game.playerInvincible) {
+          // Joueur invincible - juste repousser l'ennemi sans dégâts
+          this.direction = this.game.player.facing === 0 ? -1 : 1;
+          this.game.particleSystem.spawnParticles(this.x, this.y, 3, 0.2);
+          return; // Pas de dégâts
+        }
+
         this.game.player.facing = this.direction < 0 ? 1 : 0;
 
         this.game.player.knockback();
         this.colliding = true;
+        
+        // Vérifier si c'est la difficulté "one hit kill"
+        if (this.game.difficultyConfig && this.game.difficultyConfig.oneHitKill) {
+          // Déclencher la mort instantanée du joueur
+          this.game.player.die();
+        }
       }
     }
 

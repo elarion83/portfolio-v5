@@ -199,6 +199,11 @@ export default class Player extends GameObject {
     this.animation = null;
     this.animationName = "";
 
+    // États pour l'animation de disparition de l'aura
+    this.auraFadeOut = false;
+    this.auraFadeTime = 0;
+    this.auraFadeOutDuration = 1000; // 1 seconde pour la disparition
+
     this.setAnimation("idle");
     this.crouch = false;
   }
@@ -303,7 +308,42 @@ export default class Player extends GameObject {
     }, 100);
   }
 
+  die() {
+    // Effet visuel de mort
+    this.game.particleSystem.spawnParticles(
+      this.x + this.w / 2,
+      this.y + this.h / 2,
+      15,
+      0.8
+    );
+    
+    // Secouer la caméra
+    this.game.camera.shake(0.3, 8);
+    
+    console.log('💀 Mort instantanée - Difficulté Seigneur des ténèbres');
+    
+    // Déclencher la popup de défaite
+    window.dispatchEvent(new CustomEvent('openDeathModal'));
+    
+    // Repositionner le joueur au début du niveau (pour quand il redémarre)
+    this.x = 5;
+    this.y = this.game.levelHeight - 12;
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.setAnimation("idle");
+  }
+
+  // Méthode pour déclencher la disparition de l'aura
+  triggerAuraFadeOut() {
+    this.auraFadeOut = true;
+    this.auraFadeTime = 0;
+  }
+
   render(delta) {
+    // Effet d'invincibilité si la popup projet est ouverte
+    if (this.game.playerInvincible) {
+      this.renderInvincibilityEffect(delta);
+    }
     // animator
     this.animationTick += delta * 1000;
 
@@ -393,10 +433,70 @@ export default class Player extends GameObject {
     }
   }
 
+  renderInvincibilityEffect(delta) {
+    const centerX = this.x + this.w / 2;
+    const centerY = this.y + this.h / 2;
+    const time = Date.now() * 0.003;
+    
+    // Calculer l'opacité et la position Y pour l'effet de disparition
+    let opacity = 1;
+    let offsetY = 0;
+    
+    if (this.auraFadeOut) {
+      const progress = Math.min(this.auraFadeTime / this.auraFadeOutDuration, 1);
+      opacity = 1 - progress;
+      offsetY = -progress * 1.5; // L'aura monte en disparaissant
+      
+      if (progress >= 1) {
+        // Fin de l'animation de disparition
+        this.auraFadeOut = false;
+        this.auraFadeTime = 0;
+        return; // Ne plus afficher l'aura
+      }
+    }
+    
+    // Aura dorée autour du joueur
+    const auraRadius = 0.8 + Math.sin(time * 2) * 0.1;
+    this.game.render.drawCircle(
+      centerX, 
+      centerY + offsetY, 
+      auraRadius, 
+      `rgba(255, 215, 0, ${(0.3 + Math.sin(time * 3) * 0.15) * opacity})`
+    );
+    
+    // Particules dorées flottantes
+    for (let i = 0; i < 6; i++) {
+      const angle = time + (i * Math.PI * 2 / 6);
+      const distance = 0.6 + Math.sin(time * 1.5 + i) * 0.2;
+      const particleX = centerX + Math.cos(angle) * distance;
+      const particleY = centerY + offsetY + Math.sin(angle) * distance;
+      
+      this.game.render.drawCircle(
+        particleX, 
+        particleY, 
+        0.05, 
+        `rgba(255, 215, 0, ${(0.8 + Math.sin(time * 4 + i) * 0.2) * opacity})`
+      );
+    }
+    
+    // Effet de brillance
+    this.game.render.drawCircle(
+      centerX, 
+      centerY + offsetY, 
+      0.4, 
+      `rgba(255, 255, 255, ${(0.2 + Math.sin(time * 4) * 0.1) * opacity})`
+    );
+  }
+
   update(delta) {
     var wasOnGround = this.onGround;
 
     super.update(delta);
+    
+    // Mise à jour du timer de disparition de l'aura
+    if (this.auraFadeOut) {
+      this.auraFadeTime += delta * 1000; // Convertir en millisecondes
+    }
     
     // Gestion de l'historique des tiles touchées (pour les plateformes orange)
     if (this.onGround && Object.keys(this.tiles).length > 0) {
