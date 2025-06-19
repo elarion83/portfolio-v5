@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { Clock, FolderOpen } from "lucide-react";
 import Game from "./Game";
