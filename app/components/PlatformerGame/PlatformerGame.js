@@ -539,7 +539,7 @@ function AppContent({
       {/* Popup d'initialisation */}
       <GameInitPopup 
         isVisible={isInitializing} 
-        onGameStart={handleGameStart}
+        onGameStart={handleGameStart} 
         resetKey={restartKey}
       />
 

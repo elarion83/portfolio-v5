@@ -470,7 +470,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
               🇬🇧 EN
             </button>
           </div>
-
+          
           <AnimatePresence mode="wait">
             {/* ÉTAPE 1: Initialisation + Sélection du mode */}
             {step === 1 && (
@@ -481,31 +481,31 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5 }}
               >
-                <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait">
                   {!isLoaded && (
-                    <motion.div 
+                <motion.div 
                       key="loading"
                       className="step1-loading"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.5 }}
-                    >
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.5 }}
+                >
                       <h2 className="game-init-title">{t('step1LoadingTitle')}</h2>
                       <div className="game-init-spinner-container">
-                        <GameSpinner />
-                      </div>
-                    </motion.div>
-                  )}
-
+                  <GameSpinner />
+              </div>
+                </motion.div>
+              )}
+              
                   {isLoaded && (
-                    <motion.div 
+                <motion.div 
                       key="selection"
                       className="step1-selection"
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, ease: "easeOut" }}
-                    >
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                >
                       <h2 className="game-init-title">{t('step1SelectionTitle')}</h2>
                       
                       {/* Blocs de gameplay */}
@@ -523,54 +523,54 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                           <h4>{t('gameplaySpeedrun')}</h4>
                         </div>
                       </div>
-                      
-                      {/* Sélecteur de difficulté */}
+                  
+                  {/* Sélecteur de difficulté */}
                       <div className="difficulty-section compact">
-                        <div className="difficulty-label">{t('difficulty')}</div>
-                        <div className="difficulty-dropdown">
-                          <button 
-                            className="difficulty-selector"
-                            onClick={() => setIsDifficultyDropdownOpen(!isDifficultyDropdownOpen)}
-                          >
-                            <span className="difficulty-icon">{difficulties[selectedDifficulty].icon}</span>
-                            <span className="difficulty-name">{difficulties[selectedDifficulty].name}</span>
-                            <span className={`difficulty-arrow ${isDifficultyDropdownOpen ? 'open' : ''}`}>▼</span>
-                          </button>
-                          
-                          {isDifficultyDropdownOpen && (
-                            <motion.div 
-                              className="difficulty-options"
-                              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              transition={{ duration: 0.2, ease: "easeOut" }}
-                            >
-                              {Object.entries(difficulties).map(([key, difficulty]) => (
-                                <button
-                                  key={key}
-                                  className={`difficulty-option ${selectedDifficulty === key ? 'selected' : ''}`}
-                                  onClick={() => handleDifficultySelect(key)}
-                                >
-                                  <div className="difficulty-option-header">
-                                    <span className="difficulty-option-icon">{difficulty.icon}</span>
-                                    <span className="difficulty-option-name">{difficulty.name}</span>
-                                  </div>
-                                  <div className="difficulty-option-desc">{difficulty.description}</div>
-                                </button>
-                              ))}
-                            </motion.div>
-                          )}
-                        </div>
-                      </div>
-                      
+                    <div className="difficulty-label">{t('difficulty')}</div>
+                    <div className="difficulty-dropdown">
                       <button 
+                        className="difficulty-selector"
+                        onClick={() => setIsDifficultyDropdownOpen(!isDifficultyDropdownOpen)}
+                      >
+                        <span className="difficulty-icon">{difficulties[selectedDifficulty].icon}</span>
+                        <span className="difficulty-name">{difficulties[selectedDifficulty].name}</span>
+                        <span className={`difficulty-arrow ${isDifficultyDropdownOpen ? 'open' : ''}`}>▼</span>
+                      </button>
+                      
+                      {isDifficultyDropdownOpen && (
+                        <motion.div 
+                          className="difficulty-options"
+                          initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                        >
+                          {Object.entries(difficulties).map(([key, difficulty]) => (
+                            <button
+                              key={key}
+                              className={`difficulty-option ${selectedDifficulty === key ? 'selected' : ''}`}
+                              onClick={() => handleDifficultySelect(key)}
+                            >
+                              <div className="difficulty-option-header">
+                                <span className="difficulty-option-icon">{difficulty.icon}</span>
+                                <span className="difficulty-option-name">{difficulty.name}</span>
+                              </div>
+                              <div className="difficulty-option-desc">{difficulty.description}</div>
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <button 
                         className="start-game-btn compact"
                         onClick={handleProceedToStep2}
-                      >
-                        {t('startGame')}
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  >
+                    {t('startGame')}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
               </motion.div>
             )}
 
@@ -583,7 +583,6 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.5 }}
               >
-                <h2 className="game-init-title">{t('step2Title')}</h2>
 
                 <div className="step2-content">
                   {/* Règles de victoire */}
@@ -684,13 +683,13 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                       </div>
                     )}
                   </motion.div>
-                </div>
+          </div>
               </motion.div>
             )}
           </AnimatePresence>
           
           {/* Footer avec crédits */}
-          <div className="game-init-footer" style={{
+          {step === 1 && <div className="game-init-footer" style={{
             marginTop: '40px',
             paddingTop: '20px',
             borderTop: '1px solid rgba(255, 255, 255, 0.1)',
@@ -737,6 +736,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
               </div>
             </div>
           </div>
+          }
         </div>
       </div>
     </div>
