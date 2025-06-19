@@ -283,4 +283,58 @@ export default class Render {
     // Restauration du contexte
     this.game.ctx.restore();
   }
+
+  // Indicateur directionnel vers le projet le plus proche
+  drawDirectionalIndicator(playerX, playerY, targetX, targetY, distance) {
+    // Ne pas afficher si le projet est très proche (déjà visible)
+    if (distance < 3) return;
+
+    // Calculer l'angle vers la cible
+    const angle = Math.atan2(targetY - playerY, targetX - playerX);
+    
+    // Position de l'indicateur (autour du joueur)
+    const indicatorDistance = 1.5; // Distance de l'indicateur par rapport au joueur
+    const indicatorX = playerX + Math.cos(angle) * indicatorDistance;
+    const indicatorY = playerY + Math.sin(angle) * indicatorDistance;
+    
+    // Transformer les coordonnées pour l'écran
+    const [screenX, screenY] = this.game.camera.transformCoordinates(indicatorX, indicatorY);
+    
+    // Sauvegarde du contexte
+    this.game.ctx.save();
+    
+    // Opacité très faible et basée sur la distance
+    const baseOpacity = Math.max(0.05, Math.min(0.15, 1 - (distance - 3) / 15));
+    const opacity = baseOpacity;
+    
+    // Dessiner l'indicateur (flèche/point)
+    const size = this.game.camera.transformX(0.3);
+    
+    // Flèche triangulaire
+    this.game.ctx.translate(screenX, screenY);
+    this.game.ctx.rotate(angle);
+    
+    // Corps de la flèche
+    this.game.ctx.fillStyle = `rgba(226, 141, 29, ${opacity})`;
+    this.game.ctx.beginPath();
+    this.game.ctx.moveTo(size, 0);
+    this.game.ctx.lineTo(-size * 0.5, -size * 0.5);
+    this.game.ctx.lineTo(-size * 0.3, 0);
+    this.game.ctx.lineTo(-size * 0.5, size * 0.5);
+    this.game.ctx.closePath();
+    this.game.ctx.fill();
+    
+    // Bordure très subtile
+    this.game.ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.3})`;
+    this.game.ctx.lineWidth = 1;
+    this.game.ctx.stroke();
+    
+    // Effet de lueur très discret
+    this.game.ctx.shadowColor = `rgba(226, 141, 29, ${opacity * 0.2})`;
+    this.game.ctx.shadowBlur = 4;
+    this.game.ctx.fill();
+    
+    // Restauration du contexte
+    this.game.ctx.restore();
+  }
 }

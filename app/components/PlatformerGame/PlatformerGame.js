@@ -18,7 +18,7 @@ function App() {
   var [currentProject, setCurrentProject] = useState(null);
   var [gameTime, setGameTime] = useState(0);
   var [collectedProjects, setCollectedProjects] = useState(0);
-  var [totalProjects] = useState(10);
+  var [totalProjects] = useState(39);
 
   /**
    * Show menu

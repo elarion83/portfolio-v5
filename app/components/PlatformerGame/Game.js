@@ -107,6 +107,7 @@ export default class Game {
     this.portfolioItems = [];
     this.loadPortfolioItems();
     this.collectedProjectsCount = 0;
+    this.lastProjectCollectedTime = Date.now(); // Temps de la dernière collecte
   }
 
   end() {
@@ -180,6 +181,7 @@ export default class Game {
     this.isInitializing = false;
     this.inputManager.start();
     this.particleSystem.particles = [];
+    this.lastProjectCollectedTime = Date.now(); // Réinitialiser le timer au démarrage
 
     this.camera.followingObject = this.player;
   }
@@ -194,7 +196,7 @@ export default class Game {
 
   async loadPortfolioItems() {
     try {
-      const res = await fetch("https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=10");
+      const res = await fetch("https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100");
       const data = await res.json();
       // Exclure le projet id 1602
       const filtered = data.filter(item => item.id !== 1602);
@@ -226,7 +228,7 @@ export default class Game {
         [validPositions[i], validPositions[j]] = [validPositions[j], validPositions[i]];
       }
 
-      // Créer les items initiaux (max 10 ou moins si moins de positions)
+      // Créer les items initiaux (max 10 visibles simultanément, mais 39 projets au total)
       this.portfolioItems = [];
       for (let i = 0; i < Math.min(validPositions.length, this.availableProjects.length, 10); i++) {
         const pos = validPositions[i];
@@ -259,6 +261,7 @@ export default class Game {
     if (index > -1) {
       this.portfolioItems.splice(index, 1);
       this.collectedProjectsCount++;
+      this.lastProjectCollectedTime = Date.now(); // Mettre à jour le temps de collecte
     }
     // Ajouter un nouveau projet si disponible
     if (this.availableProjects.length > 0) {
@@ -413,7 +416,59 @@ export default class Game {
       item.render();
     }
 
+    // Indicateur directionnel vers le projet le plus proche
+    this.renderDirectionalIndicator();
     
+  }
+
+  renderDirectionalIndicator() {
+    // Ne pas afficher pendant l'initialisation
+    if (this.isInitializing || this.portfolioItems.length === 0) {
+      return;
+    }
+
+    // Vérifier si 25 secondes se sont écoulées depuis la dernière collecte
+    const timeSinceLastCollection = (Date.now() - this.lastProjectCollectedTime) / 1000;
+    if (timeSinceLastCollection < 25) {
+      return; // Ne pas afficher l'indicateur si moins de 25 secondes
+    }
+
+    // Position du joueur
+    const playerCenterX = this.player.x + this.player.w / 2;
+    const playerCenterY = this.player.y + this.player.h / 2;
+
+    // Trouver le projet le plus proche
+    let closestItem = null;
+    let closestDistance = Infinity;
+
+    for (const item of this.portfolioItems) {
+      const itemCenterX = item.x + item.w / 2;
+      const itemCenterY = item.y + item.h / 2;
+      
+      const distance = Math.sqrt(
+        Math.pow(itemCenterX - playerCenterX, 2) + 
+        Math.pow(itemCenterY - playerCenterY, 2)
+      );
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = item;
+      }
+    }
+
+    // Afficher l'indicateur si un projet est trouvé
+    if (closestItem) {
+      const targetX = closestItem.x + closestItem.w / 2;
+      const targetY = closestItem.y + closestItem.h / 2;
+      
+      this.render.drawDirectionalIndicator(
+        playerCenterX, 
+        playerCenterY, 
+        targetX, 
+        targetY, 
+        closestDistance
+      );
+    }
   }
 
   updateGame(delta) {

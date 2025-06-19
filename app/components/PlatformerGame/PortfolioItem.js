@@ -270,7 +270,7 @@ export default class PortfolioItem extends GameObject {
     ctx.font = 'bold 13px Arial';
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
-    ctx.fillText('E pour découvrir', screenX, tooltipY + tooltipHeight + 22);
+    ctx.fillText('[E] Open', screenX, tooltipY + tooltipHeight + 22);
     ctx.restore();
   }
 
@@ -321,7 +321,7 @@ export default class PortfolioItem extends GameObject {
       detail: {
         ...this.projectData,
         collectedCount: this.game.collectedProjectsCount + 1, // +1 car ce projet va être collecté
-        totalProjects: 10
+        totalProjects: 39
       }
     }));
     

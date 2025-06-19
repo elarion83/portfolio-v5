@@ -16,7 +16,7 @@ const translations = {
     startGame: "Lancer le jeu",
     ready: "Prêt à jouer !",
     // Textes pour le jeu
-    projectCollected: "Projet collecté !",
+    projectCollected: "Projet découvert !",
     discoverProject: "Découvrir le projet",
     continueAdventure: "Continuer l'aventure",
     gameControls: "Contrôles du jeu",
@@ -60,7 +60,7 @@ const translations = {
     startGame: "Start Game",
     ready: "Ready to play!",
     // Textes pour le jeu
-    projectCollected: "Project collected!",
+    projectCollected: "Project discovered!",
     discoverProject: "Discover project",
     continueAdventure: "Continue adventure",
     gameControls: "Game Controls",
@@ -116,7 +116,7 @@ export const LanguageProvider = ({ children }) => {
 };
 
 const GameInitPopup = ({ isVisible, onGameStart }) => {
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(13);
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
   const { language, setLanguage, t } = useLanguage();
@@ -216,6 +216,21 @@ const GameInitPopup = ({ isVisible, onGameStart }) => {
     <div className="game-init-overlay">
       <div className="game-init-popup">
         <div className="game-init-content">
+          {/* Language switcher compact en haut */}
+          <div className="language-switcher-compact">
+            <button 
+              className={`lang-btn-compact ${selectedLanguage === 'fr' ? 'active' : ''}`}
+              onClick={() => handleLanguageChange('fr')}
+            >
+              🇫🇷 FR
+            </button>
+            <button 
+              className={`lang-btn-compact ${selectedLanguage === 'en' ? 'active' : ''}`}
+              onClick={() => handleLanguageChange('en')}
+            >
+              🇬🇧 EN
+            </button>
+          </div>
           
           <div className="game-init-section">
             <h3>{t('objective')}</h3>
@@ -249,7 +264,7 @@ const GameInitPopup = ({ isVisible, onGameStart }) => {
 
           <div className="game-init-loading">
 
-            {!showLanguageSelection && (
+            {showSpinner && (
               <h2 className="game-init-title">{t('title')}</h2>
             )}
 
@@ -276,10 +291,10 @@ const GameInitPopup = ({ isVisible, onGameStart }) => {
                   transition={{ duration: 0.6, ease: "easeOut" }}
                 >
                   <p>{t('loading')}</p>
-                  <div className="game-init-countdown">
-                    <span className="countdown-number">{countdown}</span>
+              <div className="game-init-countdown">
+                <span className="countdown-number">{countdown}</span>
                     <span className="countdown-text">{t('seconds')}</span>
-                  </div>
+              </div>
                 </motion.div>
               )}
               
@@ -292,24 +307,6 @@ const GameInitPopup = ({ isVisible, onGameStart }) => {
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
                   <h3 className="language-title">{t('ready')}</h3>
-                  
-                  <div className="language-section">
-                    <p className="language-label">{t('selectLanguage')}</p>
-                    <div className="language-buttons">
-                      <button 
-                        className={`language-btn ${selectedLanguage === 'fr' ? 'active' : ''}`}
-                        onClick={() => handleLanguageChange('fr')}
-                      >
-                        🇫🇷 Français
-                      </button>
-                      <button 
-                        className={`language-btn ${selectedLanguage === 'en' ? 'active' : ''}`}
-                        onClick={() => handleLanguageChange('en')}
-                      >
-                        🇬🇧 English
-                      </button>
-                    </div>
-                  </div>
                   
                   <button 
                     className="start-game-btn"

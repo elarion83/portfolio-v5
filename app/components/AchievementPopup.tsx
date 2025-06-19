@@ -134,12 +134,36 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose, onS
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#e28d1d] to-[#b86e0e] text-white rounded-lg text-sm font-bold shadow-lg hover:shadow-xl hover:from-[#f29d2d] hover:to-[#c87e1e] transition-all transform hover:scale-105 active:scale-95"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#e28d1d] to-[#b86e0e] text-white rounded-lg text-sm font-bold shadow-lg hover:shadow-xl hover:from-[#f29d2d] hover:to-[#c87e1e] transition-all transform hover:scale-105 active:scale-95 relative overflow-hidden group glow-animation"
           onClick={onSecret}
           aria-label={language === 'fr' ? 'Jouer au jeu de plateforme' : 'Play platform game'}
         >
-          <Gamepad2 className="w-5 h-5" />
-          {language === 'fr' ? 'JOUER AU JEU' : 'PLAY GAME'}
+          {/* Effet de lueur animée qui traverse le bouton */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+            initial={{ x: '-100%' }}
+            animate={{ x: '100%' }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              repeatDelay: 1
+            }}
+            style={{
+              transform: 'skewX(-20deg)',
+              filter: 'blur(1px)'
+            }}
+          />
+          
+          {/* Contenu du bouton */}
+          <motion.div 
+            className="relative z-10 flex items-center gap-2"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Gamepad2 className="w-5 h-5" />
+            {language === 'fr' ? 'JOUER AU JEU' : 'PLAY GAME'}
+          </motion.div>
         </motion.button>
       )}
     </motion.div>

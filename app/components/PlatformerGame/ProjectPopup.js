@@ -60,7 +60,7 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
   return (
     <div className="game-init-overlay" onClick={handleOverlayClick}>
       <div 
-        className="project-popup" 
+        className={`project-popup ${!showContent ? 'phase-1' : 'phase-2'}`}
         style={{ 
           minHeight: !showContent ? '90px' : 'auto',
           display: 'flex',
@@ -75,48 +75,50 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
         }}
       >
         <div className="game-init-content" style={{ flex: 1 }}>
+          {/* Bouton de fermeture toujours visible */}
+          <button 
+            className="project-popup-close-btn" 
+            onClick={handleCloseClick}
+            aria-label={t('close')}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '24px',
+              background: 'rgba(0, 0, 0, 0.6)',
+              zIndex: 20
+            }}
+          >
+            ×
+          </button>
+
           <motion.div 
             className="project-popup-header"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            style={!showContent ? { background: 'none', padding: 0 } : {}}
+            style={!showContent ? { background: 'none', padding: 0 } : { display: 'none' }}
           >
-            <h2 
-              className="game-init-title"
-              style={!showContent ? {
-                padding: '20px 24px',
-                paddingBottom: '0px',
-                backgroundColor: 'rgba(38, 25, 57, 0.95)',
-                borderRadius: '20px 20px 0 0',
-                margin: '0',
-                // Couleur verte moderne et vibrante pour la réussite
-                background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                textShadow: '0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(52, 211, 153, 0.3)',
-                filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))'
-              } : {
-                margin: '0'
-              }}
-            >
-              {t('projectCollected')} <b>({projectData.collectedCount || 1}/{projectData.totalProjects || 10})</b>
-            </h2>
-            <button 
-              className="project-popup-close-btn" 
-              onClick={handleCloseClick}
-              aria-label={t('close')}
-              style={!showContent ? {
-                position: 'absolute',
-                top: '20px',
-                right: '24px',
-                background: 'rgba(0, 0, 0, 0.6)',
-                zIndex: 20
-              } : {}}
-            >
-              ×
-            </button>
+            {!showContent && (
+              <h2 
+                className="game-init-title"
+                style={{
+                  padding: '20px 24px',
+                  paddingBottom: '0px',
+                  backgroundColor: 'rgba(38, 25, 57, 0.95)',
+                  borderRadius: '20px 20px 0 0',
+                  margin: '0',
+                  // Couleur verte moderne et vibrante pour la réussite
+                  background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  textShadow: '0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(52, 211, 153, 0.3)',
+                  filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))'
+                }}
+              >
+              <b>   {t('projectCollected')} </b>
+              </h2>
+            )}
           </motion.div>
           
           <motion.div 
