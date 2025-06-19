@@ -195,8 +195,6 @@ export default class GameObject {
 
           this.tiles[index] = flag;
         }
-
-        // console.log(this, block);
       }
     }
 

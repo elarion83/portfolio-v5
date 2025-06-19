@@ -17,8 +17,6 @@ export default class SpriteSheetManager {
   incrementLoaded() {
     this.assetsLoaded++;
 
-    console.log(this.assetsLoaded, this.assetsTotal);
-
     setTimeout(() => {
       if (this.assetsLoaded === this.assetsTotal) {
         if (!this.hasLoaded) {
