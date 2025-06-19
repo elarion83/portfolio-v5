@@ -8,7 +8,7 @@ const translations = {
   fr: {
     title: "Initialisation",
     objective: "Objectif :",
-    objectiveText: "Découvrir les 20 projets cachés le plus rapidement possible ! Optimisez vos déplacements, maîtrisez les combos de combat et exploitez chaque raccourci. Votre temps sera enregistré - visez le speedrun parfait !",
+    objectiveText: "Découvrir tous les projets cachés le plus rapidement possible ! Optimisez vos déplacements, maîtrisez les combos de combat et exploitez chaque raccourci. Votre temps sera enregistré - visez le speedrun parfait !",
     credits: "Crédits :",
     creditsText: "Jeu de plateforme original par ",
     creditsText2: "Adaptation, design et gamification par ",
@@ -108,7 +108,7 @@ const translations = {
   en: {
     title: "Initialization",
     objective: "Objective:",
-    objectiveText: "Discover all 20 hidden projects as fast as possible! Optimize your movement, master combat combos and exploit every shortcut. Your time will be recorded - aim for the perfect speedrun!",
+    objectiveText: "Discover all hidden projects as fast as possible! Optimize your movement, master combat combos and exploit every shortcut. Your time will be recorded - aim for the perfect speedrun!",
     credits: "Credits:",
     creditsText: "Original platform game by ",
     creditsText2: "Adaptation, design and gamification by ",
@@ -319,7 +319,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       name: t('difficultyDiscovery'),
       description: t('difficultyDescDiscovery'),
       icon: '🌟',
-      projectsRequired: process.env.NODE_ENV === 'development' ? 5 : 20,
+      projectsRequired: process.env.NODE_ENV === 'development' ? 5 : 35,
       enemyMultiplier: 0.5,
       oneHitKill: false
     },
@@ -335,7 +335,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       name: t('difficultyDarkLord'),
       description: t('difficultyDescDarkLord'),
       icon: '💀',
-      projectsRequired: process.env.NODE_ENV === 'development' ? 5 : 20,
+      projectsRequired: process.env.NODE_ENV === 'development' ? 5 : 35,
       enemyMultiplier: 3.0,
       oneHitKill: true
     }

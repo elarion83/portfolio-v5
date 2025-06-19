@@ -2778,7 +2778,7 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 }
 
 .step2-content .game-init-section:first-child h3 {
-  margin-top: 15px;
+  margin-top: 25px;
 }
 
 .selected-difficulty-display {
