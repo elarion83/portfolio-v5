@@ -38,13 +38,6 @@ const DeathPopup = ({ isVisible, onRestart, onBackToSite }) => {
             <span>🔄</span>
             {t('tryAgain')}
           </button>
-          <button 
-            className="back-btn"
-            onClick={onBackToSite}
-          >
-            <span>←</span>
-            {t('backToPortfolio')}
-          </button>
         </div>
       </motion.div>
     </div>

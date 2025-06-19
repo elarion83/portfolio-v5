@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronLeft, ChevronRight, ChevronUp, Sword, Minus, Plus, Home } from 'lucide-react';
 
 const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false }) => {
   const handleTouchStart = (key) => {
@@ -29,6 +30,24 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false })
     }
   };
 
+  const handleZoomIn = () => {
+    if (window.game && window.game.camera) {
+      window.game.camera.zoomIn();
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (window.game && window.game.camera) {
+      window.game.camera.zoomOut();
+    }
+  };
+
+  const handleZoomReset = () => {
+    if (window.game && window.game.camera) {
+      window.game.camera.resetZoom();
+    }
+  };
+
   return (
     <div className="mobile-controls">
       {/* Contrôles de mouvement */}
@@ -40,7 +59,7 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false })
           onMouseDown={() => handleTouchStart('a')}
           onMouseUp={() => handleTouchEnd('a')}
         >
-          ←
+          <ChevronLeft size={24} />
         </button>
         <button
           className="mobile-btn mobile-btn-right"
@@ -49,7 +68,32 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false })
           onMouseDown={() => handleTouchStart('d')}
           onMouseUp={() => handleTouchEnd('d')}
         >
-          →
+          <ChevronRight size={24} />
+        </button>
+      </div>
+
+      {/* Contrôles de zoom */}
+      <div className="mobile-zoom-controls">
+        <button
+          className="mobile-btn mobile-btn-zoom-out"
+          onTouchStart={handleZoomOut}
+          onMouseDown={handleZoomOut}
+        >
+          <Minus size={16} />
+        </button>
+        <button
+          className="mobile-btn mobile-btn-zoom-reset"
+          onTouchStart={handleZoomReset}
+          onMouseDown={handleZoomReset}
+        >
+          <Home size={14} />
+        </button>
+        <button
+          className="mobile-btn mobile-btn-zoom-in"
+          onTouchStart={handleZoomIn}
+          onMouseDown={handleZoomIn}
+        >
+          <Plus size={16} />
         </button>
       </div>
 
@@ -79,7 +123,7 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false })
             onMouseDown={() => handleTouchStart(' ')}
             onMouseUp={() => handleTouchEnd(' ')}
           >
-            ⬆
+            <ChevronUp size={24} />
           </button>
           <button
             className="mobile-btn mobile-btn-attack"
@@ -88,7 +132,7 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false })
             onMouseDown={handleAttackStart}
             onMouseUp={handleAttackEnd}
           >
-            ⚔
+            <Sword size={20} />
           </button>
         </div>
       </div>

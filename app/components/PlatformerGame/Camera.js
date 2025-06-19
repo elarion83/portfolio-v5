@@ -12,10 +12,20 @@ export default class Camera {
     this.startX = 0;
     this.startY = 0;
     
-    // Dézoomer sur mobile pour une meilleure visibilité
+    // Système de zoom dynamique
     const isMobile = window.innerWidth <= 768;
-    this.endX = isMobile ? 20 : 16;  // Plus large sur mobile
-    this.endY = isMobile ? 14 : 11;  // Plus haut sur mobile
+    this.baseZoomLevel = isMobile ? 1.4 : 1.0; // Zoom de base plus élevé sur mobile
+    this.currentZoomLevel = this.baseZoomLevel;
+    this.minZoomLevel = 0.8;
+    this.maxZoomLevel = 2.5;
+    
+    // Dimensions de base pour le calcul du zoom
+    this.baseWidth = 16;
+    this.baseHeight = 11;
+    
+    // Calculer les dimensions initiales avec le zoom
+    this.endX = this.baseWidth / this.currentZoomLevel;
+    this.endY = this.baseHeight / this.currentZoomLevel;
 
     this.mut = [1, 1];
     this.followingObject = null;
@@ -202,5 +212,36 @@ export default class Camera {
       this.transformX(w),
       this.transformY(h),
     ];
+  }
+
+  // Méthodes de zoom
+  zoomIn() {
+    const newZoomLevel = Math.min(this.currentZoomLevel + 0.2, this.maxZoomLevel);
+    this.setZoom(newZoomLevel);
+  }
+
+  zoomOut() {
+    const newZoomLevel = Math.max(this.currentZoomLevel - 0.2, this.minZoomLevel);
+    this.setZoom(newZoomLevel);
+  }
+
+  setZoom(zoomLevel) {
+    this.currentZoomLevel = Math.max(this.minZoomLevel, Math.min(this.maxZoomLevel, zoomLevel));
+    
+    // Calculer les nouvelles dimensions
+    const newWidth = this.baseWidth / this.currentZoomLevel;
+    const newHeight = this.baseHeight / this.currentZoomLevel;
+    
+    // Maintenir la position du centre
+    const center = this.getCenter();
+    this.setPositionCenterAndSize(center[0], center[1], newWidth, newHeight);
+  }
+
+  getZoomLevel() {
+    return this.currentZoomLevel;
+  }
+
+  resetZoom() {
+    this.setZoom(this.baseZoomLevel);
   }
 }

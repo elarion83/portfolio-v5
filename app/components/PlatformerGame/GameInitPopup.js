@@ -15,7 +15,7 @@ const translations = {
     loading: "Chargement en cours...",
     seconds: "secondes",
     selectLanguage: "Choisissez votre langue :",
-    startGame: "Lancer le jeu",
+    startGame: "Continuer",
     ready: "Prêt à jouer ?",
     // Textes pour le jeu
     projectCollected: "Projet découvert !",
@@ -48,6 +48,7 @@ const translations = {
     // Contrôles desktop en bas à gauche
     movementShort: "Mouvement",
     actionsShort: "Actions",
+    zoomShort: "Zoom",
     commandShort: "Commande",
     controlsTooltip: "Cliquez pour voir tous les contrôles",
     // Bouton retour au site
@@ -114,7 +115,7 @@ const translations = {
     loading: "Loading...",
     seconds: "seconds",
     selectLanguage: "Choose your language:",
-    startGame: "Start Game",
+    startGame: "Continue",
     ready: "Ready to play ?",
     // Textes pour le jeu
     projectCollected: "Project discovered!",
@@ -144,6 +145,7 @@ const translations = {
     // Contrôles desktop en bas à gauche
     movementShort: "Movement",
     actionsShort: "Actions",
+    zoomShort: "Zoom",
     commandShort: "Command",
     controlsTooltip: "Click to see all controls",
     // Bouton retour au site
@@ -506,7 +508,6 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                      <h2 className="game-init-title">{t('step1SelectionTitle')}</h2>
                       
                       {/* Blocs de gameplay */}
                       <div className="gameplay-blocks">
@@ -523,10 +524,10 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                           <h4>{t('gameplaySpeedrun')}</h4>
                         </div>
                       </div>
-                  
+                      <h2 className="game-init-title">{t('difficulty')}</h2>
+
                   {/* Sélecteur de difficulté */}
                       <div className="difficulty-section compact">
-                    <div className="difficulty-label">{t('difficulty')}</div>
                     <div className="difficulty-dropdown">
                       <button 
                         className="difficulty-selector"
@@ -641,16 +642,16 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                     {!showFinalCountdown ? (
                       <>
                         <button 
+                          className="start-game-btn primary"
+                          onClick={handleStartFinalCountdown}
+                        >
+                          {t('ready')}
+                        </button>
+                        <button 
                           className="btn-secondary back-btn"
                           onClick={handleBackToStep1}
                         >
                           {t('backToChoices')}
-                        </button>
-                        <button 
-                          className="start-game-btn primary"
-                          onClick={handleStartFinalCountdown}
-                        >
-                          {t('getReady')}
                         </button>
                       </>
                     ) : (

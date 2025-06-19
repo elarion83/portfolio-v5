@@ -3,6 +3,32 @@
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><defs><filter id="blur"><feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/></filter><filter id="glow"><feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="10" cy="10" r="8" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.3)" stroke-width="1" filter="url(%23blur)"/><circle cx="10" cy="10" r="4" fill="rgba(59,130,246,0.4)" stroke="rgba(59,130,246,0.8)" stroke-width="0.5" filter="url(%23glow)"/><circle cx="10" cy="10" r="2" fill="rgba(147,197,253,0.9)" stroke="rgba(147,197,253,1)" stroke-width="0.3"/></svg>') 10 10, auto;
 }
 
+/* Masquer les éléments du site web quand le jeu est actif */
+.hide-cursor ~ * button.fixed.top-4.right-4.z-50.p-2.bg-\[\#261939\].rounded-full.md\:hidden,
+.hide-cursor ~ * div.fixed.top-4.left-4.z-50.flex.gap-2 {
+  display: none !important;
+}
+
+/* Sélecteurs globaux pour les éléments du site web */
+body:has(.hide-cursor) button.fixed.top-4.right-4,
+body:has(.hide-cursor) div.fixed.top-4.left-4 {
+  display: none !important;
+}
+
+/* Sélecteurs alternatifs plus génériques */
+body:has(.hide-cursor) .fixed.top-4.right-4,
+body:has(.hide-cursor) .fixed.top-4.left-4 {
+  display: none !important;
+}
+
+/* Version mobile spécifique */
+@media (max-width: 768px) {
+  body:has(.hide-cursor) .fixed.top-4.right-4.md\\:hidden,
+  body:has(.hide-cursor) .fixed.top-4.left-4 {
+    display: none !important;
+  }
+}
+
 .main-menu {
   position: fixed;
   top: 0;
@@ -211,6 +237,62 @@
   border-color: rgba(226, 141, 29, 0.7);
 }
 
+/* Contrôles de zoom */
+.mobile-zoom-controls {
+  position: fixed;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.mobile-btn-zoom-out,
+.mobile-btn-zoom-in,
+.mobile-btn-zoom-reset {
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: pointer;
+  transform: scale(0.8);
+}
+
+.mobile-btn-zoom-out:active,
+.mobile-btn-zoom-in:active {
+  background: rgba(94, 148, 255, 0.3);
+  border-color: rgba(94, 148, 255, 0.6);
+  transform: scale(0.9);
+}
+
+.mobile-btn-zoom-reset {
+  background: rgba(226, 141, 29, 0.08);
+  border-color: rgba(226, 141, 29, 0.18);
+  font-size: 0.85rem;
+  color: rgba(226, 141, 29, 0.8);
+}
+
+.mobile-btn-zoom-reset:active {
+  background: rgba(226, 141, 29, 0.3);
+  border-color: rgba(226, 141, 29, 0.6);
+  transform: scale(0.9);
+}
+
 /* Responsive - Masquer les contrôles desktop sur mobile */
 @media (max-width: 768px) {
   .desktop-controls {
@@ -221,6 +303,15 @@
 @media (min-width: 769px) {
   .mobile-controls {
     display: none;
+  }
+  .mobile-zoom-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-zoom-controls {
+    display: flex;
   }
 }
 
@@ -1164,24 +1255,12 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
   color: #e28d1d;
   transition: all 0.3s ease;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .timer-icon:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(226, 141, 29, 0.3);
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 0 20px rgba(226, 141, 29, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .timer-value {
@@ -1218,25 +1297,12 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: rgba(16, 185, 129, 0.15);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 8px;
   color: #10b981;
   transition: all 0.3s ease;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    0 0 12px rgba(16, 185, 129, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .counter-icon:hover {
-  background: rgba(16, 185, 129, 0.25);
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 0 20px rgba(16, 185, 129, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .counter-value {
@@ -1576,62 +1642,41 @@
 /* Responsive pour mobile */
 @media (max-width: 768px) {
   .game-timer {
-    top: auto !important;
-    bottom: 80px;
-    left: auto !important;
-    right: 10px;
+    top: 15px !important;
+    left: 15px !important;
+    right: auto !important;
+    bottom: auto !important;
     transform: none !important;
-    top: 10px;
-    left: 10px; /* En haut à gauche */
-    right: auto;
-    bottom: auto;
-    width: 130px; /* Plus petit sur mobile */
-    padding: 8px 12px; /* Padding réduit */
+    width: 140px;
+    padding: 10px 14px;
   }
   
   .game-timer .timer-value {
-    font-size: 0.9rem; /* Texte plus petit */
+    font-size: 0.95rem;
   }
   
   .projects-counter {
-    top: auto !important;
-    bottom: 20px;
+    top: 15px !important;
+    right: 15px !important;
     left: auto !important;
-    right: 10px;
+    bottom: auto !important;
     transform: none !important;
-    top: 65px; /* Juste en dessous du timer */
-    left: 10px; /* Aussi à gauche */
-    right: auto;
-    bottom: auto;
-    width: 130px; /* Plus petit sur mobile */
-    padding: 8px 12px; /* Padding réduit */
+    width: 140px;
+    padding: 10px 14px;
   }
   
   .projects-counter .counter-value {
-    font-size: 0.9rem; /* Texte plus petit */
+    font-size: 0.95rem;
   }
   
-  /* Supprimer les blocs de fond des icônes sur mobile */
+  /* Ajuster les icônes sur mobile pour plus de compacité */
   .timer-icon,
   .counter-icon {
-    background: none !important;
-    border: none !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: 24px !important; /* Icônes plus petites */
-    height: 24px !important;
+    width: 28px !important;
+    height: 28px !important;
   }
   
-  /* Corriger l'alignement des flèches de direction sur mobile */
-  .mobile-btn-left,
-  .mobile-btn-right {
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 5px; /* Remonter les icônes de 5px */
-  }
+  /* Les icônes Lucide sont parfaitement alignées par défaut */
 }
 
 /* Supprimer background et box-shadow du SVG dans le bouton de fermeture moderne */
@@ -1805,14 +1850,14 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Language switcher compact en haut */
+/* Language switcher compact en haut à droite */
 .language-switcher-compact {
   display: flex;
   gap: 12px;
-  justify-content: end;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 10;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 15;
 }
 
 .lang-btn-compact {
@@ -1880,7 +1925,8 @@
   }
   
   .language-switcher-compact {
-    padding: 6px 12px;
+    top: 15px;
+    right: 15px;
     gap: 8px;
   }
   
@@ -2728,29 +2774,33 @@
 
 /* Styles pour l'étape 2 */
 .step2-content {
-  padding: 20px;
+  padding: 12px;
+}
+
+.step2-content .game-init-section:first-child h3 {
+  margin-top: 15px;
 }
 
 .selected-difficulty-display {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 20px;
-  margin: 20px 0;
+  padding: 16px;
+  margin: 12px 0;
 }
 
 .difficulty-icon-large {
-  font-size: 3rem;
-  width: 70px;
-  height: 70px;
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(226, 141, 29, 0.15);
-  border-radius: 12px;
+  border-radius: 10px;
   flex-shrink: 0;
 }
 
@@ -2759,40 +2809,43 @@
 }
 
 .difficulty-name-large {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .difficulty-desc-large {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .step2-actions {
   display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-top: 30px;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
 }
 
 .step2-actions .back-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.8);
-  padding: 12px 24px;
-  border-radius: 8px;
+  background: none;
+  border: none;
+  color: rgba(226, 141, 29, 0.9);
+  padding: 8px 0;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(226, 141, 29, 0.5);
 }
 
 .step2-actions .back-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: white;
+  color: rgba(226, 141, 29, 1);
+  text-decoration-color: rgba(226, 141, 29, 0.8);
+  transform: none;
 }
 
 .start-game-btn.primary {
@@ -2818,7 +2871,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 70px;
 }
 
 .final-countdown {
@@ -2934,6 +2987,10 @@
 }
 
 @media (max-width: 768px) {
+  .step2-content {
+    padding: 8px;
+  }
+  
   .gameplay-blocks {
     margin: 20px 0 20px 0;
     gap: 8px;
@@ -2957,16 +3014,22 @@
   .selected-difficulty-display {
     flex-direction: column;
     text-align: center;
-    gap: 16px;
+    gap: 12px;
+    padding: 12px;
+    margin: 8px 0;
   }
   
   .difficulty-icon-large {
     align-self: center;
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
   }
   
   .step2-actions {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    margin-top: 12px;
   }
   
   .step2-actions .back-btn,
