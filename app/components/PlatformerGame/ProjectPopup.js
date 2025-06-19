@@ -1,0 +1,224 @@
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useLanguage } from './GameInitPopup';
+
+const ProjectPopup = ({ isVisible, projectData, onClose }) => {
+  const [showContent, setShowContent] = useState(false);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && isVisible) {
+        onClose();
+      }
+    };
+
+    if (isVisible) {
+      window.addEventListener('keydown', handleEscape);
+      // Réinitialiser l'état du contenu
+      setShowContent(false);
+      // Délai avant d'afficher le contenu avec animation
+      const timer = setTimeout(() => {
+        setShowContent(true);
+      }, 1000); // 1000ms = 1 seconde de délai pour n'afficher que le header
+
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('keydown', handleEscape);
+      };
+    } else {
+      setShowContent(false);
+    }
+  }, [isVisible]);
+
+  if (!isVisible || !projectData) return null;
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleCloseClick = () => {
+    onClose();
+  };
+
+  const handleVisitProject = () => {
+    if (projectData.title) {
+      // Nettoyer le titre et générer le slug de la même manière que dans le portfolio
+      const cleanTitle = projectData.title.replace(/\s*\(\d{4}\)$/, '');
+      const slug = cleanTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      
+      const portfolioUrl = `/portfolio/${slug}`;
+      window.open(portfolioUrl, '_blank');
+    }
+  };
+
+  return (
+    <div className="game-init-overlay" onClick={handleOverlayClick}>
+      <div 
+        className="project-popup" 
+        style={{ 
+          minHeight: !showContent ? '90px' : 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          // Bordure verte moderne pendant la première phase (réussite)
+          border: !showContent ? '3px solid #10b981' : '1px solid rgba(226, 141, 29, 0.2)',
+          boxShadow: !showContent 
+            ? '0 0 25px rgba(16, 185, 129, 0.4), 0 0 50px rgba(52, 211, 153, 0.2), inset 0 0 15px rgba(110, 231, 183, 0.1)' 
+            : '0 10px 30px rgba(0, 0, 0, 0.3)',
+          // Transition fluide pour les changements de style
+          transition: 'border 0.5s ease, box-shadow 0.5s ease'
+        }}
+      >
+        <div className="game-init-content" style={{ flex: 1 }}>
+          <motion.div 
+            className="project-popup-header"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={!showContent ? { background: 'none', padding: 0 } : {}}
+          >
+            <h2 
+              className="game-init-title"
+              style={!showContent ? {
+                padding: '20px 24px',
+                paddingBottom: '0px',
+                backgroundColor: 'rgba(38, 25, 57, 0.95)',
+                borderRadius: '20px 20px 0 0',
+                margin: '0',
+                // Couleur verte moderne et vibrante pour la réussite
+                background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: '0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(52, 211, 153, 0.3)',
+                filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.4))'
+              } : {
+                margin: '0'
+              }}
+            >
+              {t('projectCollected')} <b>({projectData.collectedCount || 1}/{projectData.totalProjects || 10})</b>
+            </h2>
+            <button 
+              className="project-popup-close-btn" 
+              onClick={handleCloseClick}
+              aria-label={t('close')}
+              style={!showContent ? {
+                position: 'absolute',
+                top: '20px',
+                right: '24px',
+                background: 'rgba(0, 0, 0, 0.6)',
+                zIndex: 20
+              } : {}}
+            >
+              ×
+            </button>
+          </motion.div>
+          
+          <motion.div 
+            className="project-popup-content"
+            initial={{ opacity: 0, maxHeight: 0 }}
+            animate={{ 
+              opacity: showContent ? 1 : 0,
+              maxHeight: showContent ? '1000px' : 0
+            }}
+            transition={{ 
+              duration: 0.6, 
+              ease: [0.4, 0, 0.2, 1],
+              opacity: { delay: showContent ? 0.2 : 0 }
+            }}
+            style={{ overflow: 'hidden' }}
+          >
+            {/* Hero section avec image et overlay */}
+            <div className="project-hero-section">
+              <div className="project-image-container">
+                {projectData.imageUrl ? (
+                  <img 
+                    src={projectData.imageUrl} 
+                    alt={projectData.title}
+                    className="project-image"
+                  />
+                ) : (
+                  <div className="project-image-placeholder">
+                    <div className="placeholder-icon"></div>
+                  </div>
+                )}
+                
+                {/* Overlay gradient */}
+                <div className="project-image-overlay"></div>
+                
+                {/* Contenu superposé */}
+                <div className="project-overlay-content">
+                  <h3 className="project-title">
+                    {projectData.title ? projectData.title.replace(/\s*\(\d{4}\)$/, '') : ''}
+                  </h3>
+                  
+                  {/* Badge technologie */}
+                  {projectData.description && (
+                    <div className="project-tech-badge">
+                      <div className="tech-badge-icon"></div>
+                      <span>{projectData.description}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Logo projet */}
+                {projectData.logoUrl && (
+                  <div className="project-logo-corner">
+                    <img 
+                      src={projectData.logoUrl} 
+                      alt={`Logo ${projectData.title}`}
+                      className="project-logo"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Section métadonnées et actions */}
+            <div className="project-bottom-section">
+              {/* Métadonnées */}
+              <div className="project-metadata">
+                {projectData.department && (
+                  <div className="metadata-item">
+                    <div className="metadata-label">{t('company')}</div>
+                    <div className="metadata-value">{projectData.department}</div>
+                  </div>
+                )}
+                {projectData.year && (
+                  <div className="metadata-item">
+                    <div className="metadata-label">{t('year')}</div>
+                    <div className="metadata-value">{projectData.year}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="project-actions">
+                <button 
+                  className="btn-primary"
+                  onClick={handleVisitProject}
+                >
+                  <span className="btn-text">{t('discoverProject')}</span>
+                  <div className="btn-arrow">→</div>
+                </button>
+                <button 
+                  className="btn-secondary"
+                  onClick={handleCloseClick}
+                >
+                  {t('continueAdventure')}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectPopup; 

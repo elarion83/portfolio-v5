@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Star, Trophy, Award, Crown, Sparkles } from 'lucide-react'
+import { Star, Trophy, Award, Crown, Sparkles, Gamepad2 } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
 
 interface AchievementPopupProps {
@@ -10,9 +10,10 @@ interface AchievementPopupProps {
   isVisible: boolean
   level: number
   onClose: () => void
+  onSecret?: () => void
 }
 
-export function AchievementPopup({ achievementId, isVisible, level, onClose }: AchievementPopupProps) {
+export function AchievementPopup({ achievementId, isVisible, level, onClose, onSecret }: AchievementPopupProps) {
   const { language } = useLanguage()
   
   useEffect(() => {
@@ -49,8 +50,9 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose }: A
       initial={{ opacity: 0, y: 50, scale: 0.3 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      className="fixed bottom-4 left-4 z-[9999]"
+      className="fixed bottom-4 left-4 z-[9999] flex flex-col gap-2"
     >
+      {/* Popup principale */}
       <div className="bg-[#261939]/90 backdrop-blur-sm rounded-lg border border-[#e28d1d]/20 shadow-xl">
         <div className="relative">
           {/* Progress bar */}
@@ -61,7 +63,7 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose }: A
             className="absolute bottom-0 left-0 h-0.5 bg-[#e28d1d]"
           />
           
-          <div className="p-3 flex items-start gap-2 ">
+          <div className="p-3 flex items-start gap-2">
             <div className="relative flex-shrink-0 w-10 h-10">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#e28d1d] to-[#e28d1d]/80 rounded-full" />
@@ -125,6 +127,21 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose }: A
           </div>
         </div>
       </div>
+
+      {/* Bouton Jouer sous la popup */}
+      {onSecret && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#e28d1d] to-[#b86e0e] text-white rounded-lg text-sm font-bold shadow-lg hover:shadow-xl hover:from-[#f29d2d] hover:to-[#c87e1e] transition-all transform hover:scale-105 active:scale-95"
+          onClick={onSecret}
+          aria-label={language === 'fr' ? 'Jouer au jeu de plateforme' : 'Play platform game'}
+        >
+          <Gamepad2 className="w-5 h-5" />
+          {language === 'fr' ? 'JOUER AU JEU' : 'PLAY GAME'}
+        </motion.button>
+      )}
     </motion.div>
   )
 } 

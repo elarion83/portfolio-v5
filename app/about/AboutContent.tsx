@@ -142,9 +142,9 @@ const AboutContent = () => {
                   }}
                 />
                 <div className="text-center">
-                  <h4 className="text-white font-semibold">
+                  <h3 className="text-white font-semibold text-lg">
                     {testimonials[activeTestimonial].acf.tem_auteurs}
-                  </h4>
+                  </h3>
                   <p className="text-[#e28d1d]">
                     {language === 'en' ? testimonials[activeTestimonial].acf.tem_post_title_en : testimonials[activeTestimonial].acf.tem_statut}
                   </p>
@@ -155,7 +155,7 @@ const AboutContent = () => {
             <button
               onClick={prevTestimonial}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 text-white/50 hover:text-white transition-colors"
-              aria-label="Previous testimonial"
+              aria-label={language === 'fr' ? 'Témoignage précédent' : 'Previous testimonial'}
             >
               <ChevronLeft className="w-8 h-8" />
             </button>
@@ -163,7 +163,7 @@ const AboutContent = () => {
             <button
               onClick={nextTestimonial}
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 text-white/50 hover:text-white transition-colors"
-              aria-label="Next testimonial"
+              aria-label={language === 'fr' ? 'Témoignage suivant' : 'Next testimonial'}
             >
               <ChevronRight className="w-8 h-8" />
             </button>

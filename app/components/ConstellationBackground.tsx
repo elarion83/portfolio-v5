@@ -2,6 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { AchievementPopup } from './AchievementPopup'
+import SecretComponent from './SecretComponent'
+import { motion, AnimatePresence } from 'framer-motion'
+import { createPortal } from 'react-dom'
 
 interface Point {
   x: number
@@ -57,6 +60,7 @@ export function ConstellationBackground({ showAchievements = true }: Constellati
   const connectedStarsRef = useRef(new Set<string>())
   const [achievement, setAchievement] = useState<Achievement | null>(null)
   const achievedRef = useRef(new Set<string>())
+  const [showSecret, setShowSecret] = useState(false)
 
   const checkAchievement = (count: number) => {
     const nextAchievement = ACHIEVEMENTS
@@ -256,6 +260,24 @@ export function ConstellationBackground({ showAchievements = true }: Constellati
     }
   }, [])
 
+  if (showSecret) {
+    return createPortal(
+      <AnimatePresence>
+        <motion.div
+          key="secret-modal"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.35, ease: 'easeInOut' }}
+          className="fixed inset-0 z-[2147483647] bg-black flex items-center justify-center"
+          style={{ zIndex: 2147483647 }}
+        >
+          <SecretComponent onClose={() => setShowSecret(false)} />
+        </motion.div>
+      </AnimatePresence>,
+      typeof window !== 'undefined' ? document.body : (null as any)
+    )
+  }
   return (
     <>
       <canvas
@@ -269,6 +291,7 @@ export function ConstellationBackground({ showAchievements = true }: Constellati
           isVisible={!!achievement}
           onClose={() => setAchievement(null)}
           level={achievement?.level || 1}
+          onSecret={() => setShowSecret(true)}
         />
       )}
     </>
