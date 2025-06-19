@@ -13,7 +13,14 @@ module.exports = {
   generateIndexSitemap: false,
   additionalPaths: async (config) => {
     // Ajout des routes dynamiques du portfolio et du blog
-    const result = []
+    const result = [
+      {
+        loc: '/jeu',
+        changefreq: 'monthly',
+        priority: 0.6,
+        lastmod: new Date().toISOString()
+      }
+    ]
 
     // Portfolio
     try {
