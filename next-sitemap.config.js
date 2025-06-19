@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://nicolas-gruwe.fr',
+  siteUrl: 'https://www.nicolas-gruwe.fr',
   generateRobotsTxt: false, // On a déjà créé notre robots.txt personnalisé
   changefreq: 'daily',
   priority: 0.7,
