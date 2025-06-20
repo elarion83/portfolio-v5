@@ -525,7 +525,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                         </div>
                       </div>*/}
                       <h2 className="game-init-title">{t('difficulty')}</h2>
-
+                  
                   {/* Sélecteur de difficulté */}
                       <div className="difficulty-section compact">
                     <div className="difficulty-dropdown">

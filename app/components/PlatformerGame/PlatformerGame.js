@@ -201,35 +201,48 @@ function App() {
     window.game = game;
 
     var cb = () => {
-      // Obtenir les dimensions réelles du viewport
-      let width = window.innerWidth;
-      let height = window.innerHeight;
+      // Obtenir les dimensions du viewport
+      let viewportWidth = window.innerWidth;
+      let viewportHeight = window.innerHeight;
 
-      // Sur mobile, on doit gérer le problème du viewport dynamique
-      // et éviter l'étirement causé par la barre d'adresse du navigateur
-      if (window.innerWidth <= 768) { // Mobile
-        // Utiliser la hauteur de viewport CSS si disponible
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        // MOBILE : Ratio d'aspect fixe pour le jeu (16:10) avec letterboxing
+        const gameAspectRatio = 16 / 10;
+        
+        // Sur mobile, ajuster pour la barre d'adresse
         if (window.visualViewport) {
-          height = window.visualViewport.height;
+          viewportHeight = window.visualViewport.height;
         } else {
-          // Fallback : utiliser document.documentElement.clientHeight qui exclut les barres de navigation
-          height = Math.min(window.innerHeight, document.documentElement.clientHeight);
+          viewportHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
         }
-        
-        // S'assurer que le ratio d'aspect reste raisonnable sur mobile
-        const aspectRatio = width / height;
-        
-        // Si le ratio est trop étroit (viewport trop haut), on limite la hauteur
-        if (aspectRatio < 0.6) {
-          height = width / 0.6; // Forcer un ratio minimum de 0.6
+
+        // Calculer les dimensions du canvas en maintenant le ratio 16:10
+        let canvasWidth, canvasHeight;
+        const viewportRatio = viewportWidth / viewportHeight;
+
+        if (viewportRatio > gameAspectRatio) {
+          // L'écran est plus large que 16:10, on limite par la hauteur
+          canvasHeight = viewportHeight;
+          canvasWidth = canvasHeight * gameAspectRatio;
+        } else {
+          // L'écran est plus haut que 16:10, on limite par la largeur
+          canvasWidth = viewportWidth;
+          canvasHeight = canvasWidth / gameAspectRatio;
         }
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        canvas.style.width = canvasWidth + "px";
+        canvas.style.height = canvasHeight + "px";
+      } else {
+        // DESKTOP : Plein écran sans letterboxing (comportement original)
+        canvas.width = viewportWidth;
+        canvas.height = viewportHeight;
+        canvas.style.width = viewportWidth + "px";
+        canvas.style.height = viewportHeight + "px";
       }
-
-      canvas.width = width;
-      canvas.height = height;
-
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
 
       game.camera.updateAspectRatio();
     };
