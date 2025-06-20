@@ -1234,27 +1234,69 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
       0 0 30px rgba(16, 185, 129, 0.8),
       0 0 45px rgba(16, 185, 129, 0.6);
   }
-  /* Particules pour la popup projet */
-  .popup-particles {
+  /* Particules pour la popup projet - dans l'overlay */
+  .popup-particles-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 999; /* Derrière la popup mais devant l'overlay */
+  }
+  
+  .popup-particles-group {
     position: absolute;
+    pointer-events: none;
+  }
+  
+  /* Groupe central - au centre de l'écran */
+  .popup-particles-center {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 20;
-    width: 100%;
-    height: 100%;
+  }
+  
+  /* Groupe haut gauche */
+  .popup-particles-top-left {
+    top: 25%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Groupe haut droite */
+  .popup-particles-top-right {
+    top: 25%;
+    right: 25%;
+    transform: translate(50%, -50%);
+  }
+  
+  /* Groupe bas gauche */
+  .popup-particles-bottom-left {
+    bottom: 25%;
+    left: 25%;
+    transform: translate(-50%, 50%);
+  }
+  
+  /* Groupe bas droite */
+  .popup-particles-bottom-right {
+    bottom: 25%;
+    right: 25%;
+    transform: translate(50%, 50%);
   }
   .popup-particle {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 14px;
+    height: 14px;
     background: radial-gradient(circle, #10b981 0%, #34d399 50%, #6ee7b7 100%);
     border-radius: 50%;
     box-shadow: 
-      0 0 10px rgba(16, 185, 129, 0.8),
-      0 0 20px rgba(16, 185, 129, 0.6),
-      0 0 30px rgba(16, 185, 129, 0.4);
+      0 0 20px rgba(16, 185, 129, 1),
+      0 0 40px rgba(16, 185, 129, 0.9),
+      0 0 60px rgba(16, 185, 129, 0.7),
+      0 0 80px rgba(16, 185, 129, 0.5);
+    opacity: 0; /* Masquer par défaut */
+    border: 2px solid rgba(16, 185, 129, 0.8);
   }
 .particle-0 { animation: particle-burst-0 2s ease-out forwards; }
 .particle-1 { animation: particle-burst-1 2s ease-out forwards; }
@@ -1813,44 +1855,68 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 }
 /* Animations plus douces pour les particules de popup */
 @keyframes popup-particle-burst-0 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(20px, -30px) scale(1.2) rotate(90deg); }
-  100% { transform: translate(40px, -60px) scale(0) rotate(180deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(5px, -5px) scale(0.5) rotate(20deg); }
+  20% { opacity: 1; transform: translate(30px, -40px) scale(2) rotate(120deg); }
+  50% { opacity: 1; transform: translate(80px, -100px) scale(1.8) rotate(250deg); }
+  80% { opacity: 0.8; transform: translate(120px, -150px) scale(1.5) rotate(350deg); }
+  100% { transform: translate(150px, -200px) scale(0) rotate(360deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-1 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(-20px, -30px) scale(1.2) rotate(-90deg); }
-  100% { transform: translate(-40px, -60px) scale(0) rotate(-180deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(-5px, -5px) scale(0.5) rotate(-20deg); }
+  20% { opacity: 1; transform: translate(-30px, -40px) scale(2) rotate(-120deg); }
+  50% { opacity: 1; transform: translate(-80px, -100px) scale(1.8) rotate(-250deg); }
+  80% { opacity: 0.8; transform: translate(-120px, -150px) scale(1.5) rotate(-350deg); }
+  100% { transform: translate(-150px, -200px) scale(0) rotate(-360deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-2 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(30px, 20px) scale(1.2) rotate(120deg); }
-  100% { transform: translate(60px, 40px) scale(0) rotate(240deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(5px, 3px) scale(0.5) rotate(25deg); }
+  20% { opacity: 1; transform: translate(40px, 30px) scale(2) rotate(130deg); }
+  50% { opacity: 1; transform: translate(100px, 80px) scale(1.8) rotate(280deg); }
+  80% { opacity: 0.8; transform: translate(150px, 120px) scale(1.5) rotate(380deg); }
+  100% { transform: translate(200px, 160px) scale(0) rotate(450deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-3 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(-30px, 20px) scale(1.2) rotate(-120deg); }
-  100% { transform: translate(-60px, 40px) scale(0) rotate(-240deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(-5px, 3px) scale(0.5) rotate(-25deg); }
+  20% { opacity: 1; transform: translate(-40px, 30px) scale(2) rotate(-130deg); }
+  50% { opacity: 1; transform: translate(-100px, 80px) scale(1.8) rotate(-280deg); }
+  80% { opacity: 0.8; transform: translate(-150px, 120px) scale(1.5) rotate(-380deg); }
+  100% { transform: translate(-200px, 160px) scale(0) rotate(-450deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-4 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(35px, -10px) scale(1.2) rotate(60deg); }
-  100% { transform: translate(70px, -20px) scale(0) rotate(120deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(4px, -2px) scale(0.5) rotate(15deg); }
+  20% { opacity: 1; transform: translate(60px, -20px) scale(2) rotate(90deg); }
+  50% { opacity: 1; transform: translate(130px, -40px) scale(1.8) rotate(200deg); }
+  80% { opacity: 0.8; transform: translate(180px, -60px) scale(1.5) rotate(300deg); }
+  100% { transform: translate(220px, -80px) scale(0) rotate(360deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-5 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(-35px, -10px) scale(1.2) rotate(-60deg); }
-  100% { transform: translate(-70px, -20px) scale(0) rotate(-120deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(-4px, -2px) scale(0.5) rotate(-15deg); }
+  20% { opacity: 1; transform: translate(-60px, -20px) scale(2) rotate(-90deg); }
+  50% { opacity: 1; transform: translate(-130px, -40px) scale(1.8) rotate(-200deg); }
+  80% { opacity: 0.8; transform: translate(-180px, -60px) scale(1.5) rotate(-300deg); }
+  100% { transform: translate(-220px, -80px) scale(0) rotate(-360deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-6 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(10px, 35px) scale(1.2) rotate(45deg); }
-  100% { transform: translate(20px, 70px) scale(0) rotate(90deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(2px, 4px) scale(0.5) rotate(12deg); }
+  20% { opacity: 1; transform: translate(20px, 60px) scale(2) rotate(70deg); }
+  50% { opacity: 1; transform: translate(40px, 130px) scale(1.8) rotate(170deg); }
+  80% { opacity: 0.8; transform: translate(60px, 180px) scale(1.5) rotate(270deg); }
+  100% { transform: translate(80px, 220px) scale(0) rotate(360deg); opacity: 0; }
 }
 @keyframes popup-particle-burst-7 {
-  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
-  30% { opacity: 1; transform: translate(-10px, 35px) scale(1.2) rotate(-45deg); }
-  100% { transform: translate(-20px, 70px) scale(0) rotate(-90deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; transform: translate(-2px, 4px) scale(0.5) rotate(-12deg); }
+  20% { opacity: 1; transform: translate(-20px, 60px) scale(2) rotate(-70deg); }
+  50% { opacity: 1; transform: translate(-40px, 130px) scale(1.8) rotate(-170deg); }
+  80% { opacity: 0.8; transform: translate(-60px, 180px) scale(1.5) rotate(-270deg); }
+  100% { transform: translate(-80px, 220px) scale(0) rotate(-360deg); opacity: 0; }
 }
 /* ===== SPEEDRUN POPUP STYLES ===== */
 .speedrun-overlay {
@@ -2057,7 +2123,7 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 }
 .leaderboard-item {
   display: grid;
-  grid-template-columns: 40px 1fr 80px 60px;
+  grid-template-columns: 40px 1fr 100px;
   gap: 15px;
   align-items: center;
   padding: 12px 16px;
@@ -2088,12 +2154,7 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 .leaderboard-item .date {
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
-  text-align: center;
-}
-.leaderboard-item .projects {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
+  text-align: right;
 }
 .speedrun-actions {
   display: flex;
@@ -2170,9 +2231,32 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
     font-size: 1.6rem;
   }
   .leaderboard-item {
-    grid-template-columns: 35px 1fr 70px 50px;
-    gap: 10px;
-    padding: 10px 12px;
+    grid-template-columns: 30px 1fr 80px;
+    gap: 8px;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .leaderboard-item .rank {
+    font-size: 0.8rem;
+  }
+  
+  .leaderboard-item .time {
+    font-size: 0.85rem;
+  }
+  
+  .leaderboard-item .date {
+    font-size: 0.7rem;
+  }
+  
+  .leaderboard {
+    padding: 20px 15px;
+    margin-bottom: 25px;
+  }
+  
+  .leaderboard-title {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
   }
   .speedrun-actions {
     flex-direction: column;
@@ -2652,6 +2736,67 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   text-align: center;
   margin-bottom: 24px;
 }
+
+/* Statistiques de jeu dans la popup de pause */
+.pause-game-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pause-stat-item {
+  flex: 1;
+  min-width: 0; /* Permet le shrinking */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.pause-stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.pause-stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.pause-mode-value {
+  color: #e28d1d;
+}
+
+.pause-time-value {
+  font-family: 'Courier New', monospace;
+  color: #10b981;
+  letter-spacing: 0.5px;
+}
+
+.pause-projects-value {
+  color: #8b5cf6;
+}
+
+.pause-collected {
+  color: #10b981;
+}
+
+.pause-separator {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 2px;
+}
+
+.pause-total {
+  color: rgba(255, 255, 255, 0.7);
+}
 .pause-icon {
   display: inline-flex;
   align-items: center;
@@ -2774,6 +2919,24 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
     width: 40px;
     height: 40px;
     font-size: 1.5rem;
+  }
+  
+  /* Maintenir la disposition sur une ligne même sur mobile */
+  .pause-game-stats {
+    gap: 8px;
+  }
+  
+  .pause-stat-item {
+    padding: 12px 8px;
+  }
+  
+  .pause-stat-label {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+  
+  .pause-stat-value {
+    font-size: 0.9rem;
   }
 }
 /* Styles compacts pour mobile - Step 2 */

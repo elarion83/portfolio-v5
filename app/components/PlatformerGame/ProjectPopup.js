@@ -94,6 +94,61 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
 
   return (
     <div className={`game-init-overlay ${isClosing ? 'closing' : ''}`} onClick={handleOverlayClick}>
+      {/* Particules d'ouverture - maintenant dans l'overlay pour être visibles partout */}
+      {showParticles && !showContent && (
+        <div className="popup-particles-overlay">
+          {/* Groupe central de particules */}
+          <div className="popup-particles-group popup-particles-center">
+            {[...Array(12)].map((_, i) => (
+              <div 
+                key={`center-${i}`} 
+                className={`popup-particle popup-particle-${i % 8}`}
+              />
+            ))}
+          </div>
+          
+          {/* Groupe de particules en haut à gauche */}
+          <div className="popup-particles-group popup-particles-top-left">
+            {[...Array(6)].map((_, i) => (
+              <div 
+                key={`top-left-${i}`} 
+                className={`popup-particle popup-particle-${i % 8}`}
+              />
+            ))}
+          </div>
+          
+          {/* Groupe de particules en haut à droite */}
+          <div className="popup-particles-group popup-particles-top-right">
+            {[...Array(6)].map((_, i) => (
+              <div 
+                key={`top-right-${i}`} 
+                className={`popup-particle popup-particle-${i % 8}`}
+              />
+            ))}
+          </div>
+          
+          {/* Groupe de particules en bas à gauche */}
+          <div className="popup-particles-group popup-particles-bottom-left">
+            {[...Array(6)].map((_, i) => (
+              <div 
+                key={`bottom-left-${i}`} 
+                className={`popup-particle popup-particle-${i % 8}`}
+              />
+            ))}
+          </div>
+          
+          {/* Groupe de particules en bas à droite */}
+          <div className="popup-particles-group popup-particles-bottom-right">
+            {[...Array(6)].map((_, i) => (
+              <div 
+                key={`bottom-right-${i}`} 
+                className={`popup-particle popup-particle-${i % 8}`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      
       <div 
         className={`project-popup ${!showContent ? 'phase-1' : 'phase-2'} ${isClosing ? 'closing' : ''}`}
         style={{ 
@@ -110,21 +165,6 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
           position: 'relative'
         }}
       >
-        {/* Particules d'ouverture */}
-        {showParticles && !showContent && (
-          <div className="popup-particles">
-            {[...Array(8)].map((_, i) => (
-              <div 
-                key={i} 
-                className={`popup-particle popup-particle-${i}`}
-                style={{
-                  left: '50%',
-                  top: '50%'
-                }}
-              />
-            ))}
-          </div>
-        )}
         <div className="game-init-content" style={{ flex: 1 }}>
           {/* Bouton de fermeture moderne - masqué pendant la phase 1 */}
           <button 

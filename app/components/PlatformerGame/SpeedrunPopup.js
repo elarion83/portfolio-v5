@@ -489,7 +489,6 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
                   <div className="rank">#{index + 1}</div>
                   <div className="time">{formatTime(time.time)}</div>
                   <div className="date">{formatDate(time.date)}</div>
-                  <div className="projects">{time.projects}/{totalProjects}</div>
                 </div>
               ))}
             </div>
