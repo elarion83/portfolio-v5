@@ -718,20 +718,7 @@ function AppContent({
         currentDifficulty={difficultyConfig}
       />
 
-      <div className={"main-menu" + (menu ? " main-menu-show" : "")}>
-        <h1>Platformer</h1>
-        <p>by: MichaelXF</p>
 
-        <button
-          className='main-btn'
-          onClick={() => {
-            // Start game
-            setMenu(false);
-          }}
-        >
-          Play
-        </button>
-      </div>
 
       <canvas ref={canvasRef} />
 
@@ -739,7 +726,7 @@ function AppContent({
       {!isInitializing && !menu && (
         <>
           {/* Chrono - en bas à droite sur desktop, en haut à droite sur mobile */}
-          <div className={`game-timer ${timerAlert ? 'minute-alert' : ''} ${difficultyConfig?.key === 'discovery' ? 'discovery-mode' : ''}`}>
+          <div className={`game-timer ${timerAlert ? 'minute-alert' : ''}`}>
             <div className="timer-icon">
               <Clock size={18} />
             </div>
