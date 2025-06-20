@@ -249,14 +249,6 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
                   <h3 className="project-title">
                     {projectData.title ? projectData.title.replace(/\s*\(\d{4}\)$/, '') : ''}
                   </h3>
-                  
-                  {/* Badge technologie */}
-                  {projectData.description && (
-                    <div className="project-tech-badge">
-                      <div className="tech-badge-icon"></div>
-                      <span>{projectData.description}</span>
-                    </div>
-                  )}
                 </div>
                 
                 {/* Logo projet */}
@@ -298,10 +290,78 @@ const ProjectPopup = ({ isVisible, projectData, onClose }) => {
               </div>
             </div>
 
-            {/* Section métadonnées et actions */}
+                        {/* Section métadonnées et actions */}
             <div className="project-bottom-section">
+              {/* PageSpeed Metrics */}
+              {projectData.pagespeed && (
+                <div className="pagespeed-metrics">
+                  {Object.entries(projectData.pagespeed).map(([key, value], index) => {
+                    if (!value || value === 0 || value === 'n.a') return null;
+                    
+                    const labels = {
+                      performance: t('performance'),
+                      accessibility: t('accessibility'), 
+                      bestPractices: t('bestPractices'),
+                      seo: t('seo')
+                    };
+                      
+                      const getScoreColor = (score) => {
+                        if (score >= 90) return '#10b981'; // Vert
+                        if (score >= 50) return '#f59e0b'; // Orange
+                        return '#ef4444'; // Rouge
+                      };
+                      
+                      return (
+                        <motion.div 
+                          key={key}
+                          className="pagespeed-metric"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.1 * index, duration: 0.3 }}
+                        >
+                          <div className="metric-circle" style={{ '--score-color': getScoreColor(value) }}>
+                            <svg className="circle-progress" viewBox="0 0 42 42">
+                              <circle
+                                className="circle-background"
+                                cx="21"
+                                cy="21"
+                                r="15.915"
+                                fill="transparent"
+                                stroke="rgba(255,255,255,0.1)"
+                                strokeWidth="2"
+                              />
+                              <motion.circle
+                                className="circle-stroke"
+                                cx="21"
+                                cy="21"
+                                r="15.915"
+                                fill="transparent"
+                                stroke={getScoreColor(value)}
+                                strokeWidth="2"
+                                strokeDasharray="100"
+                                strokeLinecap="round"
+                                initial={{ strokeDashoffset: 100 }}
+                                animate={{ strokeDashoffset: 100 - value }}
+                                transition={{ duration: 1, delay: 0.1 * index, ease: "easeOut" }}
+                              />
+                            </svg>
+                            <div className="metric-score">{value}</div>
+                          </div>
+                          <div className="metric-label">{labels[key]}</div>
+                        </motion.div>
+                      );
+                    })}
+                </div>
+                              )}
+
               {/* Métadonnées */}
               <div className="project-metadata">
+                {projectData.description && (
+                  <div className="metadata-item">
+                    <div className="metadata-label">{t('technology')}</div>
+                    <div className="metadata-value">{projectData.description}</div>
+                  </div>
+                )}
                 {projectData.department && (
                   <div className="metadata-item">
                     <div className="metadata-label">{t('company')}</div>

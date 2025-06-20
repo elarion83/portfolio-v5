@@ -386,9 +386,7 @@ export default class Player extends GameObject {
     const barHeight = 0.08;
     const padding = 0.01;
     
-    // Vérifier si le joueur est près d'un projet pour ajuster l'opacité
-    const isNearProject = this.game.nearProject || false;
-    const baseOpacity = isNearProject ? 0.15 : 1.0; // Quasi transparente près d'un projet
+
     
     const ctx = this.game.ctx;
     const [screenCenterX, screenBarY] = this.game.camera.transformCoordinates(centerX, barY);
@@ -399,9 +397,6 @@ export default class Player extends GameObject {
     const barX = screenCenterX - screenBarWidth / 2;
     
     ctx.save();
-    
-    // Appliquer l'opacité globale
-    ctx.globalAlpha = baseOpacity;
     
     // Fond avec gradient sombre moderne
     const backgroundGradient = ctx.createLinearGradient(barX, screenBarY, barX, screenBarY + screenBarHeight);

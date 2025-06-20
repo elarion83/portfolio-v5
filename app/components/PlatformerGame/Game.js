@@ -141,6 +141,9 @@ export default class Game {
       enemyMultiplier: 1.0,
       oneHitKill: false
     };
+    
+    // Protection contre les appels multiples d'API
+    this.isLoadingProjects = false;
   }
 
   end() {
@@ -268,6 +271,7 @@ export default class Game {
     this.collectedProjectsCount = 0;
     this.chronologicalIndex = 0;
     this.lastProjectCollectedTime = Date.now();
+    this.isLoadingProjects = false; // Réinitialiser le flag de chargement
     
     // Réinitialiser les entités (ennemis)
     this.entities = {};
@@ -321,6 +325,13 @@ export default class Game {
   }
 
   async loadPortfolioItems() {
+    // Protection contre les appels multiples simultanés
+    if (this.isLoadingProjects) {
+      console.log('⏳ Chargement déjà en cours, abandon de cet appel');
+      return;
+    }
+    
+    this.isLoadingProjects = true;
     console.log('📡 Chargement des projets portfolio...');
     try {
       // Déterminer le nombre de projets nécessaires selon le mode
@@ -366,7 +377,13 @@ export default class Game {
               imageUrl: firstProject.acf?.image_background || '',
               logoUrl: firstProject.acf?.logo_url || '',
               department: firstProject.department_name || '',
-              year: firstProject.acf?.annee || ''
+              year: firstProject.acf?.annee || '',
+              pagespeed: firstProject.acf?.informations_pagespeed ? {
+                performance: parseInt(firstProject.acf.informations_pagespeed.performance) || 0,
+                accessibility: parseInt(firstProject.acf.informations_pagespeed.accessibilite) || 0,
+                bestPractices: parseInt(firstProject.acf.informations_pagespeed.bonnes) || 0,
+                seo: parseInt(firstProject.acf.informations_pagespeed.seo) || 0
+              } : null
             })
           );
           console.log(`✅ Mode Histoire: 1 seul projet placé initialement`);
@@ -439,7 +456,13 @@ export default class Game {
             imageUrl: project.acf?.image_background || '',
             logoUrl: project.acf?.logo_url || '',
             department: project.department_name || '',
-            year: project.acf?.annee || ''
+            year: project.acf?.annee || '',
+            pagespeed: project.acf?.informations_pagespeed ? {
+              performance: parseInt(project.acf.informations_pagespeed.performance) || 0,
+              accessibility: parseInt(project.acf.informations_pagespeed.accessibilite) || 0,
+              bestPractices: parseInt(project.acf.informations_pagespeed.bonnes) || 0,
+              seo: parseInt(project.acf.informations_pagespeed.seo) || 0
+            } : null
           })
         );
         }
@@ -450,6 +473,8 @@ export default class Game {
       this.portfolioItems = [];
       this.allProjects = [];
       this.availableProjects = [];
+    } finally {
+      this.isLoadingProjects = false;
     }
   }
 
@@ -569,17 +594,23 @@ export default class Game {
         }
         
         this.portfolioItems.push(
-          new PortfolioItem(this, finalX, finalY, {
-            id: nextProject.id,
-            title: decodeHtmlEntities(nextProject.title.rendered),
-            description: nextProject.acf?.socle_technique || 'Projet',
-            url: nextProject.acf?.url_projet || nextProject.link,
-            type: 'web',
-            imageUrl: nextProject.acf?.image_background || '',
-            logoUrl: nextProject.acf?.logo_url || '',
-            department: nextProject.department_name || '',
-            year: nextProject.acf?.annee || ''
-          })
+                      new PortfolioItem(this, finalX, finalY, {
+              id: nextProject.id,
+              title: decodeHtmlEntities(nextProject.title.rendered),
+              description: nextProject.acf?.socle_technique || 'Projet',
+              url: nextProject.acf?.url_projet || nextProject.link,
+              type: 'web',
+              imageUrl: nextProject.acf?.image_background || '',
+              logoUrl: nextProject.acf?.logo_url || '',
+              department: nextProject.department_name || '',
+              year: nextProject.acf?.annee || '',
+              pagespeed: nextProject.acf?.informations_pagespeed ? {
+                performance: parseInt(nextProject.acf.informations_pagespeed.performance) || 0,
+                accessibility: parseInt(nextProject.acf.informations_pagespeed.accessibilite) || 0,
+                bestPractices: parseInt(nextProject.acf.informations_pagespeed.bonnes) || 0,
+                seo: parseInt(nextProject.acf.informations_pagespeed.seo) || 0
+              } : null
+            })
         );
         console.log(`✅ Nouveau projet placé en (${finalX}, ${finalY}): ${decodeHtmlEntities(nextProject.title.rendered)}`);
       }
@@ -620,7 +651,13 @@ export default class Game {
             imageUrl: newProject.acf?.image_background || '',
             logoUrl: newProject.acf?.logo_url || '',
             department: newProject.department_name || '',
-            year: newProject.acf?.annee || ''
+            year: newProject.acf?.annee || '',
+            pagespeed: newProject.acf?.informations_pagespeed ? {
+              performance: parseInt(newProject.acf.informations_pagespeed.performance) || 0,
+              accessibility: parseInt(newProject.acf.informations_pagespeed.accessibilite) || 0,
+              bestPractices: parseInt(newProject.acf.informations_pagespeed.bonnes) || 0,
+              seo: parseInt(newProject.acf.informations_pagespeed.seo) || 0
+            } : null
           })
         );
         }
