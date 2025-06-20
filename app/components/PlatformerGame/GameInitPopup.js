@@ -373,6 +373,11 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
 
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [tipsCollapsing, setTipsCollapsing] = useState(false);
+  
+  // Nouvel état pour les données API
+  const [portfolioData, setPortfolioData] = useState(null);
+  const [apiError, setApiError] = useState(null);
+  
   const { language, setLanguage, t } = useLanguage();
 
   // Liste des astuces mémorisée
@@ -440,25 +445,55 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     }
   }), [t]);
 
-  // Étape 1: Chargement initial
+  // Étape 1: Chargement initial avec API
   useEffect(() => {
     if (!isVisible || step !== 1) return;
 
     // Si on a déjà chargé une fois, on affiche directement la sélection
-    if (hasLoadedOnce) {
+    if (hasLoadedOnce && portfolioData) {
       setIsLoaded(true);
       return;
     }
 
     setIsLoaded(false);
     setLoadingCountdown(5);
+    setApiError(null);
+
+    // Lancer le chargement API en parallèle du countdown
+    const loadPortfolioData = async () => {
+      try {
+        console.log('📡 Chargement des données portfolio depuis l\'API...');
+        const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100');
+        if (!res.ok) throw new Error('Erreur API');
+        const data = await res.json();
+        // Exclure le projet id 1602 et traiter les données
+        const filtered = data.filter(item => item.id !== 1602);
+        console.log(`📊 ${filtered.length} projets récupérés de l'API`);
+        setPortfolioData(filtered);
+      } catch (error) {
+        console.error('Erreur chargement portfolio:', error);
+        setApiError(error.message);
+      }
+    };
+
+    // Démarrer le chargement API
+    loadPortfolioData();
 
     const timer = setInterval(() => {
       setLoadingCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          setIsLoaded(true);
-          setHasLoadedOnce(true); // Marquer comme chargé
+          // Vérifier que les données sont chargées
+          if (portfolioData || apiError) {
+            setIsLoaded(true);
+            setHasLoadedOnce(true);
+          } else {
+            // Attendre encore un peu si les données ne sont pas prêtes
+            setTimeout(() => {
+              setIsLoaded(true);
+              setHasLoadedOnce(true);
+            }, 1000);
+          }
           return 0;
         }
         return prev - 1;
@@ -466,7 +501,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isVisible, step, hasLoadedOnce]);
+  }, [isVisible, step, hasLoadedOnce, portfolioData]);
 
   // Étape 2: Compteur final
   useEffect(() => {
@@ -479,7 +514,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
           // Différer l'appel à onGameStart pour éviter les mises à jour pendant le rendu
           setTimeout(() => {
             if (onGameStart) {
-              onGameStart(difficulties[selectedDifficulty]);
+              onGameStart(difficulties[selectedDifficulty], portfolioData);
             }
           }, 0);
           return 0;
@@ -549,7 +584,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     // Différer l'appel à onGameStart pour éviter les mises à jour pendant le rendu
     setTimeout(() => {
       if (onGameStart) {
-        onGameStart(difficulties[selectedDifficulty]);
+        onGameStart(difficulties[selectedDifficulty], portfolioData);
       }
     }, 0);
   };

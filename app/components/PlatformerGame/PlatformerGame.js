@@ -472,7 +472,7 @@ function App() {
   }, []);
 
   // Gestion du démarrage du jeu
-  const handleGameStart = (difficulty) => {
+  const handleGameStart = (difficulty, portfolioData) => {
     setDifficultyConfig(difficulty);
     setTotalProjects(difficulty.projectsRequired);
     setIsInitializing(false);
@@ -484,9 +484,10 @@ function App() {
     setFinalTime(null);
     setShowSpeedrunModal(false);
     if (gameRef.current) {
-      // Passer la configuration de difficulté au jeu AVANT de démarrer
+      // Passer la configuration de difficulté ET les données portfolio au jeu AVANT de démarrer
       gameRef.current.setDifficulty(difficulty);
-      // Démarrer le jeu (qui va réinitialiser et recharger les projets)
+      gameRef.current.setPortfolioData(portfolioData);
+      // Démarrer le jeu (qui va réinitialiser et générer les projets depuis les données)
       gameRef.current.start();
     }
     // Déclencher l'invincibilité prolongée après fermeture de GameInitPopup (avec un petit délai)
