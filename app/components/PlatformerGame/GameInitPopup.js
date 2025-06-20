@@ -459,25 +459,27 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     setLoadingCountdown(5);
     setApiError(null);
 
-    // Lancer le chargement API en parallèle du countdown
-    const loadPortfolioData = async () => {
-      try {
-        console.log('📡 Chargement des données portfolio depuis l\'API...');
-        const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100');
-        if (!res.ok) throw new Error('Erreur API');
-        const data = await res.json();
-        // Exclure le projet id 1602 et traiter les données
-        const filtered = data.filter(item => item.id !== 1602);
-        console.log(`📊 ${filtered.length} projets récupérés de l'API`);
-        setPortfolioData(filtered);
-      } catch (error) {
-        console.error('Erreur chargement portfolio:', error);
-        setApiError(error.message);
-      }
-    };
+    // Lancer le chargement API en parallèle du countdown (seulement si pas déjà chargé)
+    if (!portfolioData) {
+      const loadPortfolioData = async () => {
+        try {
+          console.log('📡 Chargement des données portfolio depuis l\'API...');
+          const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100');
+          if (!res.ok) throw new Error('Erreur API');
+          const data = await res.json();
+          // Exclure le projet id 1602 et traiter les données
+          const filtered = data.filter(item => item.id !== 1602);
+          console.log(`📊 ${filtered.length} projets récupérés de l'API`);
+          setPortfolioData(filtered);
+        } catch (error) {
+          console.error('Erreur chargement portfolio:', error);
+          setApiError(error.message);
+        }
+      };
 
-    // Démarrer le chargement API
-    loadPortfolioData();
+      // Démarrer le chargement API
+      loadPortfolioData();
+    }
 
     const timer = setInterval(() => {
       setLoadingCountdown((prev) => {
@@ -501,7 +503,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isVisible, step, hasLoadedOnce, portfolioData]);
+  }, [isVisible, step, hasLoadedOnce]);
 
   // Étape 2: Compteur final
   useEffect(() => {
