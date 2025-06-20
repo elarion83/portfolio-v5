@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from './GameInitPopup';
 import { Trophy, Clock, Target, Award, RotateCcw, ArrowLeft, Share2, Download } from 'lucide-react';
 
-const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects, formatTime, onRestart, onBackToSite }) => {
+const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects, formatTime, onRestart, onBackToSite, difficultyConfig }) => {
   const [showContent, setShowContent] = useState(false);
   const [bestTimes, setBestTimes] = useState([]);
   const [isNewRecord, setIsNewRecord] = useState(false);
@@ -16,6 +16,11 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
 
   useEffect(() => {
     if (isVisible) {
+      console.log('🎯 SpeedrunPopup ouverte');
+      console.log('📊 finalTime reçu:', finalTime);
+      console.log('📊 Type de finalTime:', typeof finalTime);
+      console.log('📊 formatTime(finalTime):', formatTime(finalTime));
+      
       setShowContent(false);
       
       // Délai pour l'animation d'entrée
@@ -26,9 +31,17 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
       // Charger les meilleurs temps depuis localStorage
       loadBestTimes();
     }
-  }, [isVisible]);
+  }, [isVisible, finalTime]);
 
   const loadBestTimes = () => {
+    // Ne pas sauvegarder les temps en mode Histoire
+    if (difficultyConfig?.key === 'discovery') {
+      setBestTimes([]);
+      setIsNewRecord(false);
+      setCurrentRank(null);
+      return;
+    }
+
     try {
       const saved = localStorage.getItem('speedrun-times');
       const times = saved ? JSON.parse(saved) : [];
@@ -96,7 +109,10 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
         hour: '2-digit',
         minute: '2-digit'
       });
-      const shareText = `🎮 J'ai collecté tous les projets en ${formatTime(finalTime)} le ${dateTime} ! Essaye de me battre ! ${window.location.origin}/jeu`;
+      // Texte de partage différent selon le mode
+      const shareText = difficultyConfig?.key === 'discovery' 
+        ? `🎮 J'ai exploré tous les projets le ${dateTime} ! Venez découvrir mon portfolio ! ${window.location.origin}/jeu`
+        : `🎮 J'ai collecté tous les projets en ${formatTime(finalTime)} le ${dateTime} ! Essaye de me battre ! ${window.location.origin}/jeu`;
 
       // 1. Essayer le Web Share API natif (mobile)
       if (navigator.share && navigator.canShare) {
@@ -298,7 +314,10 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
     } catch (error) {
       console.error('Erreur lors du partage:', error);
       // Dernier fallback: alerte avec le texte
-      const shareText = `🎮 J'ai collecté tous les projets en ${formatTime(finalTime)} ! Essaye de me battre ! ${window.location.origin}/jeu`;
+              // Texte de partage différent selon le mode
+        const shareText = difficultyConfig?.key === 'discovery' 
+          ? `🎮 J'ai exploré tous les projets ! Venez découvrir mon portfolio ! ${window.location.origin}/jeu`
+          : `🎮 J'ai collecté tous les projets en ${formatTime(finalTime)} ! Essaye de me battre ! ${window.location.origin}/jeu`;
       alert(t('shareError') + '\n\n' + shareText);
     } finally {
       setIsSharing(false);
@@ -401,15 +420,18 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
           animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 30 }}
           transition={{ delay: 0.8, duration: 0.5 }}
         >
-          <div className="stat-card main-time">
-            <div className="stat-icon">
-              <Clock size={24} />
+          {/* Temps final - masqué en mode Histoire */}
+          {difficultyConfig?.key !== 'discovery' && (
+            <div className="stat-card main-time">
+              <div className="stat-icon">
+                <Clock size={24} />
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">{t('finalTime')}</div>
+                <div className="stat-value main-time-value">{formatTime(finalTime)}</div>
+              </div>
             </div>
-            <div className="stat-content">
-              <div className="stat-label">{t('finalTime')}</div>
-              <div className="stat-value main-time-value">{formatTime(finalTime)}</div>
-            </div>
-          </div>
+          )}
 
           <div className="stat-card">
             <div className="stat-icon">
@@ -421,20 +443,23 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
             </div>
           </div>
 
-          <div className="stat-card grade-card" style={{ borderColor: grade.color }}>
-            <div className="stat-icon" style={{ color: grade.color }}>
-              <span className="grade-emoji">{grade.emoji}</span>
+          {/* Rang - masqué en mode Histoire */}
+          {difficultyConfig?.key !== 'discovery' && (
+            <div className="stat-card grade-card" style={{ borderColor: grade.color }}>
+              <div className="stat-icon" style={{ color: grade.color }}>
+                <span className="grade-emoji">{grade.emoji}</span>
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">{t('rank')}</div>
+                <div className="stat-value" style={{ color: grade.color }}>#{currentRank}</div>
+                <div className="grade-name" style={{ color: grade.color }}>{grade.name}</div>
+              </div>
             </div>
-            <div className="stat-content">
-              <div className="stat-label">{t('rank')}</div>
-              <div className="stat-value" style={{ color: grade.color }}>#{currentRank}</div>
-              <div className="grade-name" style={{ color: grade.color }}>{grade.name}</div>
-            </div>
-          </div>
+          )}
         </motion.div>
 
-        {/* Nouveau record */}
-        {isNewRecord && (
+        {/* Nouveau record - masqué en mode Histoire */}
+        {isNewRecord && difficultyConfig?.key !== 'discovery' && (
           <motion.div 
             className="new-record-banner"
             initial={{ scale: 0, opacity: 0 }}
@@ -446,28 +471,30 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
           </motion.div>
         )}
 
-        {/* Tableau des meilleurs temps */}
-        <motion.div 
-          className="leaderboard"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
-          transition={{ delay: 1.4, duration: 0.5 }}
-        >
-          <h3 className="leaderboard-title">{t('bestTimes')}</h3>
-          <div className="leaderboard-list">
-            {bestTimes.map((time, index) => (
-              <div 
-                key={time.id} 
-                className={`leaderboard-item ${time.id === currentTimeId ? 'current' : ''}`}
-              >
-                <div className="rank">#{index + 1}</div>
-                <div className="time">{formatTime(time.time)}</div>
-                <div className="date">{formatDate(time.date)}</div>
-                <div className="projects">{time.projects}/{totalProjects}</div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+        {/* Tableau des meilleurs temps - masqué en mode Histoire */}
+        {difficultyConfig?.key !== 'discovery' && (
+          <motion.div 
+            className="leaderboard"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
+            transition={{ delay: 1.4, duration: 0.5 }}
+          >
+            <h3 className="leaderboard-title">{t('bestTimes')}</h3>
+            <div className="leaderboard-list">
+              {bestTimes.map((time, index) => (
+                <div 
+                  key={time.id} 
+                  className={`leaderboard-item ${time.id === currentTimeId ? 'current' : ''}`}
+                >
+                  <div className="rank">#{index + 1}</div>
+                  <div className="time">{formatTime(time.time)}</div>
+                  <div className="date">{formatDate(time.date)}</div>
+                  <div className="projects">{time.projects}/{totalProjects}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Actions */}
         <motion.div 

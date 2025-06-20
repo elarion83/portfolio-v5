@@ -9,6 +9,8 @@ import SpriteSheetManager from "./SpriteSheetManager";
 import { v4 } from "uuid";
 import { getRandomInteger } from "./random";
 import PortfolioItem from "./PortfolioItem";
+import ItemManager from "./ItemManager";
+import EffectManager from "./EffectManager";
 import { degreesToRadians } from "./util/MathUtil.js";
 
 // Fonction pour décoder les entités HTML (identique au portfolio)
@@ -51,6 +53,8 @@ export default class Game {
 
     this.inputManager = new InputManager();
     this.particleSystem = new ParticleSystem(this);
+    this.itemManager = new ItemManager(this);
+    this.effectManager = new EffectManager(this);
 
     this.player = new Player(this);
     this.controller = new Controller(this);
@@ -124,8 +128,10 @@ export default class Game {
     this.collisionMap = this.createCollisionMap();
 
     this.portfolioItems = [];
-    this.loadPortfolioItems();
+    this.allProjects = [];
+    this.availableProjects = [];
     this.collectedProjectsCount = 0;
+    this.chronologicalIndex = 0;
     this.lastProjectCollectedTime = Date.now();
     this.nearProject = false; // Track if player is near any project // Temps de la dernière collecte
     
@@ -139,12 +145,42 @@ export default class Game {
 
   end() {
     this.inputManager.end();
+    this.itemManager.clear();
+    this.effectManager.clear();
   }
 
   setDifficulty(config) {
     this.difficultyConfig = config;
     this.difficulty = config; // Aussi accessible via .difficulty
     console.log('Difficulté configurée:', config);
+    
+    // Configurer le système de vie selon la difficulté
+    this.configureHealthSystem();
+  }
+
+  configureHealthSystem() {
+    if (!this.player) return;
+    
+    const diffKey = this.getDifficultyKey();
+    
+    // Modes sans barre de vie
+    if (diffKey === 'discovery' || diffKey === 'darklord') {
+      this.player.setHealthBarVisibility(false);
+    } else {
+      // Modes avec barre de vie (quick, battlefield)
+      this.player.setHealthBarVisibility(true);
+      this.player.resetHealth();
+    }
+  }
+  
+  getDifficultyKey() {
+    if (!this.difficultyConfig) return 'quick';
+    
+    // Déterminer le mode basé sur les propriétés
+    if (this.difficultyConfig.oneHitKill) return 'darklord';
+    if (this.difficultyConfig.enemyMultiplier === 0.5) return 'discovery';
+    if (this.difficultyConfig.enemyMultiplier === 2.0) return 'battlefield';
+    return 'quick';
   }
 
   setPlayerInvincible(isInvincible) {
@@ -222,13 +258,58 @@ export default class Game {
     return [this.canvas.width, this.canvas.height];
   }
 
+  reset() {
+    console.log('🔄 Réinitialisation complète du jeu...');
+    
+    // Réinitialiser tous les projets
+    this.portfolioItems = [];
+    this.allProjects = [];
+    this.availableProjects = [];
+    this.collectedProjectsCount = 0;
+    this.chronologicalIndex = 0;
+    this.lastProjectCollectedTime = Date.now();
+    
+    // Réinitialiser les entités (ennemis)
+    this.entities = {};
+    this.spawnTick = 0;
+    
+    // Réinitialiser les systèmes
+    this.particleSystem.particles = [];
+    this.itemManager.clear();
+    this.effectManager.clear();
+    
+    // Réinitialiser le joueur
+    this.player.x = 2;
+    this.player.y = this.levelHeight - 12;
+    this.player.vx = 0;
+    this.player.vy = 0;
+    this.player.resetHealth();
+    this.player.tilesHistory = [];
+    
+    // Réinitialiser la caméra
+    this.camera.x = 0;
+    this.camera.y = 0;
+    this.camera.followingObject = this.player;
+    
+    console.log('✅ Jeu réinitialisé');
+  }
+
   start() {
+    console.log('🚀 Démarrage du jeu...');
+    
+    // Réinitialisation complète avant de commencer
+    this.reset();
+    
     this.isInitializing = false;
     this.inputManager.start();
-    this.particleSystem.particles = [];
-    this.lastProjectCollectedTime = Date.now(); // Réinitialiser le timer au démarrage
-
-    this.camera.followingObject = this.player;
+    
+    // Recharger les projets selon le mode de difficulté
+    this.loadPortfolioItems();
+    
+    // Configurer le système de vie au démarrage
+    this.configureHealthSystem();
+    
+    console.log('✅ Jeu démarré');
   }
 
   convertIndexToCoordinates(i) {
@@ -240,13 +321,79 @@ export default class Game {
   }
 
   async loadPortfolioItems() {
+    console.log('📡 Chargement des projets portfolio...');
     try {
       const res = await fetch("https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100");
       const data = await res.json();
       // Exclure le projet id 1602
       const filtered = data.filter(item => item.id !== 1602);
+      console.log(`📊 ${filtered.length} projets récupérés de l'API`);
+      
+      // Déterminer le mode de difficulté
+      const diffKey = this.getDifficultyKey();
+      
+      if (diffKey === 'discovery') {
+        // Mode chronologique : inverser l'ordre des projets et placement séquentiel
+        this.allProjects = [...filtered].reverse(); // Ordre chronologique inverse (le plus ancien en premier)
+        this.availableProjects = [...this.allProjects];
+        
+        console.log(`🌟 Mode Histoire: ${this.allProjects.length} projets chargés`);
+        console.log(`📅 Premier projet (le plus ancien): ${this.allProjects[0]?.title?.rendered} (${this.allProjects[0]?.acf?.annee})`);
+        
+        // Créer des positions séquentielles proches les unes des autres
+        this.portfolioItems = [];
+        this.chronologicalIndex = 0; // Index pour suivre la progression chronologique
+        
+        // Placer seulement le premier projet au début (le plus ancien)
+        if (this.availableProjects.length > 0) {
+          const firstProject = this.availableProjects[0];
+          console.log(`🎯 Placement du premier projet: ${decodeHtmlEntities(firstProject.title.rendered)}`);
+          this.portfolioItems.push(
+            new PortfolioItem(this, 3, 18, { // Position de départ
+              id: firstProject.id,
+              title: decodeHtmlEntities(firstProject.title.rendered),
+              description: firstProject.acf?.socle_technique || 'Projet',
+              url: firstProject.acf?.url_projet || firstProject.link,
+              type: 'web',
+              imageUrl: firstProject.acf?.image_background || '',
+              logoUrl: firstProject.acf?.logo_url || '',
+              department: firstProject.department_name || '',
+              year: firstProject.acf?.annee || ''
+            })
+          );
+          console.log(`✅ Mode Histoire: 1 seul projet placé initialement`);
+        }
+      } else {
+        // Modes normaux : placement aléatoire
       this.allProjects = filtered;
-      this.availableProjects = [...filtered];
+        
+        // Déterminer le nombre de projets selon le mode
+        let maxProjects;
+        if (this.difficultyConfig && this.difficultyConfig.projectsRequired) {
+          // Utiliser la configuration de difficulté si disponible
+          if (diffKey === 'darklord' && this.difficultyConfig.projectsRequired > 20) {
+            // Pour le mode Seigneur des ténèbres en production, utiliser tous les projets
+            maxProjects = filtered.length;
+          } else {
+            // Pour tous les autres modes, utiliser la valeur configurée
+            maxProjects = this.difficultyConfig.projectsRequired;
+          }
+        } else {
+          // Fallback sur l'ancienne logique si pas de config
+          if (diffKey === 'quick') {
+            maxProjects = 10;
+          } else if (diffKey === 'battlefield') {
+            maxProjects = 15;
+          } else if (diffKey === 'darklord') {
+            maxProjects = filtered.length;
+          } else {
+            maxProjects = 10;
+          }
+        }
+        
+        // Limiter les projets disponibles selon le mode
+        this.availableProjects = [...filtered].slice(0, maxProjects);
+        console.log(`🎯 Mode ${diffKey}: ${this.availableProjects.length} projets sur ${filtered.length} disponibles`);
 
       // Trouver les emplacements valides (1ère, 3e, 5e case vide au-dessus d'une plateforme par colonne)
       // Exclure les 2 premières colonnes (x = 0 et x = 1)
@@ -274,9 +421,10 @@ export default class Game {
         [validPositions[i], validPositions[j]] = [validPositions[j], validPositions[i]];
       }
 
-      // Créer les items initiaux (max 10 visibles simultanément, mais 39 projets au total)
+        // Créer les items initiaux (max 10 visibles simultanément)
       this.portfolioItems = [];
-      for (let i = 0; i < Math.min(validPositions.length, this.availableProjects.length, 10); i++) {
+        const itemsToPlace = Math.min(validPositions.length, this.availableProjects.length, 10);
+        for (let i = 0; i < itemsToPlace; i++) {
         const pos = validPositions[i];
         const project = this.availableProjects.shift();
         this.portfolioItems.push(
@@ -292,6 +440,8 @@ export default class Game {
             year: project.acf?.annee || ''
           })
         );
+        }
+        console.log(`✅ ${this.portfolioItems.length} projets placés initialement`);
       }
     } catch (e) {
       console.error('Erreur chargement projets:', e);
@@ -309,7 +459,130 @@ export default class Game {
       this.collectedProjectsCount++;
       this.lastProjectCollectedTime = Date.now(); // Mettre à jour le temps de collecte
     }
-    // Ajouter un nouveau projet si disponible
+    
+    const diffKey = this.getDifficultyKey();
+    
+    if (diffKey === 'discovery') {
+      // Mode chronologique : placer le prochain projet dans l'ordre chronologique
+      this.chronologicalIndex++;
+      console.log(`📈 Mode Histoire: passage au projet ${this.chronologicalIndex + 1}/${this.allProjects.length}`);
+      
+      if (this.chronologicalIndex < this.allProjects.length) {
+        const nextProject = this.allProjects[this.chronologicalIndex];
+        console.log(`🔄 Prochain projet: ${decodeHtmlEntities(nextProject.title.rendered)} (${nextProject.acf?.annee})`);
+        
+        // Trouver la position du projet précédent (qui vient d'être collecté)
+        const previousProject = itemToReplace;
+        const previousX = previousProject.x;
+        const previousY = previousProject.y;
+        
+        console.log(`📍 Position du projet précédent: (${previousX}, ${previousY})`);
+        
+        // Placer le nouveau projet 5-8 colonnes à droite
+        const offsetX = 5 + Math.floor(Math.random() * 4); // 5, 6, 7 ou 8 colonnes à droite
+        let targetX = previousX + offsetX;
+        
+        // S'assurer qu'on ne dépasse pas les limites de la carte
+        if (targetX >= this.levelWidth - 1) {
+          // Si on dépasse à droite, revenir au début avec un peu de décalage
+          targetX = 3 + Math.floor(Math.random() * 2); // Position 3 ou 4
+          console.log(`🔄 Retour au début de la carte: colonne ${targetX}`);
+        }
+        
+        console.log(`🎯 Recherche position en colonne ${targetX} [+${offsetX} colonnes à droite (5-8)]`);
+        
+        // Trouver les positions valides dans cette colonne (1ère, 3ème, 5ème, 7ème case au-dessus d'une plateforme)
+        const validPositionsInColumn = [];
+        let found = 0;
+        for (let y = 1; y < this.levelHeight; y++) {
+          const idx = this.convertCoordinatesToIndex(targetX, y);
+          const idxBelow = this.convertCoordinatesToIndex(targetX, y + 1);
+          if (
+            this.map[idx] === 0 &&
+            this.map[idxBelow] === 5
+          ) {
+            found++;
+            if (found === 1 || found === 3 || found === 5 || found === 7) {
+              validPositionsInColumn.push(y);
+              console.log(`📍 Position valide trouvée en colonne ${targetX}: hauteur ${y} (${found}ème position)`);
+            }
+          }
+        }
+        
+        let finalX = targetX;
+        let finalY;
+        
+        if (validPositionsInColumn.length > 0) {
+          // Choisir une position valide au hasard parmi celles disponibles
+          finalY = validPositionsInColumn[Math.floor(Math.random() * validPositionsInColumn.length)];
+          console.log(`✅ Position choisie: (${finalX}, ${finalY}) parmi ${validPositionsInColumn.length} positions valides`);
+        } else {
+          // Si aucune position valide dans cette colonne, chercher dans les colonnes adjacentes
+          console.log(`⚠️ Aucune position valide en colonne ${targetX}, recherche dans les colonnes adjacentes...`);
+          let foundAlternative = false;
+          
+          for (let deltaX = 1; deltaX <= 3 && !foundAlternative; deltaX++) {
+            for (let direction of [-1, 1]) {
+              const altX = targetX + (direction * deltaX);
+              if (altX >= 2 && altX < this.levelWidth - 1) {
+                const altValidPositions = [];
+                let altFound = 0;
+                for (let y = 1; y < this.levelHeight; y++) {
+                  const idx = this.convertCoordinatesToIndex(altX, y);
+                  const idxBelow = this.convertCoordinatesToIndex(altX, y + 1);
+                  if (this.map[idx] === 0 && this.map[idxBelow] === 5) {
+                    altFound++;
+                    if (altFound === 1 || altFound === 3 || altFound === 5 || altFound === 7) {
+                      altValidPositions.push(y);
+                    }
+                  }
+                }
+                if (altValidPositions.length > 0) {
+                  finalX = altX;
+                  finalY = altValidPositions[Math.floor(Math.random() * altValidPositions.length)];
+                  console.log(`✅ Position alternative trouvée: (${finalX}, ${finalY}) en colonne ${altX}`);
+                  foundAlternative = true;
+                  break;
+                }
+              }
+            }
+          }
+          
+          if (!foundAlternative) {
+            // Fallback : utiliser la position par défaut
+            finalX = 3;
+            finalY = 18;
+            console.log(`❌ Aucune position alternative trouvée, utilisation position par défaut: (${finalX}, ${finalY})`);
+          }
+        }
+        
+        // Vérification finale de la position (devrait être valide grâce à la logique ci-dessus)
+        const idxBelow = this.convertCoordinatesToIndex(finalX, finalY + 1);
+        console.log(`🔍 Vérification finale position (${finalX}, ${finalY}): plateforme en dessous = ${this.map[idxBelow] === 5 ? 'OUI' : 'NON'}`);
+        
+        if (this.map[idxBelow] !== 5) {
+          console.log(`❌ ERREUR: Position finale invalide, utilisation position de secours`);
+          finalX = 3;
+          finalY = 18;
+        }
+        
+        this.portfolioItems.push(
+          new PortfolioItem(this, finalX, finalY, {
+            id: nextProject.id,
+            title: decodeHtmlEntities(nextProject.title.rendered),
+            description: nextProject.acf?.socle_technique || 'Projet',
+            url: nextProject.acf?.url_projet || nextProject.link,
+            type: 'web',
+            imageUrl: nextProject.acf?.image_background || '',
+            logoUrl: nextProject.acf?.logo_url || '',
+            department: nextProject.department_name || '',
+            year: nextProject.acf?.annee || ''
+          })
+        );
+        console.log(`✅ Nouveau projet placé en (${finalX}, ${finalY}): ${decodeHtmlEntities(nextProject.title.rendered)}`);
+      }
+    } else {
+      // Modes normaux : placement aléatoire
     if (this.availableProjects.length > 0) {
       // Recalcule les positions libres valides (1ère, 3e, 5e case par colonne)
       // Exclure les 2 premières colonnes (x = 0 et x = 1)
@@ -348,6 +621,7 @@ export default class Game {
             year: newProject.acf?.annee || ''
           })
         );
+        }
       }
     }
   }
@@ -505,6 +779,9 @@ export default class Game {
       item.render();
     }
 
+    // Affichage des items collectibles
+    this.itemManager.render();
+
     // Indicateur directionnel vers le projet le plus proche
     this.renderDirectionalIndicator();
     
@@ -570,6 +847,8 @@ export default class Game {
       this.fps = Math.floor(1 / delta);
     }
 
+    // Ne pas spawner d'ennemis pendant l'initialisation
+    if (!this.isInitializing) {
     this.spawnTick += delta;
     // Ajuster le taux de spawn selon la difficulté
     const spawnRate = 2 / this.difficultyConfig.enemyMultiplier;
@@ -577,6 +856,7 @@ export default class Game {
       this.spawnTick = 0;
 
       this.spawnEntity();
+      }
     }
 
     this.controller.update(delta);
@@ -599,6 +879,8 @@ export default class Game {
 
     this.player.update(delta);
     this.particleSystem.update(delta);
+    this.itemManager.update(delta);
+    this.effectManager.update(delta);
     this.camera.update(delta);
 
     // Update des items portfolio

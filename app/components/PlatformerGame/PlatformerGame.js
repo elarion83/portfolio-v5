@@ -14,6 +14,7 @@ import DeathPopup from "./DeathPopup";
 import PauseMenuPopup from "./PauseMenuPopup";
 import DesktopControls from "./DesktopControls";
 import MobileControls from "./MobileControls";
+import ActiveEffectsUI from "./ActiveEffectsUI";
 import "./PlatformerGame.css";
 
 function App() {
@@ -133,11 +134,19 @@ function App() {
         // Vérifier si c'est le dernier projet
         if (newCount >= totalProjects) {
           const completionTime = Date.now() - gameStartTime;
+          console.log('🏆 Jeu terminé !');
+          console.log('📊 gameStartTime:', gameStartTime);
+          console.log('📊 Date.now():', Date.now());
+          console.log('📊 completionTime calculé:', completionTime);
+          console.log('📊 Type de completionTime:', typeof completionTime);
+          
           setFinalTime(completionTime);
           setGameCompleted(true);
           
           // Déclencher l'événement de fin de jeu
           setTimeout(() => {
+            console.log('📊 finalTime passé à SpeedrunPopup:', completionTime);
+            setFinalTime(completionTime); // Re-set juste avant l'ouverture
             setShowSpeedrunModal(true);
             window.dispatchEvent(new CustomEvent('gameCompleted', { 
               detail: { 
@@ -182,6 +191,11 @@ function App() {
 
   // Formatage du temps avec millisecondes
   const formatTime = (milliseconds) => {
+    // Gérer les valeurs nulles, undefined ou invalides
+    if (milliseconds == null || isNaN(milliseconds) || milliseconds < 0) {
+      return "00:00.000";
+    }
+    
     const totalMs = Math.floor(milliseconds);
     const mins = Math.floor(totalMs / 60000);
     const secs = Math.floor((totalMs % 60000) / 1000);
@@ -191,6 +205,11 @@ function App() {
 
   // Formatage pour l'affichage en jeu (avec millisecondes)
   const formatTimeSimple = (milliseconds) => {
+    // Gérer les valeurs nulles, undefined ou invalides
+    if (milliseconds == null || isNaN(milliseconds) || milliseconds < 0) {
+      return "00:00.000";
+    }
+    
     const totalMs = Math.floor(milliseconds);
     const mins = Math.floor(totalMs / 60000);
     const secs = Math.floor((totalMs % 60000) / 1000);
@@ -235,6 +254,9 @@ function App() {
     gameRef.current = game;
 
     window.game = game;
+
+    // S'assurer que le joueur est invincible pendant l'initialisation
+    game.setPlayerInvincible(isInitializing);
 
     var cb = () => {
       // Obtenir les dimensions réelles du viewport
@@ -462,9 +484,10 @@ function App() {
     setFinalTime(null);
     setShowSpeedrunModal(false);
     if (gameRef.current) {
-      gameRef.current.start();
-      // Passer la configuration de difficulté au jeu
+      // Passer la configuration de difficulté au jeu AVANT de démarrer
       gameRef.current.setDifficulty(difficulty);
+      // Démarrer le jeu (qui va réinitialiser et recharger les projets)
+      gameRef.current.start();
     }
     // Déclencher l'invincibilité prolongée après fermeture de GameInitPopup (avec un petit délai)
     setTimeout(() => {
@@ -520,6 +543,10 @@ function App() {
   // Handlers pour la modale de pause
   const handlePauseResume = () => {
     setShowPauseMenu(false);
+    // Déclencher l'invincibilité prolongée après fermeture de PauseMenu (avec un petit délai)
+    setTimeout(() => {
+      triggerExtraInvincibility();
+    }, 100);
   };
 
   const handlePauseQuickRestart = () => {
@@ -671,6 +698,7 @@ function AppContent({
         formatTime={formatTime}
         onRestart={handleRestart}
         onBackToSite={handleBackToSite}
+        difficultyConfig={difficultyConfig}
       />
 
       {/* Modale de défaite */}
@@ -678,6 +706,7 @@ function AppContent({
         isVisible={showDeathModal}
         onRestart={handleRestart}
         onBackToSite={handleBackToSite}
+        difficultyConfig={difficultyConfig}
       />
 
       {/* Modale de pause */}
@@ -710,12 +739,15 @@ function AppContent({
       {!isInitializing && !menu && (
         <>
           {/* Chrono - en bas à droite sur desktop, en haut à droite sur mobile */}
-          <div className={`game-timer ${timerAlert ? 'minute-alert' : ''}`}>
+          <div className={`game-timer ${timerAlert ? 'minute-alert' : ''} ${difficultyConfig?.key === 'discovery' ? 'discovery-mode' : ''}`}>
             <div className="timer-icon">
               <Clock size={18} />
             </div>
             <div className="timer-value">{formatTimeSimple(gameMilliseconds)}</div>
           </div>
+
+          {/* Interface des effets actifs */}
+          <ActiveEffectsUI />
 
           {/* Compteur de projets - en bas à droite sur desktop */}
           <div className={`projects-counter ${showCounterParticles ? 'celebrating' : ''}`}>

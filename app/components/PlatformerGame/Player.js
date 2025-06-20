@@ -34,6 +34,14 @@ export default class Player extends GameObject {
      */
     this.game = game;
 
+    // Multiplicateurs d'effets
+    this.speedMultiplier = 1;
+
+    // Système de vie
+    this.maxHealth = 5;
+    this.currentHealth = 5;
+    this.showHealthBar = true; // Sera défini selon la difficulté
+
     this.tiles = {};
     this.tilesHistory = []; // Historique des plateformes touchées avec fade-out
     this.tileFadeOutDuration = 500; // 0.5 secondes de fade-out
@@ -340,11 +348,144 @@ export default class Player extends GameObject {
     this.auraFadeTime = 0;
   }
 
+  // Méthodes pour gérer la vie
+  takeDamage(amount = 1) {
+    if (!this.showHealthBar) return false; // Pas de dégâts si pas de système de vie
+    
+    this.currentHealth = Math.max(0, this.currentHealth - amount);
+    
+    if (this.currentHealth <= 0) {
+      // Déclencher la popup de défaite
+      window.dispatchEvent(new CustomEvent('openDeathModal'));
+      return true; // Le joueur est mort
+    }
+    
+    return false; // Le joueur a survécu
+  }
+
+  heal(amount = 1) {
+    if (!this.showHealthBar) return;
+    this.currentHealth = Math.min(this.maxHealth, this.currentHealth + amount);
+  }
+
+  resetHealth() {
+    this.currentHealth = this.maxHealth;
+  }
+
+  setHealthBarVisibility(visible) {
+    this.showHealthBar = visible;
+  }
+
+  // Afficher la barre de vie au-dessus du joueur
+  renderHealthBar(delta) {
+    if (!this.showHealthBar) return;
+    
+    const centerX = this.x + this.w / 2;
+    const barY = this.y - 0.15; // 20px plus bas (était à -0.4, maintenant à -0.15)
+    const barWidth = 1.2;
+    const barHeight = 0.08;
+    const padding = 0.01;
+    
+    // Vérifier si le joueur est près d'un projet pour ajuster l'opacité
+    const isNearProject = this.game.nearProject || false;
+    const baseOpacity = isNearProject ? 0.15 : 1.0; // Quasi transparente près d'un projet
+    
+    const ctx = this.game.ctx;
+    const [screenCenterX, screenBarY] = this.game.camera.transformCoordinates(centerX, barY);
+    const screenBarWidth = this.game.camera.transformX(barWidth);
+    const screenBarHeight = this.game.camera.transformX(barHeight);
+    const screenPadding = this.game.camera.transformX(padding);
+    
+    const barX = screenCenterX - screenBarWidth / 2;
+    
+    ctx.save();
+    
+    // Appliquer l'opacité globale
+    ctx.globalAlpha = baseOpacity;
+    
+    // Fond avec gradient sombre moderne
+    const backgroundGradient = ctx.createLinearGradient(barX, screenBarY, barX, screenBarY + screenBarHeight);
+    backgroundGradient.addColorStop(0, 'rgba(30, 30, 30, 0.9)');
+    backgroundGradient.addColorStop(1, 'rgba(10, 10, 10, 0.9)');
+    
+    // Fond avec coins arrondis
+    ctx.fillStyle = backgroundGradient;
+    ctx.beginPath();
+    ctx.roundRect(barX, screenBarY, screenBarWidth, screenBarHeight, screenBarHeight / 2);
+    ctx.fill();
+    
+    // Barre de vie avec gradient moderne
+    const healthRatio = this.currentHealth / this.maxHealth;
+    if (healthRatio > 0) {
+      const healthBarWidth = (screenBarWidth - screenPadding * 2) * healthRatio;
+      const healthBarX = barX + screenPadding;
+      const healthBarY = screenBarY + screenPadding;
+      const healthBarHeight = screenBarHeight - screenPadding * 2;
+      
+      // Couleur qui change selon la vie restante
+      let healthGradient;
+      if (healthRatio > 0.6) {
+        // Vert moderne
+        healthGradient = ctx.createLinearGradient(healthBarX, healthBarY, healthBarX, healthBarY + healthBarHeight);
+        healthGradient.addColorStop(0, '#4ade80'); // Vert clair
+        healthGradient.addColorStop(1, '#16a34a'); // Vert foncé
+      } else if (healthRatio > 0.3) {
+        // Jaune/Orange moderne
+        healthGradient = ctx.createLinearGradient(healthBarX, healthBarY, healthBarX, healthBarY + healthBarHeight);
+        healthGradient.addColorStop(0, '#fbbf24'); // Jaune clair
+        healthGradient.addColorStop(1, '#d97706'); // Orange foncé
+      } else {
+        // Rouge moderne
+        healthGradient = ctx.createLinearGradient(healthBarX, healthBarY, healthBarX, healthBarY + healthBarHeight);
+        healthGradient.addColorStop(0, '#f87171'); // Rouge clair
+        healthGradient.addColorStop(1, '#dc2626'); // Rouge foncé
+      }
+      
+      // Barre de vie avec coins arrondis
+      ctx.fillStyle = healthGradient;
+      ctx.beginPath();
+      ctx.roundRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight, healthBarHeight / 2);
+      ctx.fill();
+      
+      // Effet de brillance sur la barre
+      const shineGradient = ctx.createLinearGradient(healthBarX, healthBarY, healthBarX, healthBarY + healthBarHeight / 2);
+      shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+      shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+      
+      ctx.fillStyle = shineGradient;
+      ctx.beginPath();
+      ctx.roundRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight / 2, healthBarHeight / 2);
+      ctx.fill();
+    }
+    
+    // Bordure externe élégante
+    const borderGradient = ctx.createLinearGradient(barX, screenBarY, barX, screenBarY + screenBarHeight);
+    borderGradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+    borderGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.4)');
+    borderGradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+    
+    ctx.strokeStyle = borderGradient;
+    ctx.lineWidth = Math.max(1, this.game.camera.transformX(0.015));
+    ctx.beginPath();
+    ctx.roundRect(barX, screenBarY, screenBarWidth, screenBarHeight, screenBarHeight / 2);
+    ctx.stroke();
+    
+    // Ombre portée subtile
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    ctx.shadowBlur = this.game.camera.transformX(0.02);
+    ctx.shadowOffsetY = this.game.camera.transformX(0.01);
+    
+    ctx.restore();
+  }
+
   render(delta) {
     // Effet d'invincibilité si la popup projet est ouverte
     if (this.game.playerInvincible) {
       this.renderInvincibilityEffect(delta);
     }
+    
+    // Afficher la barre de vie
+    this.renderHealthBar(delta);
     // animator
     this.animationTick += delta * 1000;
 

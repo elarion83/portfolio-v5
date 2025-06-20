@@ -227,6 +227,13 @@ export default class Entity extends GameObject {
         if (this.game.difficultyConfig && this.game.difficultyConfig.oneHitKill) {
           // Déclencher la mort instantanée du joueur
           this.game.player.die();
+        } else {
+          // Modes avec système de vie : infliger des dégâts
+          const playerDied = this.game.player.takeDamage(1);
+          if (playerDied) {
+            // Si le joueur est mort (plus de vie), déclencher la popup de défaite
+            this.game.player.die();
+          }
         }
       }
     }

@@ -16,7 +16,8 @@ export default class Controller {
       return;
     }
 
-    var speed = (this.controlling.onGround ? 6 : 5.5) * delta;
+    var baseSpeed = (this.controlling.onGround ? 6 : 5.5);
+    var speed = baseSpeed * (this.controlling.speedMultiplier || 1) * delta;
 
     if (this.game.inputManager.isKeyDown("shift")) {
       speed /= 5;
@@ -26,13 +27,24 @@ export default class Controller {
       speed /= 5;
     }
 
+    // Vérifier si les popups sont ouvertes pour désactiver les mouvements gauche/droite
+    const isPopupOpen = this.game.playerInvincible && (
+      // Vérifier les popups via les événements DOM ou les états globaux
+      document.querySelector('.project-popup') || 
+      document.querySelector('.pause-menu-popup')
+    );
+
     var left =
-      this.game.inputManager.isKeyDown("a") ||
-      this.game.inputManager.isKeyDown("ArrowLeft");
+      !isPopupOpen && (
+        this.game.inputManager.isKeyDown("a") ||
+        this.game.inputManager.isKeyDown("ArrowLeft")
+      );
 
     var right =
-      this.game.inputManager.isKeyDown("d") ||
-      this.game.inputManager.isKeyDown("ArrowRight");
+      !isPopupOpen && (
+        this.game.inputManager.isKeyDown("d") ||
+        this.game.inputManager.isKeyDown("ArrowRight")
+      );
 
     var move = left ^ right && !this.controlling.animation.disableController;
 

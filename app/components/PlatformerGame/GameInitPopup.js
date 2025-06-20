@@ -81,7 +81,7 @@ const translations = {
     shareError: "Impossible de partager automatiquement. Voici votre score :",
     locale: "fr-FR",
     // Concept du jeu
-    gameConceptIntro: "Découvrez mon portfolio à travers un platformer interactif",
+    gameConceptIntro: "Découvrez mon portfolio à travers un jeu-vidéo platformer interactif",
     // Menu de pause
     gamePaused: "Jeu en pause",
     currentMode: "Mode actuel :",
@@ -89,19 +89,21 @@ const translations = {
     quickRestart: "Recommencer",
     changeDifficulty: "Changer de mode",
     // Niveaux de difficulté
-    difficulty: "Mode :",
+    difficulty: "Mode",
     difficultyQuick: "Partie rapide",
-    difficultyDiscovery: "Découverte",
+    difficultyDiscovery: "Histoire",
     difficultyBattlefield: "Champs de bataille",
     difficultyDarkLord: "Seigneur des ténèbres",
-    difficultyDescQuick: "5 projets - Peu d'ennemis - Idéal pour découvrir",
-    difficultyDescDiscovery: "Tous les projets - Peu d'ennemis",
+    difficultyDescQuick: "10 projets - Peu d'ennemis - Idéal pour découvrir",
+    difficultyDescDiscovery: "35 projets par ordre chronologique - Peu d'ennemis",
     difficultyDescBattlefield: "15 projets - Beaucoup d'ennemis",
-    difficultyDescDarkLord: "Tous les projets - Énormément d'ennemis - Un dégât = mort",
+    difficultyDescDarkLord: "35 projets - Énormément d'ennemis - Un dégât = mort",
     // Popup de défaite
     gameOver: "Défaite !",
     deathMessage: "Vous avez succombé aux ténèbres...",
+    healthSystemSubtitle: "Votre énergie vitale est épuisée...",
     darkLordDeathMessage: "En mode Seigneur des ténèbres, un seul contact avec l'ennemi est fatal. Relevez-vous et tentez à nouveau votre chance !",
+    healthSystemDeathMessage: "Vous avez perdu toute votre énergie vitale face aux ennemis. Récupérez vos forces et recommencez l'aventure !",
     tryAgain: "Réessayer",
     // Étapes de la popup d'init
     step1LoadingTitle: "Initialisation",
@@ -110,13 +112,30 @@ const translations = {
     winCondition: "Condition de victoire :",
     winConditionText: "Collectez tous les projets portfolio le plus rapidement possible !",
     selectedMode: "Mode sélectionné :",
-    backToChoices: "← Retour aux choix",
+    backToChoices: "← Choix du mode",
     startTheGame: "Commencer le jeu",
     getReady: "Préparez-vous...",
     // Blocs gameplay
     gameplayExplore: "Explorez",
     gameplayFight: "Combattez",
-    gameplaySpeedrun: "Chronométrez"
+    gameplaySpeedrun: "Chronométrez",
+    // Caractéristiques du mode
+    modeFeatures: "Caractéristiques :",
+    noTimer: "Aucun chrono",
+    withTimer: "Chrono activé",
+    projectsToCollect: "Projets à collecter",
+    healthPoints: "Points de vie",
+    infiniteHealth: "Vie infinie",
+    simultaneousProjects: "Projet(s) simultané(s)",
+    // Astuces
+    tips: "Astuces",
+    tipDoubleJump: "Sautez 2x pour double jump",
+    tipCollect: "[O] collecte les projets",
+    tipItems: "Les items boostent vos stats !",
+    tipCombat: "Enchaînez les attaques",
+    tipWallJump: "Sautez sur les murs",
+    tipPause: "Faites pause en jeu pour revenir ici",
+    tipSpeed: "Soyez rapide et battez vos amis !"
   },
   en: {
     title: "Initialization",
@@ -199,19 +218,21 @@ const translations = {
     quickRestart: "Quick Restart",
     changeDifficulty: "Change Mode",
     // Niveaux de difficulté
-    difficulty: "Mode :",
+    difficulty: "Mode",
     difficultyQuick: "Quick Game",
-    difficultyDiscovery: "Discovery",
+    difficultyDiscovery: "Story",
     difficultyBattlefield: "Battlefield",
     difficultyDarkLord: "Dark Lord",
-    difficultyDescQuick: "5 projects - Few enemies - Perfect to discover",
-    difficultyDescDiscovery: "All projects - Few enemies",
+    difficultyDescQuick: "10 projects - Few enemies - Perfect to discover",
+    difficultyDescDiscovery: "35 projects by chronological order - Few enemies",
     difficultyDescBattlefield: "15 projects - Many enemies",
-    difficultyDescDarkLord: "All projects - Tons of enemies - One hit = death",
+    difficultyDescDarkLord: "35 projects - Tons of enemies - One hit = death",
     // Popup de défaite
     gameOver: "Game Over!",
     deathMessage: "You have succumbed to darkness...",
+    healthSystemSubtitle: "Your vital energy is depleted...",
     darkLordDeathMessage: "In Dark Lord mode, a single contact with the enemy is fatal. Rise up and try again!",
+    healthSystemDeathMessage: "You have lost all your vital energy against the enemies. Recover your strength and start the adventure again!",
     tryAgain: "Try Again",
     // Étapes de la popup d'init
     step1LoadingTitle: "Initialization",
@@ -220,13 +241,30 @@ const translations = {
     winCondition: "Victory condition:",
     winConditionText: "Collect all portfolio projects as fast as possible!",
     selectedMode: "Selected mode:",
-    backToChoices: "← Back to choices",
+    backToChoices: "← Mode choice",
     startTheGame: "Start the game",
     getReady: "Get ready...",
     // Blocs gameplay
     gameplayExplore: "Explore",
     gameplayFight: "Fight",
-    gameplaySpeedrun: "Speedrun"
+    gameplaySpeedrun: "Speedrun",
+    // Caractéristiques du mode
+    modeFeatures: "Features:",
+    noTimer: "No timer",
+    withTimer: "Timer enabled",
+    projectsToCollect: "Projects to collect",
+    healthPoints: "Health points",
+    infiniteHealth: "Infinite health",
+    simultaneousProjects: "Simultaneous projects",
+    // Astuces
+    tips: "Tips",
+    tipDoubleJump: "Jump 2x for double jump",
+    tipCollect: "[O] collect projects",
+    tipItems: "Items boost your stats!",
+    tipCombat: "Chain your attacks",
+    tipWallJump: "Jump on walls",
+    tipPause: "Pause in-game to come back here",
+    tipSpeed: "Be fast and beat your friends!"
   }
 };
 
@@ -318,10 +356,26 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [finalCountdown, setFinalCountdown] = useState(5);
   const [showFinalCountdown, setShowFinalCountdown] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('quick');
+  const [selectedDifficulty, setSelectedDifficulty] = useState(() => {
+    // Par défaut 'quick', mais garder le mode précédent s'il existe
+    return localStorage.getItem('lastSelectedDifficulty') || 'quick';
+  });
   const [isDifficultyDropdownOpen, setIsDifficultyDropdownOpen] = useState(false);
-  const [victoryConditionsExiting, setVictoryConditionsExiting] = useState(false);
+
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [tipsCollapsing, setTipsCollapsing] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+
+  // Liste des astuces
+  const tips = [
+    t('tipDoubleJump'),
+    t('tipCollect'),
+    t('tipItems'),
+    t('tipCombat'),
+    t('tipWallJump'),
+    t('tipPause'),
+    t('tipSpeed')
+  ];
 
   // Réinitialiser tous les états quand resetKey change
   useEffect(() => {
@@ -332,9 +386,12 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       // hasLoadedOnce reste true pour éviter le spinner
       setFinalCountdown(5);
       setShowFinalCountdown(false);
-      setSelectedDifficulty('discovery');
+      setTipsCollapsing(false);
+      // Garder le mode de la dernière partie lors d'un reset
+      const lastDifficulty = localStorage.getItem('lastSelectedDifficulty') || 'quick';
+      setSelectedDifficulty(lastDifficulty);
       setIsDifficultyDropdownOpen(false);
-      setVictoryConditionsExiting(false);
+
     }
   }, [resetKey]);
 
@@ -344,7 +401,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       name: t('difficultyQuick'),
       description: t('difficultyDescQuick'),
       icon: '⚡',
-      projectsRequired: 5,
+      projectsRequired: process.env.NODE_ENV === 'development' ? 2 : 10,
       enemyMultiplier: 0.3,
       oneHitKill: false
     },
@@ -352,7 +409,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       name: t('difficultyDiscovery'),
       description: t('difficultyDescDiscovery'),
       icon: '🌟',
-      projectsRequired: process.env.NODE_ENV === 'development' ? 5 : 35,
+      projectsRequired: process.env.NODE_ENV === 'development' ? 2 : 35,
       enemyMultiplier: 0.5,
       oneHitKill: false
     },
@@ -360,7 +417,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       name: t('difficultyBattlefield'),
       description: t('difficultyDescBattlefield'),
       icon: '⚔️',
-      projectsRequired: process.env.NODE_ENV === 'development' ? 3 : 15,
+      projectsRequired: process.env.NODE_ENV === 'development' ? 2 : 15,
       enemyMultiplier: 2.0,
       oneHitKill: false
     },
@@ -368,7 +425,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       name: t('difficultyDarkLord'),
       description: t('difficultyDescDarkLord'),
       icon: '💀',
-      projectsRequired: process.env.NODE_ENV === 'development' ? 5 : 35,
+      projectsRequired: process.env.NODE_ENV === 'development' ? 2 : 35,
       enemyMultiplier: 3.0,
       oneHitKill: true
     }
@@ -412,6 +469,8 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
           clearInterval(timer);
           // Lancer le jeu
           if (onGameStart) {
+            // Sauvegarder le mode sélectionné pour la prochaine fois
+            localStorage.setItem('lastSelectedDifficulty', selectedDifficulty);
             onGameStart(difficulties[selectedDifficulty]);
           }
           return 0;
@@ -421,7 +480,18 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [showFinalCountdown]);
+  }, [showFinalCountdown, selectedDifficulty, onGameStart, difficulties]);
+
+  // Faire défiler les astuces à l'étape 2 (plus lentement)
+  useEffect(() => {
+    if (step === 2 && !showFinalCountdown) {
+      const tipTimer = setInterval(() => {
+        setCurrentTipIndex((prev) => (prev + 1) % tips.length);
+      }, 5000); // Changer d'astuce toutes les 5 secondes (plus lent)
+
+      return () => clearInterval(tipTimer);
+    }
+  }, [step, showFinalCountdown, tips.length]);
 
   // Fermer le dropdown quand on clique ailleurs
   useEffect(() => {
@@ -453,21 +523,23 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     setStep(1);
     setShowFinalCountdown(false);
     setFinalCountdown(5);
-    setVictoryConditionsExiting(false);
+    setTipsCollapsing(false);
   };
 
   const handleStartFinalCountdown = () => {
-    // Déclencher l'animation de sortie des conditions de victoire
-    setVictoryConditionsExiting(true);
+    // Déclencher l'animation d'accordéon des astuces vers le haut
+    setTipsCollapsing(true);
     
     // Attendre la fin de l'animation avant de démarrer le countdown
     setTimeout(() => {
       setShowFinalCountdown(true);
-    }, 600); // 600ms pour laisser le temps aux animations de remontée
+    }, 600); // 600ms pour laisser le temps à l'animation d'accordéon
   };
 
   const handleDirectStart = () => {
     if (onGameStart) {
+      // Sauvegarder le mode sélectionné pour la prochaine fois
+      localStorage.setItem('lastSelectedDifficulty', selectedDifficulty);
       onGameStart(difficulties[selectedDifficulty]);
     }
   };
@@ -477,36 +549,85 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
     setIsDifficultyDropdownOpen(false);
   };
 
+  // Obtenir les caractéristiques du mode sélectionné
+  const getModeFeatures = (difficultyKey) => {
+    const difficulty = difficulties[difficultyKey];
+    const features = [];
+    
+    // Chrono
+    features.push({
+      icon: difficultyKey === 'discovery' ? '🚫' : '⏱️',
+      text: difficultyKey === 'discovery' ? t('noTimer') : t('withTimer')
+    });
+    
+    // Projets à collecter
+    features.push({
+      icon: '🎯',
+      text: `${difficulty.projectsRequired} ${t('projectsToCollect').toLowerCase()}`
+    });
+    
+    // Points de vie
+    if (difficultyKey === 'discovery') {
+      features.push({
+        icon: '💚',
+        text: t('infiniteHealth')
+      });
+    } else if (difficultyKey === 'darklord') {
+      features.push({
+        icon: '💀',
+        text: '1 ' + t('healthPoints').toLowerCase()
+      });
+    } else {
+      features.push({
+        icon: '❤️',
+        text: '5 ' + t('healthPoints').toLowerCase()
+      });
+    }
+    
+    // Projets simultanés
+    const simultaneous = difficultyKey === 'discovery' ? 1 : 10;
+    features.push({
+      icon: '📦',
+      text: `${simultaneous} ${t('simultaneousProjects').toLowerCase()}`
+    });
+    
+    return features;
+  };
+
   if (!isVisible) return null;
 
   return (
           <div className={`game-init-overlay ${selectedDifficulty === 'darklord' ? 'dark-lord-mode' : ''}`}>
         <div className={`game-init-popup ${selectedDifficulty === 'darklord' ? 'dark-lord-mode' : ''}`}>
         <div className="game-init-content">
-          {/* Bouton retour au site discret en haut */}
-          <a 
-            href="/" 
-            className="back-to-site-btn"
-            title={t('backToSite')}
-          >
-            {t('backToSite')}
-          </a>
+          {/* Bouton retour au site discret en haut - seulement à l'étape 1 */}
+          {step === 1 && (
+            <a 
+              href="/" 
+              className="back-to-site-btn"
+              title={t('backToSite')}
+            >
+              {t('backToSite')}
+            </a>
+          )}
           
-          {/* Language switcher compact en haut */}
-          <div className="language-switcher-compact">
-            <button 
-              className={`lang-btn-compact ${language === 'fr' ? 'active' : ''}`}
-              onClick={() => handleLanguageChange('fr')}
-            >
-              🇫🇷 FR
-            </button>
-            <button 
-              className={`lang-btn-compact ${language === 'en' ? 'active' : ''}`}
-              onClick={() => handleLanguageChange('en')}
-            >
-              🇬🇧 EN
-            </button>
-          </div>
+          {/* Language switcher compact en haut - seulement à l'étape 1 */}
+          {step === 1 && (
+            <div className="language-switcher-compact">
+              <button 
+                className={`lang-btn-compact ${language === 'fr' ? 'active' : ''}`}
+                onClick={() => handleLanguageChange('fr')}
+              >
+                🇫🇷 FR
+              </button>
+              <button 
+                className={`lang-btn-compact ${language === 'en' ? 'active' : ''}`}
+                onClick={() => handleLanguageChange('en')}
+              >
+                🇬🇧 EN
+              </button>
+            </div>
+          )}
           
           <AnimatePresence mode="wait">
             {/* ÉTAPE 1: Initialisation + Sélection du mode */}
@@ -528,6 +649,9 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5 }}
                 >
+                      {/* Phrase d'introduction du concept - avec le spinner */}
+                      <p className="game-concept-intro">{t('gameConceptIntro')}</p>
+                      
                       <h2 className="game-init-title">{t('step1LoadingTitle')}</h2>
                       <div className="game-init-spinner-container">
                   <GameSpinner />
@@ -543,25 +667,6 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                      
-                      {/* Blocs de gameplay 
-                      <div className="gameplay-blocks">
-                        <div className="gameplay-block">
-                          <div className="gameplay-icon">🗺️</div>
-                          <h4>{t('gameplayExplore')}</h4>
-                        </div>
-                        <div className="gameplay-block">
-                          <div className="gameplay-icon">⚔️</div>
-                          <h4>{t('gameplayFight')}</h4>
-                        </div>
-                        <div className="gameplay-block">
-                          <div className="gameplay-icon">⏱️</div>
-                          <h4>{t('gameplaySpeedrun')}</h4>
-                        </div>
-                      </div>*/}
-                      
-                      {/* Phrase d'introduction du concept */}
-                      <p className="game-concept-intro">{t('gameConceptIntro')}</p>
                       
                       <h2 className="game-init-title">{t('difficulty')}</h2>
                   
@@ -602,6 +707,29 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                     </div>
                   </div>
                   
+                  {/* Tableau des caractéristiques dynamique pour step 1 */}
+                  <motion.div 
+                    className="step1-features-display"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <div className="step1-features-grid">
+                      {getModeFeatures(selectedDifficulty).map((feature, index) => (
+                        <motion.div 
+                          key={`${selectedDifficulty}-${index}`}
+                          className="step1-feature"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                        >
+                          <span className="step1-feature-icon">{feature.icon}</span>
+                          <span className="step1-feature-text">{feature.text}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                  
                   <button 
                         className="start-game-btn compact"
                         onClick={handleProceedToStep2}
@@ -623,7 +751,11 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                         filter: 'blur(1px)'
                       }}
                     />
-                    <span style={{ position: 'relative', zIndex: 10, color: '#ffffff' }}>
+                    <span style={{ position: 'relative', zIndex: 10, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14"/>
+                        <path d="m12 5 7 7-7 7"/>
+                      </svg>
                       {t('startGame')}
                     </span>
                   </button>
@@ -644,58 +776,71 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
               >
 
                 <div className="step2-content">
-                  {/* Règles de victoire */}
+                  {/* Affichage bento ultra compact du mode et caractéristiques */}
                   <motion.div 
-                    className="game-init-section"
-                    animate={victoryConditionsExiting ? { 
-                      opacity: 0, 
-                      y: -30,
-                      scale: 0.95 
-                    } : { 
-                      opacity: 1, 
-                      y: 0,
-                      scale: 1 
-                    }}
-                    transition={{ 
-                      duration: 0.5, 
-                      ease: "easeInOut" 
-                    }}
+                    className="bento-mode-display"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                   >
-                    <h3>{t('winCondition')}</h3>
-                    <p>{t('winConditionText')}</p>
+                    {/* Mode sélectionné */}
+                    <div className="bento-mode-header">
+                      <span className="bento-mode-icon">{difficulties[selectedDifficulty].icon}</span>
+                      <div className="bento-mode-name">{difficulties[selectedDifficulty].name}</div>
+                    </div>
+                    
+                    {/* Grille des caractéristiques */}
+                    <div className="bento-features-grid">
+                      {getModeFeatures(selectedDifficulty).map((feature, index) => (
+                        <div key={index} className="bento-feature">
+                          <span className="bento-feature-icon">{feature.icon}</span>
+                          <span className="bento-feature-text">{feature.text}</span>
+                        </div>
+                      ))}
+                    </div>
                   </motion.div>
 
-                  {/* Détails du mode sélectionné */}
+                  {/* Astuces simplifiées avec effet d'accordéon */}
                   <motion.div 
-                    className="game-init-section"
-                    animate={victoryConditionsExiting ? { 
-                      y: -80,
-                      transition: { duration: 0.6, ease: "easeInOut", delay: 0.1 }
-                    } : { 
+                    className={`simple-tips ${tipsCollapsing ? 'collapsing' : ''}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ 
+                      opacity: tipsCollapsing ? 0 : 1, 
                       y: 0,
-                      transition: { duration: 0.6, ease: "easeInOut" }
+                      height: tipsCollapsing ? 0 : 'auto',
+                      marginTop: tipsCollapsing ? 0 : undefined,
+                      marginBottom: tipsCollapsing ? 0 : undefined
+                    }}
+                    transition={{ 
+                      duration: tipsCollapsing ? 0.6 : 0.5, 
+                      delay: tipsCollapsing ? 0 : 0.2,
+                      ease: tipsCollapsing ? "easeInOut" : "easeOut"
+                    }}
+                    style={{ 
+                      overflow: 'hidden',
+                      transformOrigin: 'top'
                     }}
                   >
-                    <h3>{t('selectedMode')}</h3>
-                    <div className="selected-difficulty-display">
-                      <span className="difficulty-icon-large">{difficulties[selectedDifficulty].icon}</span>
-                      <div className="difficulty-details">
-                        <div className="difficulty-name-large">{difficulties[selectedDifficulty].name}</div>
-                        <div className="difficulty-desc-large">{difficulties[selectedDifficulty].description}</div>
-                      </div>
-                    </div>
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentTipIndex}
+                        className="simple-tip"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      >
+                        {tips[currentTipIndex]}
+                      </motion.div>
+                    </AnimatePresence>
                   </motion.div>
 
                   {/* Compteur ou bouton de démarrage */}
                   <motion.div 
                     className="step2-actions"
-                    animate={victoryConditionsExiting ? { 
-                      y: -80,
-                      transition: { duration: 0.6, ease: "easeInOut", delay: 0.2 }
-                    } : { 
-                      y: 0,
-                      transition: { duration: 0.6, ease: "easeInOut" }
-                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
                   >
                     {!showFinalCountdown ? (
                       <>
@@ -720,7 +865,14 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                               filter: 'blur(1px)'
                             }}
                           />
-                          <span style={{ position: 'relative', zIndex: 10, color: '#ffffff' }}>
+                          <span style={{ position: 'relative', zIndex: 10, color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="6" y1="11" x2="10" y2="11"/>
+                              <line x1="8" y1="9" x2="8" y2="13"/>
+                              <line x1="15" y1="12" x2="15.01" y2="12"/>
+                              <line x1="18" y1="10" x2="18.01" y2="10"/>
+                              <path d="M17.32 5H6.68a4 4 0 0 0-4.48 5.14l.05.24a2 2 0 0 0 1.94 1.62h.01a2 2 0 0 0 2-2.16l-.84-4.32a2 2 0 0 1 2-2.32h8.96a2 2 0 0 1 2 2.32l-.84 4.32a2 2 0 0 0 2 2.16h.01a2 2 0 0 0 1.94-1.62l.05-.24A4 4 0 0 0 17.32 5z"/>
+                            </svg>
                             {t('ready')}
                           </span>
                         </button>
