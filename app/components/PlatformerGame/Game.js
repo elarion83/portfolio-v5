@@ -323,14 +323,22 @@ export default class Game {
   async loadPortfolioItems() {
     console.log('📡 Chargement des projets portfolio...');
     try {
-      const res = await fetch("https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100");
+      // Déterminer le nombre de projets nécessaires selon le mode
+      const diffKey = this.getDifficultyKey();
+      let projectsNeeded = 100; // Fallback par défaut
+      
+      if (this.difficultyConfig && this.difficultyConfig.projectsRequired) {
+        // Pour tous les modes, optimiser selon le nombre requis
+        projectsNeeded = Math.min(this.difficultyConfig.projectsRequired + 10, 100); // +10 pour avoir des options de placement
+      }
+      
+      console.log(`📡 Mode ${diffKey}: récupération de ${projectsNeeded} projets (${this.difficultyConfig?.projectsRequired || 'N/A'} requis)`);
+      
+      const res = await fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=${projectsNeeded}`);
       const data = await res.json();
       // Exclure le projet id 1602
       const filtered = data.filter(item => item.id !== 1602);
-      console.log(`📊 ${filtered.length} projets récupérés de l'API`);
-      
-      // Déterminer le mode de difficulté
-      const diffKey = this.getDifficultyKey();
+      console.log(`📊 ${filtered.length} projets récupérés de l'API (${projectsNeeded} demandés)`);
       
       if (diffKey === 'discovery') {
         // Mode chronologique : inverser l'ordre des projets et placement séquentiel
@@ -370,14 +378,8 @@ export default class Game {
         // Déterminer le nombre de projets selon le mode
         let maxProjects;
         if (this.difficultyConfig && this.difficultyConfig.projectsRequired) {
-          // Utiliser la configuration de difficulté si disponible
-          if (diffKey === 'darklord' && this.difficultyConfig.projectsRequired > 20) {
-            // Pour le mode Seigneur des ténèbres en production, utiliser tous les projets
-            maxProjects = filtered.length;
-          } else {
-            // Pour tous les autres modes, utiliser la valeur configurée
-            maxProjects = this.difficultyConfig.projectsRequired;
-          }
+          // Utiliser la configuration de difficulté pour tous les modes
+          maxProjects = this.difficultyConfig.projectsRequired;
         } else {
           // Fallback sur l'ancienne logique si pas de config
           if (diffKey === 'quick') {
