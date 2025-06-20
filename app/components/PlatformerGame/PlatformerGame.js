@@ -31,8 +31,6 @@ function App() {
   const [gameTime, setGameTime] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [gameMilliseconds, setGameMilliseconds] = useState(0);
-  const [pauseStartTime, setPauseStartTime] = useState(null);
-  const [totalPauseTime, setTotalPauseTime] = useState(0);
   const [collectedProjects, setCollectedProjects] = useState(0);
   // Nombre de projets nécessaires : 5 en dev, 20 en production
   const [totalProjects, setTotalProjects] = useState(process.env.NODE_ENV === 'development' ? 5 : 20);
@@ -62,19 +60,26 @@ function App() {
     }
   };
 
-  // Timer avec millisecondes
+  // Calculer le temps de jeu (en millisecondes)
   useEffect(() => {
     let interval;
-    if (!isInitializing && !menu && !gameCompleted && !showPauseMenu && gameStartTime) {
+    if (gameStartTime && !menu && !gameCompleted) {
       interval = setInterval(() => {
         const now = Date.now();
-        const elapsed = now - gameStartTime - totalPauseTime;
-        setGameTime(Math.floor(elapsed / 1000));
-        setGameMilliseconds(elapsed);
-      }, 10); // Mise à jour toutes les 10ms pour la précision
+        const rawElapsed = now - gameStartTime;
+        
+        // Soustraire le temps de pause du temps total
+        const pausedTime = gameRef.current ? gameRef.current.getTotalPausedTime() : 0;
+        const actualElapsed = rawElapsed - pausedTime;
+        
+        setGameMilliseconds(actualElapsed);
+        setGameTime(Math.floor(actualElapsed / 1000)); // Aussi mettre à jour gameTime
+      }, 10); // Mise à jour toutes les 10ms pour plus de fluidité
     }
-    return () => clearInterval(interval);
-  }, [isInitializing, menu, gameCompleted, showPauseMenu, gameStartTime, totalPauseTime]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [gameStartTime, menu, gameCompleted, gameRef]);
 
   // Assigner le gameTime à l'objet game pour l'animation du tooltip
   useEffect(() => {
@@ -88,25 +93,8 @@ function App() {
     if (gameRef.current) {
       const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || showPauseMenu || extraInvincibilityTimer !== null;
       gameRef.current.setPlayerInvincible(shouldBeInvincible);
-      
-      // Gérer l'état de pause du jeu
-      const isGamePaused = showPauseMenu || isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal;
-      gameRef.current.setPaused(isGamePaused);
     }
   }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, showPauseMenu, extraInvincibilityTimer]);
-
-  // Gérer le temps de pause
-  useEffect(() => {
-    if (showPauseMenu && !pauseStartTime) {
-      // Début de pause
-      setPauseStartTime(Date.now());
-    } else if (!showPauseMenu && pauseStartTime) {
-      // Fin de pause
-      const pauseDuration = Date.now() - pauseStartTime;
-      setTotalPauseTime(prev => prev + pauseDuration);
-      setPauseStartTime(null);
-    }
-  }, [showPauseMenu, pauseStartTime]);
 
   // Gérer l'event listener de pause avec les bonnes conditions
   useEffect(() => {
@@ -115,7 +103,22 @@ function App() {
       if (isInitializing || showSpeedrunModal || showDeathModal || showProjectModal || showControlsModal) {
         return; // Ne pas ouvrir la pause dans ces cas
       }
-      setShowPauseMenu(prev => !prev);
+      
+      if (showPauseMenu) {
+        // Si la pause est déjà ouverte, la fermer et reprendre le jeu
+        console.log('🎮 Fermeture du menu de pause');
+        if (gameRef.current) {
+          gameRef.current.resume();
+        }
+        setShowPauseMenu(false);
+      } else {
+        // Ouvrir la pause et suspendre le jeu
+        console.log('🎮 Ouverture du menu de pause');
+        if (gameRef.current) {
+          gameRef.current.pause();
+        }
+        setShowPauseMenu(true);
+      }
     };
 
     window.addEventListener("openPauseModal", handlePauseModal);
@@ -123,7 +126,7 @@ function App() {
     return () => {
       window.removeEventListener("openPauseModal", handlePauseModal);
     };
-  }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal]);
+  }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal, showPauseMenu, gameRef]);
 
   // Détection des intervalles écoulés pour l'animation rouge du chrono
   useEffect(() => {
@@ -311,14 +314,9 @@ function App() {
       // Fond glassmorphism au lieu du noir
       drawGlassmorphismBackground(ctx, canvas.width, canvas.height, delta, gameRef.current?.difficulty || difficultyConfig);
 
-      // SYSTÈME DE PAUSE COMPLET : arrêter la logique du jeu si la pause est ouverte
-      const isGamePaused = showPauseMenu || isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal;
-      
-      if (game.active && !isGamePaused) {
+      if (game.active) {
         game.updateGame(delta);
       }
-      
-      // Le rendu continue même en pause pour afficher l'état figé du jeu
       game.renderGame(delta);
 
       active && requestAnimationFrame(update);
@@ -507,9 +505,6 @@ function App() {
     setGameCompleted(false);
     setFinalTime(null);
     setShowSpeedrunModal(false);
-    // Réinitialiser les variables de pause
-    setPauseStartTime(null);
-    setTotalPauseTime(0);
     if (gameRef.current) {
       // Passer la configuration de difficulté ET les données portfolio au jeu AVANT de démarrer
       gameRef.current.setDifficulty(difficulty);
@@ -539,9 +534,6 @@ function App() {
     setGameStartTime(null);
     setMenu(false);
     setRestartKey(prev => prev + 1); // Incrémenter pour forcer la réinitialisation
-    // Réinitialiser les variables de pause
-    setPauseStartTime(null);
-    setTotalPauseTime(0);
     // Redémarrer le jeu sera géré par l'utilisateur qui cliquera sur "Lancer le jeu"
   };
 
@@ -573,25 +565,37 @@ function App() {
 
   // Handlers pour la modale de pause
   const handlePauseResume = () => {
+    console.log('🎮 Reprise du jeu demandée');
+    if (gameRef.current) {
+      gameRef.current.resume();
+    }
     setShowPauseMenu(false);
-    // Déclencher l'invincibilité prolongée après fermeture de PauseMenu (avec un petit délai)
-    setTimeout(() => {
-      triggerExtraInvincibility();
-    }, 100);
   };
 
   const handlePauseQuickRestart = () => {
-    setShowPauseMenu(false);
-    // Redémarrer avec la même difficulté (va effacer tous les items via reset())
-    if (difficultyConfig && gameRef.current && gameRef.current.portfolioDataCache) {
-      handleGameStart(difficultyConfig, gameRef.current.portfolioDataCache);
+    console.log('🔄 Redémarrage rapide depuis la pause');
+    if (gameRef.current) {
+      gameRef.current.resume(); // Reprendre avant de redémarrer
+      gameRef.current.reset();
+      gameRef.current.setPortfolioData(gameRef.current.portfolioDataCache);
+      gameRef.current.loadPortfolioItems();
     }
+    setShowPauseMenu(false);
+    setCollectedProjects(0);
+    setGameStartTime(Date.now());
   };
 
   const handlePauseBackToModeSelection = () => {
+    console.log('🔄 Retour à la sélection de mode depuis la pause');
+    if (gameRef.current) {
+      gameRef.current.resume(); // Reprendre avant de réinitialiser
+      gameRef.current.reset();
+    }
     setShowPauseMenu(false);
-    // Retourner à la sélection de mode
-    handleRestart();
+    setIsInitializing(true);
+    setMenu(true);
+    setCollectedProjects(0);
+    setGameStartTime(null);
   };
 
   return (

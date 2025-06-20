@@ -66,7 +66,11 @@ export default class Game {
 
     // État d'initialisation
     this.isInitializing = true;
+    
+    // Système de pause complet
     this.isPaused = false;
+    this.pauseStartTime = null;
+    this.totalPausedTime = 0;
 
     const level = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -193,15 +197,7 @@ export default class Game {
   }
 
   setPlayerInvincible(isInvincible) {
-    this.player.isInvincible = isInvincible;
-  }
-
-  setPaused(isPaused) {
-    this.isPaused = isPaused;
-    // Bloquer aussi les inputs quand le jeu est en pause
-    if (this.inputManager) {
-      this.inputManager.isPaused = isPaused;
-    }
+    this.playerInvincible = isInvincible;
   }
 
   triggerPlayerAuraFadeOut() {
@@ -210,6 +206,38 @@ export default class Game {
     } else {
       console.warn('Player ou triggerAuraFadeOut non disponible dans Game');
     }
+  }
+
+  // Système de pause complet
+  pause() {
+    if (!this.isPaused && !this.isInitializing) {
+      this.isPaused = true;
+      this.pauseStartTime = Date.now();
+      console.log('🎮 Jeu mis en pause');
+    }
+  }
+
+  resume() {
+    if (this.isPaused) {
+      this.isPaused = false;
+      if (this.pauseStartTime) {
+        this.totalPausedTime += Date.now() - this.pauseStartTime;
+        this.pauseStartTime = null;
+      }
+      console.log('🎮 Jeu repris, temps de pause total:', this.totalPausedTime + 'ms');
+    }
+  }
+
+  isPausedState() {
+    return this.isPaused;
+  }
+
+  getTotalPausedTime() {
+    let totalPaused = this.totalPausedTime;
+    if (this.isPaused && this.pauseStartTime) {
+      totalPaused += Date.now() - this.pauseStartTime;
+    }
+    return totalPaused;
   }
 
   spawnEntity() {
@@ -276,49 +304,56 @@ export default class Game {
   }
 
   reset() {
-    console.log('🔄 Réinitialisation complète du jeu...');
+    console.log('🔄 Nettoyage du jeu...');
     
-    // Effacer tous les items spawned (projets portfolio)
-    const portfolioItemsCount = this.portfolioItems.length;
+    // Compter et nettoyer les éléments
+    const portfolioCount = this.portfolioItems.length;
+    const gameItemsCount = this.itemManager.items.length;
+    const entitiesCount = Object.keys(this.entities).length;
+    const particlesCount = this.particleSystem.particles.length;
+    
+    console.log(`📊 Nettoyage: ${portfolioCount} projets, ${gameItemsCount} items, ${entitiesCount} entités, ${particlesCount} particules`);
+
+    // Nettoyer les projets portfolio
     this.portfolioItems = [];
     this.allProjects = [];
     this.availableProjects = [];
     this.collectedProjectsCount = 0;
     this.chronologicalIndex = 0;
+    this.nearProject = false;
     this.lastProjectCollectedTime = Date.now();
-    console.log(`🗑️ ${portfolioItemsCount} projets portfolio effacés`);
-    
-    // Effacer tous les items de jeu (speed boosts, etc.)
-    const gameItemsCount = this.itemManager.items.length;
-    this.itemManager.clear();
-    console.log(`🗑️ ${gameItemsCount} items de jeu effacés`);
-    
-    // Réinitialiser les entités (ennemis)
-    const entitiesCount = Object.keys(this.entities).length;
+
+    // Nettoyer les entités
     this.entities = {};
-    this.spawnTick = 0;
-    console.log(`🗑️ ${entitiesCount} ennemis effacés`);
-    
-    // Réinitialiser les systèmes
-    const particlesCount = this.particleSystem.particles.length;
+
+    // Nettoyer les systèmes
     this.particleSystem.particles = [];
+    this.itemManager.clear();
     this.effectManager.clear();
-    console.log(`🗑️ ${particlesCount} particules effacées`);
-    
+
     // Réinitialiser le joueur
-    this.player.x = 2;
+    this.player.x = 0;
     this.player.y = this.levelHeight - 12;
     this.player.vx = 0;
     this.player.vy = 0;
+    this.player.onGround = false;
     this.player.resetHealth();
-    this.player.tilesHistory = [];
-    
+
     // Réinitialiser la caméra
     this.camera.x = 0;
     this.camera.y = 0;
-    this.camera.followingObject = this.player;
+
+    // Réinitialiser les compteurs
+    this.spawnTick = 0;
+    this.fpsTick = 0;
+    this.fps = 0;
     
-    console.log('✅ Jeu réinitialisé - Tous les items ont été effacés');
+    // Réinitialiser le système de pause
+    this.isPaused = false;
+    this.pauseStartTime = null;
+    this.totalPausedTime = 0;
+
+    console.log('✅ Nettoyage terminé');
   }
 
   start() {
@@ -883,6 +918,11 @@ export default class Game {
   }
 
   updateGame(delta) {
+    // Ne rien faire si le jeu est en pause
+    if (this.isPaused) {
+      return;
+    }
+
     this.fpsTick += delta;
     if (this.fpsTick > 0.5) {
       this.fpsTick = 0;
