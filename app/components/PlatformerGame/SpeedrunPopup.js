@@ -438,8 +438,8 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
               <Target size={24} />
             </div>
             <div className="stat-content">
-              <div className="stat-label">{t('projectsCollected')}</div>
-              <div className="stat-value">{totalProjects}/{totalProjects}</div>
+              <div className="stat-label">{t('gameMode')}</div>
+              <div className="stat-value">{difficultyConfig?.name || t('unknown')}</div>
             </div>
           </div>
 
