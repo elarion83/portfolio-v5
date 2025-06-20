@@ -144,6 +144,21 @@ function App() {
     };
   }, [totalProjects, gameStartTime]);
 
+  // Déclencher automatiquement le zoom reset sur mobile après la disparition de GameInitPopup
+  useEffect(() => {
+    if (!isInitializing && gameStartTime) { // Le jeu vient de commencer
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        setTimeout(() => {
+          // Déclencher directement la fonction de zoom reset au lieu du clic DOM
+          if (window.game && window.game.camera) {
+            window.game.camera.resetZoom();
+          }
+        }, 300); // Délai pour s'assurer que la popup a complètement disparu
+      }
+    }
+  }, [isInitializing, gameStartTime]);
+
   // Formatage du temps avec millisecondes
   const formatTime = (milliseconds) => {
     const totalMs = Math.floor(milliseconds);
@@ -201,48 +216,20 @@ function App() {
     window.game = game;
 
     var cb = () => {
-      // Obtenir les dimensions du viewport
-      let viewportWidth = window.innerWidth;
-      let viewportHeight = window.innerHeight;
+      // Obtenir les dimensions réelles du viewport
+      let width = window.innerWidth;
+      let height = window.innerHeight;
 
-      const isMobile = window.innerWidth <= 768;
-
-      if (isMobile) {
-        // MOBILE : Ratio d'aspect fixe pour le jeu (16:10) avec letterboxing
-        const gameAspectRatio = 16 / 10;
-        
-        // Sur mobile, ajuster pour la barre d'adresse
-        if (window.visualViewport) {
-          viewportHeight = window.visualViewport.height;
-        } else {
-          viewportHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
-        }
-
-        // Calculer les dimensions du canvas en maintenant le ratio 16:10
-        let canvasWidth, canvasHeight;
-        const viewportRatio = viewportWidth / viewportHeight;
-
-        if (viewportRatio > gameAspectRatio) {
-          // L'écran est plus large que 16:10, on limite par la hauteur
-          canvasHeight = viewportHeight;
-          canvasWidth = canvasHeight * gameAspectRatio;
-        } else {
-          // L'écran est plus haut que 16:10, on limite par la largeur
-          canvasWidth = viewportWidth;
-          canvasHeight = canvasWidth / gameAspectRatio;
-        }
-
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        canvas.style.width = canvasWidth + "px";
-        canvas.style.height = canvasHeight + "px";
-      } else {
-        // DESKTOP : Plein écran sans letterboxing (comportement original)
-        canvas.width = viewportWidth;
-        canvas.height = viewportHeight;
-        canvas.style.width = viewportWidth + "px";
-        canvas.style.height = viewportHeight + "px";
+      // Utiliser visualViewport si disponible pour une meilleure gestion du viewport
+      if (window.visualViewport) {
+        height = window.visualViewport.height;
       }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
 
       game.camera.updateAspectRatio();
     };
@@ -374,7 +361,7 @@ function App() {
 
     window.addEventListener("resize", cb);
     
-    // Sur mobile, écouter aussi les changements de visualViewport
+    // Écouter aussi les changements de visualViewport si disponible
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", cb);
     }
@@ -415,7 +402,7 @@ function App() {
       cancelAnimationFrame(update);
       window.removeEventListener("resize", cb);
       
-      // Nettoyer aussi l'event listener visualViewport
+      // Nettoyer l'event listener visualViewport
       if (window.visualViewport) {
         window.visualViewport.removeEventListener("resize", cb);
       }

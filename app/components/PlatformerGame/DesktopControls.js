@@ -14,12 +14,29 @@ const DesktopControls = ({ onShowControlsModal }) => {
         'arrowleft': '←',
         'arrowright': '→',
         ' ': 'Espace',
-        'c': 'C'
+        'c': 'C',
+        '+': '+',
+        '=': '+', // Souvent + nécessite Shift, donc = aussi
+        '-': '−',
+        '_': '−'  // Souvent - avec Shift donne _
       };
       
       if (mappedKeys[key]) {
         const displayKey = mappedKeys[key];
         setPressedKeys(prev => new Set([...prev, displayKey]));
+        
+        // Gérer les actions de zoom
+        if (displayKey === '+' && window.game && window.game.camera) {
+          window.game.camera.zoomIn();
+        } else if (displayKey === '−' && window.game && window.game.camera) {
+          window.game.camera.zoomOut();
+        }
+      }
+      
+      // Gestion spéciale pour la touche 0 (reset zoom)
+      if (key === '0' && window.game && window.game.camera) {
+        setPressedKeys(prev => new Set([...prev, '0']));
+        window.game.camera.resetZoom();
       }
     };
 
@@ -29,7 +46,12 @@ const DesktopControls = ({ onShowControlsModal }) => {
         'arrowleft': '←',
         'arrowright': '→',
         ' ': 'Espace',
-        'c': 'C'
+        'c': 'C',
+        '+': '+',
+        '=': '+',
+        '-': '−',
+        '_': '−',
+        '0': '0'
       };
       
       if (mappedKeys[key]) {

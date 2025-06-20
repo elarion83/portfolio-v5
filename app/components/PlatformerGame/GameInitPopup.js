@@ -118,7 +118,7 @@ const translations = {
     startGame: "Continue",
     ready: "Ready to play ?",
     // Textes pour le jeu
-    projectCollected: "Project discovered!",
+    projectCollected: "Project opened!",
     discoverProject: "Discover project",
     continueAdventure: "Continue adventure",
     gameControls: "Game Controls",
@@ -292,7 +292,6 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [finalCountdown, setFinalCountdown] = useState(5);
   const [showFinalCountdown, setShowFinalCountdown] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('fr');
   const [selectedDifficulty, setSelectedDifficulty] = useState('discovery');
   const [isDifficultyDropdownOpen, setIsDifficultyDropdownOpen] = useState(false);
   const [victoryConditionsExiting, setVictoryConditionsExiting] = useState(false);
@@ -405,8 +404,10 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
   }, [isDifficultyDropdownOpen]);
 
   const handleLanguageChange = (lang) => {
-    setSelectedLanguage(lang);
+    // Utiliser setTimeout pour éviter les mises à jour pendant le rendu
+    setTimeout(() => {
     setLanguage(lang);
+    }, 0);
   };
 
   const handleProceedToStep2 = () => {
@@ -460,13 +461,13 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
           {/* Language switcher compact en haut */}
           <div className="language-switcher-compact">
             <button 
-              className={`lang-btn-compact ${selectedLanguage === 'fr' ? 'active' : ''}`}
+              className={`lang-btn-compact ${language === 'fr' ? 'active' : ''}`}
               onClick={() => handleLanguageChange('fr')}
             >
               🇫🇷 FR
             </button>
             <button 
-              className={`lang-btn-compact ${selectedLanguage === 'en' ? 'active' : ''}`}
+              className={`lang-btn-compact ${language === 'en' ? 'active' : ''}`}
               onClick={() => handleLanguageChange('en')}
             >
               🇬🇧 EN

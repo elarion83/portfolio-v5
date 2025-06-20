@@ -166,12 +166,16 @@ export default class PortfolioItem extends GameObject {
     const [screenX, screenY] = this.game.camera.transformCoordinates(this.x + this.w / 2, this.y - 0.3);
     ctx.save();
     
+    // Détecter si on est sur mobile pour ajuster la taille
+    const isMobile = window.innerWidth <= 768;
+    const mobileScale = isMobile ? 0.75 : 1.0; // 75% sur mobile
+    
     // Animation d'entrée/sortie avec scale et opacité
     const centerX = screenX;
     const centerY = screenY - 60 - 18; // Centre de la tooltip
     
     ctx.translate(centerX, centerY);
-    ctx.scale(this.tooltipScale, this.tooltipScale);
+    ctx.scale(this.tooltipScale * mobileScale, this.tooltipScale * mobileScale);
     ctx.translate(-centerX, -centerY);
     
     // Appliquer l'opacité de l'animation

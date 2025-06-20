@@ -76,7 +76,7 @@ export default class Render {
     // Sauvegarde du contexte
     this.game.ctx.save();
     
-    // Création d'un gradient orange pour les plateformes touchées avec intensité
+    // Création d'un gradient orange intense pour les plateformes touchées
     let gradient;
     if (side === 'left' || side === 'right') {
       gradient = this.game.ctx.createLinearGradient(screenX, screenY, screenX + screenW, screenY);
@@ -84,30 +84,35 @@ export default class Render {
       gradient = this.game.ctx.createLinearGradient(screenX, screenY, screenX, screenY + screenH);
     }
     
-    // Couleurs orange avec transparence basée sur l'intensité
-    gradient.addColorStop(0, `rgba(226, 141, 29, ${0.4 * intensity})`);
-    gradient.addColorStop(0.3, `rgba(226, 141, 29, ${0.25 * intensity})`);
-    gradient.addColorStop(0.7, `rgba(226, 141, 29, ${0.15 * intensity})`);
-    gradient.addColorStop(1, `rgba(226, 141, 29, ${0.1 * intensity})`);
+    // Couleurs orange beaucoup plus intenses et visibles
+    gradient.addColorStop(0, `rgba(255, 165, 0, ${Math.min(0.9, 0.8 * intensity)})`); // Orange vif
+    gradient.addColorStop(0.3, `rgba(226, 141, 29, ${Math.min(0.8, 0.6 * intensity)})`);
+    gradient.addColorStop(0.7, `rgba(255, 140, 0, ${Math.min(0.7, 0.4 * intensity)})`);
+    gradient.addColorStop(1, `rgba(226, 141, 29, ${Math.min(0.6, 0.3 * intensity)})`);
     
     this.game.ctx.fillStyle = gradient;
     this.game.ctx.fillRect(screenX, screenY, screenW, screenH);
     
-    // Effet de brillance orange proportionnel à l'intensité
+    // Effet de brillance orange très intense
     this.game.ctx.globalCompositeOperation = 'screen';
-    this.game.ctx.fillStyle = `rgba(226, 141, 29, ${0.2 * intensity})`;
+    this.game.ctx.fillStyle = `rgba(255, 200, 100, ${Math.min(0.6, 0.4 * intensity)})`;
     this.game.ctx.fillRect(screenX, screenY, screenW, screenH);
     
-    // Bordure orange plus visible avec intensité
+    // Bordure orange très épaisse et visible
     this.game.ctx.globalCompositeOperation = 'source-over';
-    this.game.ctx.strokeStyle = `rgba(226, 141, 29, ${0.6 * intensity})`;
-    this.game.ctx.lineWidth = 2;
+    this.game.ctx.strokeStyle = `rgba(255, 165, 0, ${Math.min(1.0, 0.9 * intensity)})`;
+    this.game.ctx.lineWidth = Math.max(3, intensity * 4); // Bordure plus épaisse
     this.game.ctx.strokeRect(screenX, screenY, screenW, screenH);
     
-    // Effet de lueur orange avec intensité
-    this.game.ctx.shadowColor = `rgba(226, 141, 29, ${0.3 * intensity})`;
-    this.game.ctx.shadowBlur = 4;
+    // Effet de lueur orange très intense
+    this.game.ctx.shadowColor = `rgba(255, 165, 0, ${Math.min(0.8, 0.6 * intensity)})`;
+    this.game.ctx.shadowBlur = Math.max(8, intensity * 12); // Lueur plus intense
     this.game.ctx.strokeRect(screenX, screenY, screenW, screenH);
+    
+    // Bordure interne plus claire pour plus de contraste
+    this.game.ctx.strokeStyle = `rgba(255, 220, 150, ${Math.min(0.7, 0.5 * intensity)})`;
+    this.game.ctx.lineWidth = Math.max(1, intensity * 2);
+    this.game.ctx.strokeRect(screenX + 1, screenY + 1, screenW - 2, screenH - 2);
     
     // Restauration du contexte
     this.game.ctx.restore();
@@ -338,10 +343,10 @@ export default class Render {
     this.game.ctx.restore();
   }
 
-  // Particules orange subtiles autour des plateformes touchées
-  drawOrangePlatformParticles(centerX, centerY, intensity, delta) {
-    // Ne pas afficher de particules si l'intensité est trop faible
-    if (intensity < 0.4) return;
+  // Particules orange intenses autour des plateformes touchées
+  drawOrangePlatformParticles(centerX, centerY, intensity, delta, particleSeed = 0) {
+    // Afficher des particules même pour les intensités faibles
+    if (intensity < 0.2) return;
 
     // Transformer les coordonnées pour l'écran
     const [screenX, screenY] = this.game.camera.transformCoordinates(centerX, centerY);
@@ -349,35 +354,79 @@ export default class Render {
     // Sauvegarde du contexte
     this.game.ctx.save();
     
-    // Nombre de particules basé sur l'intensité
+    // Nombre réduit de particules pour un effet subtil
     const particleCount = Math.floor(intensity * 3 + 1); // 1 à 4 particules
     const time = Date.now() * 0.001; // Temps pour l'animation
     
+    // Utiliser le seed pour créer des patterns uniques par plateforme
+    const seedOffset = particleSeed * 0.001;
+    const speedMultiplier = 0.8 + (Math.sin(particleSeed) * 0.4); // Vitesse unique par plateforme
+    const radiusOffset = Math.sin(particleSeed * 0.5) * 0.1; // Rayon unique par plateforme
+    
+    // Particules principales (orbitales)
     for (let i = 0; i < particleCount; i++) {
-      // Animation circulaire pour chaque particule
-      const angle = (time * 0.5 + i * (Math.PI * 2 / particleCount)) % (Math.PI * 2);
-      const radius = this.game.camera.transformX(0.4 + Math.sin(time * 2 + i) * 0.1); // Rayon variable
+      // Animation circulaire avec pattern unique par plateforme
+      const angle = (time * speedMultiplier + seedOffset + i * (Math.PI * 2 / particleCount)) % (Math.PI * 2);
+      const radius = this.game.camera.transformX(0.3 + radiusOffset + Math.sin(time * 3 + i + seedOffset) * 0.15);
       
       // Position de la particule
       const particleX = screenX + Math.cos(angle) * radius;
-      const particleY = screenY + Math.sin(angle) * radius * 0.5; // Ellipse aplatie
+      const particleY = screenY + Math.sin(angle) * radius * 0.6; // Ellipse plus prononcée
       
-      // Taille et opacité basées sur l'intensité et l'animation
-      const baseSize = this.game.camera.transformX(0.03);
-      const size = baseSize * (0.8 + 0.4 * Math.sin(time * 3 + i));
-      const opacity = intensity * 0.3 * (0.6 + 0.4 * Math.sin(time * 2.5 + i));
+      // Taille et opacité modérées avec variation unique par plateforme
+      const baseSize = this.game.camera.transformX(0.05); // Taille réduite
+      const sizeVariation = Math.sin(particleSeed + i) * 0.2; // Variation de taille unique
+      const size = baseSize * (0.8 + 0.4 * Math.sin(time * 4 + i + seedOffset) + sizeVariation);
+      const opacity = Math.min(0.6, intensity * 0.5 * (0.6 + 0.4 * Math.sin(time * 3 + i + seedOffset)));
       
-      // Dessiner la particule
+      // Dessiner la particule principale
       this.game.ctx.fillStyle = `rgba(226, 141, 29, ${opacity})`;
       this.game.ctx.beginPath();
       this.game.ctx.arc(particleX, particleY, size, 0, Math.PI * 2);
       this.game.ctx.fill();
       
-      // Effet de lueur très subtil
-      this.game.ctx.shadowColor = `rgba(226, 141, 29, ${opacity * 0.5})`;
+      // Effet de lueur modéré
+      this.game.ctx.shadowColor = `rgba(255, 165, 0, ${opacity * 0.4})`;
       this.game.ctx.shadowBlur = size * 2;
       this.game.ctx.fill();
+      
+      // Particule interne plus brillante
+      this.game.ctx.fillStyle = `rgba(255, 200, 100, ${opacity * 0.6})`;
+      this.game.ctx.beginPath();
+      this.game.ctx.arc(particleX, particleY, size * 0.4, 0, Math.PI * 2);
+      this.game.ctx.fill();
     }
+    
+    // Particules secondaires (étincelles) - très réduites avec pattern unique
+    const sparkleCount = Math.floor(intensity * 2); // 0 à 2 étincelles
+    for (let i = 0; i < sparkleCount; i++) {
+      const sparkleSpeedMultiplier = 1.5 + Math.sin(particleSeed + i) * 0.5; // Vitesse unique
+      const sparkleAngle = (time * sparkleSpeedMultiplier + seedOffset + i * (Math.PI * 2 / sparkleCount)) % (Math.PI * 2);
+      const sparkleRadius = this.game.camera.transformX(0.6 + Math.sin(time * 5 + i + seedOffset) * 0.2);
+      
+      const sparkleX = screenX + Math.cos(sparkleAngle) * sparkleRadius;
+      const sparkleY = screenY + Math.sin(sparkleAngle) * sparkleRadius * 0.4;
+      
+      const sparkleSize = this.game.camera.transformX(0.04) * (0.5 + 0.5 * Math.sin(time * 6 + i + seedOffset));
+      const sparkleOpacity = intensity * 0.4 * (0.3 + 0.4 * Math.sin(time * 4 + i + seedOffset));
+      
+      // Étincelle
+      this.game.ctx.fillStyle = `rgba(255, 220, 120, ${sparkleOpacity})`;
+      this.game.ctx.beginPath();
+      this.game.ctx.arc(sparkleX, sparkleY, sparkleSize, 0, Math.PI * 2);
+      this.game.ctx.fill();
+    }
+    
+    // Effet de pulsation centrale avec rythme unique par plateforme
+    const pulseSpeed = 3 + Math.sin(particleSeed) * 2; // Vitesse de pulsation unique
+    const pulseIntensity = 0.5 + 0.5 * Math.sin(time * pulseSpeed + seedOffset);
+    const pulseSize = this.game.camera.transformX(0.15) * pulseIntensity;
+    const pulseOpacity = intensity * 0.4 * pulseIntensity;
+    
+    this.game.ctx.fillStyle = `rgba(226, 141, 29, ${pulseOpacity})`;
+    this.game.ctx.beginPath();
+    this.game.ctx.arc(screenX, screenY, pulseSize, 0, Math.PI * 2);
+    this.game.ctx.fill();
     
     // Restauration du contexte
     this.game.ctx.restore();

@@ -362,11 +362,15 @@ export default class Game {
       var collisionFlag = this.collisionMap[i];
       var [x, y] = this.convertIndexToCoordinates(i);
 
+      // Augmenter la distance de rendu sur mobile pour voir plus de plateformes
+      const isMobile = window.innerWidth <= 768;
+      const renderMargin = isMobile ? 3 : 0; // 3 tiles de marge supplémentaire sur mobile
+
       if (
-        x + 1 > this.camera.startX &&
-        y + 1 > this.camera.startY &&
-        x <= this.camera.endX &&
-        y <= this.camera.endY
+        x + 1 > this.camera.startX - renderMargin &&
+        y + 1 > this.camera.startY - renderMargin &&
+        x <= this.camera.endX + renderMargin &&
+        y <= this.camera.endY + renderMargin
       ) {
         var width = 0.03;
 
@@ -386,14 +390,38 @@ export default class Game {
       }
     }
 
-    // Rendu des 5 dernières plateformes touchées en orange avec particules
+    // Rendu des plateformes touchées en orange avec particules et fade-out progressif
+    // Filtrer pour afficher seulement les plateformes visibles à l'écran
+    const isMobile = window.innerWidth <= 768;
+    const renderMargin = isMobile ? 10 : 0;
+    
     for (var i = 0; i < this.player.tilesHistory.length; i++) {
       var tileEntry = this.player.tilesHistory[i];
       var tile = tileEntry.index;
       var [x, y] = this.convertIndexToCoordinates(parseInt(tile));
       
-      // Calculer l'intensité basée sur l'âge (plus récent = plus intense)
-      var intensity = Math.max(0.3, 1 - (i * 0.15)); // De 1.0 à 0.3
+      // Vérifier si la plateforme est visible à l'écran
+      if (!(x + 1 > this.camera.startX - renderMargin &&
+            y + 1 > this.camera.startY - renderMargin &&
+            x <= this.camera.endX + renderMargin &&
+            y <= this.camera.endY + renderMargin)) {
+        continue; // Passer cette plateforme si elle n'est pas visible
+      }
+      
+      // Calculer l'intensité basée sur l'âge et le fade-out
+      var baseIntensity = i === 0 ? 1.0 : Math.max(0.2, 1 - (i * 0.1)); // Plus récente = 1.0, autres dégradées
+      var intensity = baseIntensity;
+      
+      // Appliquer le fade-out progressif si la tile est en cours de disparition
+      if (tileEntry.fadeOutStartTime) {
+        const currentTime = Date.now();
+        const fadeProgress = (currentTime - tileEntry.fadeOutStartTime) / this.player.tileFadeOutDuration;
+        const fadeMultiplier = Math.max(0, 1 - fadeProgress); // De 1.0 à 0.0
+        intensity *= fadeMultiplier;
+      }
+      
+      // Ne pas afficher si l'intensité est trop faible
+      if (intensity < 0.1) continue;
       
       // Récupérer le flag de collision pour cette tile
       var collisionFlag = this.collisionMap[tile];
@@ -411,14 +439,14 @@ export default class Game {
         this.render.drawOrangeBorder(x, y + 0.95, 1, 0.05, 'bottom', intensity);
       }
       
-      // Ajouter des particules orange subtiles autour de la plateforme
-      this.render.drawOrangePlatformParticles(x + 0.5, y + 0.5, intensity, delta);
+      // Ajouter des particules orange avec pattern unique par plateforme
+      this.render.drawOrangePlatformParticles(x + 0.5, y + 0.5, intensity, delta, tileEntry.particleSeed || 0);
     }
 
     // Aura dégressive autour du joueur
     const playerCenterX = this.player.x + this.player.w / 2;
     const playerCenterY = this.player.y + this.player.h / 2;
-    const auraRadius = 4; // Rayon de l'aura en tiles
+    const auraRadius = 3; // Rayon de l'aura en tiles
     
     // Parcourir toutes les tiles visibles pour l'aura
     for (var i = 0; i < this.map.length; i++) {
@@ -426,11 +454,15 @@ export default class Game {
       var [x, y] = this.convertIndexToCoordinates(i);
       
       // Vérifier si la tile est dans la zone visible et a des collisions
+      // Utiliser la même marge de rendu que pour les bordures normales
+      const isMobile = window.innerWidth <= 768;
+      const renderMargin = 0;
+      
       if (
-        x + 1 > this.camera.startX &&
-        y + 1 > this.camera.startY &&
-        x <= this.camera.endX &&
-        y <= this.camera.endY &&
+        x + 1 > this.camera.startX - renderMargin &&
+        y + 1 > this.camera.startY - renderMargin &&
+        x <= this.camera.endX + renderMargin &&
+        y <= this.camera.endY + renderMargin &&
         collisionFlag > 0
       ) {
         // Calculer la distance du centre de la tile au centre du joueur

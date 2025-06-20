@@ -35,8 +35,9 @@ export default class Player extends GameObject {
     this.game = game;
 
     this.tiles = {};
-    this.tilesHistory = []; // Historique des 5 dernières plateformes touchées
-    this.maxTilesHistory = 5;
+    this.tilesHistory = []; // Historique des plateformes touchées avec fade-out
+    this.tileFadeOutDuration = 500; // 0.5 secondes de fade-out
+    this.tileEffectDuration = 3000; // 3 secondes avant fade-out automatique des anciennes
 
     this.lastLandY = 0;
 
@@ -511,18 +512,38 @@ export default class Player extends GameObject {
           // Mettre à jour le timestamp de la tile existante
           this.tilesHistory[existingIndex].timestamp = Date.now();
         } else {
-          // Ajouter la nouvelle tile
+          // Ajouter la nouvelle tile avec un seed aléatoire pour les particules
           this.tilesHistory.push({
             index: tileIndex,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            particleSeed: Math.random() * 1000 // Seed unique pour randomiser les particules
           });
         }
       }
       
-      // Trier par timestamp (plus récent en premier) et garder seulement les 5 dernières
+      // Trier par timestamp (plus récent en premier)
       this.tilesHistory.sort((a, b) => b.timestamp - a.timestamp);
-      this.tilesHistory = this.tilesHistory.slice(0, this.maxTilesHistory);
+      
+      // Démarrer le fade-out automatique pour les anciennes tiles (garder seulement la plus récente)
+      const currentTime = Date.now();
+      for (let i = 1; i < this.tilesHistory.length; i++) { // Commencer à l'index 1 pour garder la plus récente
+        const tile = this.tilesHistory[i];
+        const age = currentTime - tile.timestamp;
+        if (age > this.tileEffectDuration && !tile.fadeOutStartTime) {
+          tile.fadeOutStartTime = currentTime;
+        }
+      }
     }
+    
+    // Nettoyer les tiles dont le fade-out est terminé
+    const currentTime = Date.now();
+    this.tilesHistory = this.tilesHistory.filter(tile => {
+      if (tile.fadeOutStartTime) {
+        const fadeProgress = (currentTime - tile.fadeOutStartTime) / this.tileFadeOutDuration;
+        return fadeProgress < 1; // Garder seulement si le fade n'est pas terminé
+      }
+      return true; // Garder les tiles actives
+    });
 
     if (!this.onGround && !this.ledgeHang) {
       this.gravityTick += delta;

@@ -12,37 +12,23 @@ export default class Camera {
     this.startX = 0;
     this.startY = 0;
     
-    // Système de zoom - seulement sur mobile
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      this.baseZoomLevel = 1.2; // Léger zoom sur mobile pour une meilleure visibilité
-      this.currentZoomLevel = this.baseZoomLevel;
-      this.minZoomLevel = 0.8;
-      this.maxZoomLevel = 2.5;
-      
-      // Dimensions de base pour le calcul du zoom - ratio fixe 16:10
-      this.baseWidth = 16;
-      this.baseHeight = 10;
-      
-      // Calculer les dimensions initiales avec le zoom
-      this.endX = this.baseWidth / this.currentZoomLevel;
-      this.endY = this.baseHeight / this.currentZoomLevel;
-    } else {
-      // Desktop : pas de zoom, dimensions fixes
-      this.baseZoomLevel = 1.0;
-      this.currentZoomLevel = 1.0;
-      this.minZoomLevel = 1.0;
-      this.maxZoomLevel = 1.0;
-      
-      // Dimensions de base plus larges pour desktop
-      this.baseWidth = 20;
-      this.baseHeight = 12;
-      
-      this.endX = this.baseWidth;
-      this.endY = this.baseHeight;
-    }
+    // Système de zoom uniforme pour tous les appareils
+    this.baseZoomLevel = 1.0;
+    this.currentZoomLevel = this.baseZoomLevel;
+    this.minZoomLevel = 0.5;
+    this.maxZoomLevel = 2.5;
+    
+    // Dimensions de base pour le calcul du zoom - remises normales
+    this.baseWidth = 16;
+    this.baseHeight = 10;
+    
+    // Calculer les dimensions initiales avec le zoom
+    this.endX = this.baseWidth / this.currentZoomLevel;
+    this.endY = this.baseHeight / this.currentZoomLevel;
 
     this.mut = [1, 1];
+    this.offsetX = 0;
+    this.offsetY = 0;
     this.followingObject = null;
     this.followSpeed = 2;
     this.followX = true;
@@ -137,40 +123,16 @@ export default class Camera {
 
   updateAspectRatio(maintainHeight = true) {
     var viewport = this.game.getViewport();
-    const isMobile = window.innerWidth <= 768;
     
-    if (isMobile) {
-      // MOBILE : Maintenir un ratio d'aspect fixe (16:10)
-      const targetGameRatio = 16 / 10; // 1.6
-      const viewportRatio = viewport[0] / viewport[1];
-      
-      // Calculer les nouvelles dimensions en maintenant le ratio d'aspect du jeu
-      let newWidth, newHeight;
-      
-      if (viewportRatio > targetGameRatio) {
-        // Le viewport est plus large que notre ratio cible
-        // On maintient la hauteur et on ajuste la largeur
-        newHeight = this.getHeight();
-        newWidth = newHeight * targetGameRatio;
-      } else {
-        // Le viewport est plus haut que notre ratio cible  
-        // On maintient la largeur et on ajuste la hauteur
-        newWidth = this.getWidth();
-        newHeight = newWidth / targetGameRatio;
-      }
-      
-      this.setPositionCenterAndSize(...this.getCenter(), newWidth, newHeight);
+    // Comportement uniforme pour tous les appareils - adaptation libre selon le viewport
+    if (maintainHeight) {
+      var height = this.getHeight();
+      var newWidth = height * (viewport[0] / viewport[1]);
+      this.setPositionCenterAndSize(...this.getCenter(), newWidth, height);
     } else {
-      // DESKTOP : Comportement original (s'adapter au viewport sans ratio fixe)
-      if (maintainHeight) {
-        var height = this.getHeight();
-        var newWidth = height * (viewport[0] / viewport[1]);
-        this.setPositionCenterAndSize(...this.getCenter(), newWidth, height);
-      } else {
-        var width = this.getWidth();
-        var newHeight = width * (viewport[1] / viewport[0]);
-        this.setPositionCenterAndSize(...this.getCenter(), width, newHeight);
-      }
+      var width = this.getWidth();
+      var newHeight = width * (viewport[1] / viewport[0]);
+      this.setPositionCenterAndSize(...this.getCenter(), width, newHeight);
     }
   }
 
@@ -225,7 +187,23 @@ export default class Camera {
 
   calculateMultiplier() {
     var viewport = this.game.getViewport();
-    this.mut = [viewport[0] / this.getWidth(), viewport[1] / this.getHeight()];
+    
+    // Calculer les multiplicateurs pour X et Y
+    var multX = viewport[0] / this.getWidth();
+    var multY = viewport[1] / this.getHeight();
+    
+    // Utiliser le plus petit multiplicateur pour maintenir le ratio d'aspect
+    // et éviter l'étirement lors du zoom
+    var uniformMult = Math.min(multX, multY);
+    
+    this.mut = [uniformMult, uniformMult];
+    
+    // Calculer les offsets pour centrer le jeu sur l'écran
+    var actualWidth = this.getWidth() * uniformMult;
+    var actualHeight = this.getHeight() * uniformMult;
+    
+    this.offsetX = (viewport[0] - actualWidth) / 2;
+    this.offsetY = (viewport[1] - actualHeight) / 2;
   }
 
   transformX(x) {
@@ -240,6 +218,11 @@ export default class Camera {
     var transform = [x - this.startX, y - this.startY];
     transform[0] *= this.mut[0];
     transform[1] *= this.mut[1];
+    
+    // Ajouter les offsets pour centrer le jeu
+    transform[0] += this.offsetX || 0;
+    transform[1] += this.offsetY || 0;
+    
     return transform;
   }
 
@@ -251,27 +234,18 @@ export default class Camera {
     ];
   }
 
-  // Méthodes de zoom - désactivées sur desktop
+  // Méthodes de zoom
   zoomIn() {
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return; // Pas de zoom sur desktop
-    
     const newZoomLevel = Math.min(this.currentZoomLevel + 0.2, this.maxZoomLevel);
     this.setZoom(newZoomLevel);
   }
 
   zoomOut() {
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return; // Pas de zoom sur desktop
-    
     const newZoomLevel = Math.max(this.currentZoomLevel - 0.2, this.minZoomLevel);
     this.setZoom(newZoomLevel);
   }
 
   setZoom(zoomLevel) {
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return; // Pas de zoom sur desktop
-    
     this.currentZoomLevel = Math.max(this.minZoomLevel, Math.min(this.maxZoomLevel, zoomLevel));
     
     // Calculer les nouvelles dimensions
@@ -287,10 +261,11 @@ export default class Camera {
     return this.currentZoomLevel;
   }
 
+  get zoom() {
+    return this.currentZoomLevel;
+  }
+
   resetZoom() {
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return; // Pas de zoom sur desktop
-    
     this.setZoom(this.baseZoomLevel);
   }
 }
