@@ -439,7 +439,7 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
             </div>
             <div className="stat-content">
               <div className="stat-label">{t('projectsCollected')}</div>
-              <div className="stat-value">{collectedProjects}/{totalProjects}</div>
+              <div className="stat-value">{totalProjects}/{totalProjects}</div>
             </div>
           </div>
 
