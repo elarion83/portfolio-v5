@@ -478,6 +478,16 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   animation: pulse 2s infinite;
 }
 
+.game-concept-intro {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  margin: 0 0 32px 0;
+  font-style: italic;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
 .game-init-section {
   margin-bottom: 20px;
   text-align: left;
@@ -764,6 +774,15 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   
   .game-init-title {
     font-size: 2rem;
+  }
+  
+  .game-concept-intro {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    margin: 0 0 24px 0;
+    font-style: italic;
+    opacity: 0.9;
   }
   
   .game-init-section h3 {

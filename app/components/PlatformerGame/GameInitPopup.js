@@ -77,6 +77,8 @@ const translations = {
     shareImageSuccess: "Image téléchargée avec succès !",
     shareError: "Impossible de partager automatiquement. Voici votre score :",
     locale: "fr-FR",
+    // Concept du jeu
+    gameConceptIntro: "Découvrez mon portfolio à travers un platformer interactif",
     // Niveaux de difficulté
     difficulty: "Difficulté :",
     difficultyDiscovery: "Découverte",
@@ -174,6 +176,8 @@ const translations = {
     shareImageSuccess: "Image downloaded successfully!",
     shareError: "Unable to share automatically. Here's your score:",
     locale: "en-US",
+    // Concept du jeu
+    gameConceptIntro: "Discover my portfolio through an interactive platformer",
     // Niveaux de difficulté
     difficulty: "Difficulty:",
     difficultyDiscovery: "Discovery",
@@ -525,6 +529,10 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                           <h4>{t('gameplaySpeedrun')}</h4>
                         </div>
                       </div>*/}
+                      
+                      {/* Phrase d'introduction du concept */}
+                      <p className="game-concept-intro">{t('gameConceptIntro')}</p>
+                      
                       <h2 className="game-init-title">{t('difficulty')}</h2>
                   
                   {/* Sélecteur de difficulté */}

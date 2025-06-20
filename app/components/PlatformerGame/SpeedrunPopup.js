@@ -498,11 +498,6 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
             <RotateCcw size={18} />
             <span>{t('playAgain')}</span>
           </button>
-          
-          <button className="btn-secondary back-btn" onClick={onBackToSite}>
-            <ArrowLeft size={18} />
-            <span>{t('backToPortfolio')}</span>
-          </button>
         </motion.div>
       </motion.div>
     </div>
