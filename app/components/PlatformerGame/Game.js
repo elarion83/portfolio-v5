@@ -269,23 +269,32 @@ export default class Game {
   reset() {
     console.log('🔄 Réinitialisation complète du jeu...');
     
-    // Réinitialiser tous les projets
+    // Effacer tous les items spawned (projets portfolio)
+    const portfolioItemsCount = this.portfolioItems.length;
     this.portfolioItems = [];
     this.allProjects = [];
     this.availableProjects = [];
     this.collectedProjectsCount = 0;
     this.chronologicalIndex = 0;
     this.lastProjectCollectedTime = Date.now();
-
+    console.log(`🗑️ ${portfolioItemsCount} projets portfolio effacés`);
+    
+    // Effacer tous les items de jeu (speed boosts, etc.)
+    const gameItemsCount = this.itemManager.items.length;
+    this.itemManager.clear();
+    console.log(`🗑️ ${gameItemsCount} items de jeu effacés`);
     
     // Réinitialiser les entités (ennemis)
+    const entitiesCount = Object.keys(this.entities).length;
     this.entities = {};
     this.spawnTick = 0;
+    console.log(`🗑️ ${entitiesCount} ennemis effacés`);
     
     // Réinitialiser les systèmes
+    const particlesCount = this.particleSystem.particles.length;
     this.particleSystem.particles = [];
-    this.itemManager.clear();
     this.effectManager.clear();
+    console.log(`🗑️ ${particlesCount} particules effacées`);
     
     // Réinitialiser le joueur
     this.player.x = 2;
@@ -300,7 +309,7 @@ export default class Game {
     this.camera.y = 0;
     this.camera.followingObject = this.player;
     
-    console.log('✅ Jeu réinitialisé');
+    console.log('✅ Jeu réinitialisé - Tous les items ont été effacés');
   }
 
   start() {

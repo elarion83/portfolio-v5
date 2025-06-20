@@ -552,9 +552,9 @@ function App() {
 
   const handlePauseQuickRestart = () => {
     setShowPauseMenu(false);
-    // Redémarrer avec la même difficulté
-    if (difficultyConfig) {
-      handleGameStart(difficultyConfig);
+    // Redémarrer avec la même difficulté (va effacer tous les items via reset())
+    if (difficultyConfig && gameRef.current && gameRef.current.portfolioDataCache) {
+      handleGameStart(difficultyConfig, gameRef.current.portfolioDataCache);
     }
   };
 
