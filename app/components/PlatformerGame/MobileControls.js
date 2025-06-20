@@ -122,12 +122,12 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
           <div className="mobile-actions-left">
             <button
               className={`mobile-btn mobile-btn-collect ${collectedProjects === 0 ? 'first-project-pulse' : ''}`}
-              onTouchStart={() => handleTouchStart('e')}
-              onTouchEnd={() => handleTouchEnd('e')}
-              onMouseDown={() => handleTouchStart('e')}
-              onMouseUp={() => handleTouchEnd('e')}
+              onTouchStart={() => handleTouchStart('o')}
+              onTouchEnd={() => handleTouchEnd('o')}
+              onMouseDown={() => handleTouchStart('o')}
+              onMouseUp={() => handleTouchEnd('o')}
             >
-              E
+              O
             </button>
           </div>
         )}

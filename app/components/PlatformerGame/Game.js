@@ -516,10 +516,12 @@ export default class Game {
       return;
     }
 
-    // Vérifier si 10 secondes se sont écoulées depuis la dernière collecte
+    // En mode découverte, toujours afficher la flèche - sinon délai de 10 secondes
     const timeSinceLastCollection = (Date.now() - this.lastProjectCollectedTime) / 1000;
-    if (timeSinceLastCollection < 10) {
-      return; // Ne pas afficher l'indicateur si moins de 10 secondes
+    const isDiscoveryMode = this.selectedDifficulty === 'discovery' || process.env.NODE_ENV === 'development';
+    
+    if (!isDiscoveryMode && timeSinceLastCollection < 10) {
+      return; // Ne pas afficher l'indicateur si moins de 10 secondes (sauf en mode découverte)
     }
 
     // Position du joueur

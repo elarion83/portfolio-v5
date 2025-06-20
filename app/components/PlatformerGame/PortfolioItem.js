@@ -365,13 +365,13 @@ export default class PortfolioItem extends GameObject {
       ctx.restore();
     }
     ctx.restore();
-    // Bouton E EN DESSOUS de la popup
+    // Bouton O EN DESSOUS de la popup
     ctx.save();
     ctx.globalAlpha = 0.95;
     ctx.font = 'bold 13px Arial';
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
-    ctx.fillText('[E] Open', screenX, tooltipY + tooltipHeight + 22);
+    ctx.fillText('[O] Open', screenX, tooltipY + tooltipHeight + 22);
     ctx.restore();
   }
 
@@ -407,8 +407,8 @@ export default class PortfolioItem extends GameObject {
         this.showTooltip = true;
       }
       
-      // Vérifier si le joueur appuie sur E pour collecter
-      if (this.game.inputManager.isKeyPressed('e')) {
+      // Vérifier si le joueur appuie sur O pour collecter
+      if (this.game.inputManager.isKeyPressed('o')) {
         this.collect();
       }
     } else {

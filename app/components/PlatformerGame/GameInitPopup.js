@@ -19,7 +19,7 @@ const translations = {
     ready: "Prêt à jouer ?",
     // Textes pour le jeu
     projectCollected: "Projet découvert !",
-    discoverProject: "Découvrir le projet",
+    discoverProject: "Découvrir en détail",
     continueAdventure: "Continuer l'aventure",
     gameControls: "Contrôles du jeu",
     movement: "Mouvement",
@@ -32,6 +32,7 @@ const translations = {
     // Contrôles de jeu
     movement: "Déplacement :",
     basicActions: "Actions de base :",
+    projectActions: "Actions projet :",
     combat: "Combat :",
     debugTools: "Outils de debug :",
     mobileControls: "Sur mobile :",
@@ -40,6 +41,7 @@ const translations = {
     jump: "pour sauter (2x pour DoubleJump)",
     crouch: "pour s'accroupir",
     slide: "en courant pour glisser",
+    collectProject: "pour collecter un projet",
     attack: "pour attaquer",
     aerialAttack: "en l'air pour attaque aérienne",
     toggleHitboxes: "pour afficher/masquer les hitboxes",
@@ -130,7 +132,7 @@ const translations = {
     ready: "Ready to play ?",
     // Textes pour le jeu
     projectCollected: "Project opened!",
-    discoverProject: "Discover project",
+    discoverProject: "Discover in detail",
     continueAdventure: "Continue adventure",
     gameControls: "Game Controls",
     company: "Company",
@@ -140,6 +142,7 @@ const translations = {
     // Contrôles de jeu
     movement: "Movement:",
     basicActions: "Basic actions:",
+    projectActions: "Project actions:",
     combat: "Combat:",
     debugTools: "Debug tools:",
     mobileControls: "On mobile:",
@@ -148,6 +151,7 @@ const translations = {
     jump: "to jump (2x for DoubleJump)",
     crouch: "to crouch",
     slide: "while running to slide",
+    collectProject: "to collect a project",
     attack: "to attack",
     aerialAttack: "in air for aerial attack",
     toggleHitboxes: "to show/hide hitboxes",
@@ -732,12 +736,24 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                         <AnimatePresence mode="wait">
                           {finalCountdown > 0 ? (
                             <motion.div
-                              key="countdown"
+                              key={`countdown-${finalCountdown}`}
                               className="final-countdown"
-                              initial={{ scale: 0.8, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 1.2, opacity: 0 }}
-                              transition={{ duration: 0.3 }}
+                              initial={{ 
+                                y: 40, 
+                                opacity: 0
+                              }}
+                              animate={{ 
+                                y: 0, 
+                                opacity: 1
+                              }}
+                              exit={{ 
+                                y: -25, 
+                                opacity: 0
+                              }}
+                              transition={{ 
+                                duration: 0.25,
+                                ease: "easeInOut"
+                              }}
                             >
                               <span className="final-countdown-number">{finalCountdown}</span>
                             </motion.div>

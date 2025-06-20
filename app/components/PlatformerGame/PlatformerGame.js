@@ -105,15 +105,17 @@ function App() {
     };
   }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal]);
 
-  // Détection des minutes écoulées pour l'animation rouge du chrono
+  // Détection des intervalles écoulés pour l'animation rouge du chrono
   useEffect(() => {
     if (!isInitializing && !menu && !gameCompleted && gameStartTime && gameMilliseconds > 0) {
-      const currentMinute = Math.floor(gameMilliseconds / 60000);
+      // 10 secondes en dev, 60 secondes (1 minute) en production
+      const intervalMs = process.env.NODE_ENV === 'development' ? 10000 : 60000;
+      const currentInterval = Math.floor(gameMilliseconds / intervalMs);
       
-      // Si une nouvelle minute vient de s'écouler (et ce n'est pas la première minute)
-      if (currentMinute > lastMinute && currentMinute > 0) {
+      // Si un nouvel intervalle vient de s'écouler (et ce n'est pas le premier intervalle)
+      if (currentInterval > lastMinute && currentInterval > 0) {
         setTimerAlert(true);
-        setLastMinute(currentMinute);
+        setLastMinute(currentInterval);
         
         // Retirer l'animation après 1.5s
         setTimeout(() => {

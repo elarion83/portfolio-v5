@@ -88,6 +88,18 @@ const GameControlsPopup = ({ isVisible, onClose }) => {
             </div>
 
             <div className="game-init-section">
+              <h3>{t('projectActions')}</h3>
+              <ul className="controls-list">
+                <li>
+                  <span className="control-keys">
+                    <kbd>O</kbd>
+                  </span>
+                  <span className="control-desc">{t('collectProject')}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="game-init-section">
               <h3>{t('combat')}</h3>
               <ul className="controls-list">
                 <li>

@@ -308,12 +308,16 @@ export default class Render {
     // Sauvegarde du contexte
     this.game.ctx.save();
     
-    // Opacité très faible et basée sur la distance
-    const baseOpacity = Math.max(0.05, Math.min(0.15, 1 - (distance - 3) / 15));
-    const opacity = baseOpacity;
+    // Détecter si on est sur mobile pour ajuster la taille et l'opacité
+    const isMobile = window.innerWidth <= 768;
     
-    // Dessiner l'indicateur (flèche/point)
-    const size = this.game.camera.transformX(0.3);
+    // Opacité plus visible sur mobile, basée sur la distance
+    const baseOpacity = Math.max(0.05, Math.min(0.15, 1 - (distance - 3) / 15));
+    const opacity = isMobile ? Math.max(baseOpacity * 3, 0.4) : baseOpacity; // Plus visible sur mobile
+    
+    // Taille de l'indicateur - plus grosse sur mobile
+    const baseSize = this.game.camera.transformX(0.3);
+    const size = isMobile ? baseSize * 1.8 : baseSize; // 80% plus grosse sur mobile
     
     // Flèche triangulaire
     this.game.ctx.translate(screenX, screenY);
