@@ -66,6 +66,7 @@ export default class Game {
 
     // État d'initialisation
     this.isInitializing = true;
+    this.isPaused = false;
 
     const level = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -192,7 +193,15 @@ export default class Game {
   }
 
   setPlayerInvincible(isInvincible) {
-    this.playerInvincible = isInvincible;
+    this.player.isInvincible = isInvincible;
+  }
+
+  setPaused(isPaused) {
+    this.isPaused = isPaused;
+    // Bloquer aussi les inputs quand le jeu est en pause
+    if (this.inputManager) {
+      this.inputManager.isPaused = isPaused;
+    }
   }
 
   triggerPlayerAuraFadeOut() {

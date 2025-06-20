@@ -4,6 +4,7 @@ export default class InputManager {
     this.keypress = Object.create(null);
     this.mouse = Object.create(null);
     this.mousePress = Object.create(null);
+    this.isPaused = false;
 
     this.mousePos = [];
     this.mouseMoved = true;
@@ -71,12 +72,19 @@ export default class InputManager {
   }
 
   isKeyDown(char) {
+    if (this.isPaused) {
+      return false;
+    }
+    
     var keyCode = char.toString().toLowerCase();
-
     return !!this.keyboard[keyCode];
   }
 
   isKeyPressed(char) {
+    if (this.isPaused) {
+      return false;
+    }
+    
     var keyCode = char.toString().toLowerCase();
 
     var output = this.keypress[keyCode];
@@ -88,10 +96,18 @@ export default class InputManager {
   }
 
   isMouseDown(str) {
+    if (this.isPaused) {
+      return false;
+    }
+    
     return this.mouse[this.mouseToButton(str)];
   }
 
   isMousePressed(str) {
+    if (this.isPaused) {
+      return false;
+    }
+    
     var button = this.mouseToButton(str);
 
     var output = this.mousePress[button];

@@ -31,6 +31,8 @@ function App() {
   const [gameTime, setGameTime] = useState(0);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [gameMilliseconds, setGameMilliseconds] = useState(0);
+  const [pauseStartTime, setPauseStartTime] = useState(null);
+  const [totalPauseTime, setTotalPauseTime] = useState(0);
   const [collectedProjects, setCollectedProjects] = useState(0);
   // Nombre de projets nécessaires : 5 en dev, 20 en production
   const [totalProjects, setTotalProjects] = useState(process.env.NODE_ENV === 'development' ? 5 : 20);
@@ -66,13 +68,13 @@ function App() {
     if (!isInitializing && !menu && !gameCompleted && !showPauseMenu && gameStartTime) {
       interval = setInterval(() => {
         const now = Date.now();
-        const elapsed = now - gameStartTime;
+        const elapsed = now - gameStartTime - totalPauseTime;
         setGameTime(Math.floor(elapsed / 1000));
         setGameMilliseconds(elapsed);
       }, 10); // Mise à jour toutes les 10ms pour la précision
     }
     return () => clearInterval(interval);
-  }, [isInitializing, menu, gameCompleted, showPauseMenu, gameStartTime]);
+  }, [isInitializing, menu, gameCompleted, showPauseMenu, gameStartTime, totalPauseTime]);
 
   // Assigner le gameTime à l'objet game pour l'animation du tooltip
   useEffect(() => {
@@ -86,8 +88,25 @@ function App() {
     if (gameRef.current) {
       const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || showPauseMenu || extraInvincibilityTimer !== null;
       gameRef.current.setPlayerInvincible(shouldBeInvincible);
+      
+      // Gérer l'état de pause du jeu
+      const isGamePaused = showPauseMenu || isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal;
+      gameRef.current.setPaused(isGamePaused);
     }
   }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, showPauseMenu, extraInvincibilityTimer]);
+
+  // Gérer le temps de pause
+  useEffect(() => {
+    if (showPauseMenu && !pauseStartTime) {
+      // Début de pause
+      setPauseStartTime(Date.now());
+    } else if (!showPauseMenu && pauseStartTime) {
+      // Fin de pause
+      const pauseDuration = Date.now() - pauseStartTime;
+      setTotalPauseTime(prev => prev + pauseDuration);
+      setPauseStartTime(null);
+    }
+  }, [showPauseMenu, pauseStartTime]);
 
   // Gérer l'event listener de pause avec les bonnes conditions
   useEffect(() => {
@@ -292,9 +311,14 @@ function App() {
       // Fond glassmorphism au lieu du noir
       drawGlassmorphismBackground(ctx, canvas.width, canvas.height, delta, gameRef.current?.difficulty || difficultyConfig);
 
-      if (game.active) {
+      // SYSTÈME DE PAUSE COMPLET : arrêter la logique du jeu si la pause est ouverte
+      const isGamePaused = showPauseMenu || isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal;
+      
+      if (game.active && !isGamePaused) {
         game.updateGame(delta);
       }
+      
+      // Le rendu continue même en pause pour afficher l'état figé du jeu
       game.renderGame(delta);
 
       active && requestAnimationFrame(update);
@@ -483,6 +507,9 @@ function App() {
     setGameCompleted(false);
     setFinalTime(null);
     setShowSpeedrunModal(false);
+    // Réinitialiser les variables de pause
+    setPauseStartTime(null);
+    setTotalPauseTime(0);
     if (gameRef.current) {
       // Passer la configuration de difficulté ET les données portfolio au jeu AVANT de démarrer
       gameRef.current.setDifficulty(difficulty);
@@ -512,6 +539,9 @@ function App() {
     setGameStartTime(null);
     setMenu(false);
     setRestartKey(prev => prev + 1); // Incrémenter pour forcer la réinitialisation
+    // Réinitialiser les variables de pause
+    setPauseStartTime(null);
+    setTotalPauseTime(0);
     // Redémarrer le jeu sera géré par l'utilisateur qui cliquera sur "Lancer le jeu"
   };
 
