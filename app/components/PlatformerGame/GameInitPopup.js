@@ -476,10 +476,12 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       setFinalCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          // Lancer le jeu
-          if (onGameStart) {
-            onGameStart(difficulties[selectedDifficulty]);
-          }
+          // Différer l'appel à onGameStart pour éviter les mises à jour pendant le rendu
+          setTimeout(() => {
+            if (onGameStart) {
+              onGameStart(difficulties[selectedDifficulty]);
+            }
+          }, 0);
           return 0;
         }
         return prev - 1;
@@ -544,9 +546,12 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
   };
 
   const handleDirectStart = () => {
-    if (onGameStart) {
-      onGameStart(difficulties[selectedDifficulty]);
-    }
+    // Différer l'appel à onGameStart pour éviter les mises à jour pendant le rendu
+    setTimeout(() => {
+      if (onGameStart) {
+        onGameStart(difficulties[selectedDifficulty]);
+      }
+    }, 0);
   };
 
   const handleDifficultySelect = (difficultyKey) => {
