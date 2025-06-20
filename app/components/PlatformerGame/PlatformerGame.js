@@ -60,26 +60,19 @@ function App() {
     }
   };
 
-  // Calculer le temps de jeu (en millisecondes)
+  // Timer avec millisecondes
   useEffect(() => {
     let interval;
-    if (gameStartTime && !menu && !gameCompleted) {
+    if (!isInitializing && !menu && !gameCompleted && !showPauseMenu && gameStartTime) {
       interval = setInterval(() => {
         const now = Date.now();
-        const rawElapsed = now - gameStartTime;
-        
-        // Soustraire le temps de pause du temps total
-        const pausedTime = gameRef.current ? gameRef.current.getTotalPausedTime() : 0;
-        const actualElapsed = rawElapsed - pausedTime;
-        
-        setGameMilliseconds(actualElapsed);
-        setGameTime(Math.floor(actualElapsed / 1000)); // Aussi mettre à jour gameTime
-      }, 10); // Mise à jour toutes les 10ms pour plus de fluidité
+        const elapsed = now - gameStartTime;
+        setGameTime(Math.floor(elapsed / 1000));
+        setGameMilliseconds(elapsed);
+      }, 10); // Mise à jour toutes les 10ms pour la précision
     }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [gameStartTime, menu, gameCompleted, gameRef]);
+    return () => clearInterval(interval);
+  }, [isInitializing, menu, gameCompleted, showPauseMenu, gameStartTime]);
 
   // Assigner le gameTime à l'objet game pour l'animation du tooltip
   useEffect(() => {
@@ -103,22 +96,7 @@ function App() {
       if (isInitializing || showSpeedrunModal || showDeathModal || showProjectModal || showControlsModal) {
         return; // Ne pas ouvrir la pause dans ces cas
       }
-      
-      if (showPauseMenu) {
-        // Si la pause est déjà ouverte, la fermer et reprendre le jeu
-        console.log('🎮 Fermeture du menu de pause');
-        if (gameRef.current) {
-          gameRef.current.resume();
-        }
-        setShowPauseMenu(false);
-      } else {
-        // Ouvrir la pause et suspendre le jeu
-        console.log('🎮 Ouverture du menu de pause');
-        if (gameRef.current) {
-          gameRef.current.pause();
-        }
-        setShowPauseMenu(true);
-      }
+      setShowPauseMenu(prev => !prev);
     };
 
     window.addEventListener("openPauseModal", handlePauseModal);
@@ -126,7 +104,7 @@ function App() {
     return () => {
       window.removeEventListener("openPauseModal", handlePauseModal);
     };
-  }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal, showPauseMenu, gameRef]);
+  }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal]);
 
   // Détection des intervalles écoulés pour l'animation rouge du chrono
   useEffect(() => {
@@ -565,37 +543,25 @@ function App() {
 
   // Handlers pour la modale de pause
   const handlePauseResume = () => {
-    console.log('🎮 Reprise du jeu demandée');
-    if (gameRef.current) {
-      gameRef.current.resume();
-    }
     setShowPauseMenu(false);
+    // Déclencher l'invincibilité prolongée après fermeture de PauseMenu (avec un petit délai)
+    setTimeout(() => {
+      triggerExtraInvincibility();
+    }, 100);
   };
 
   const handlePauseQuickRestart = () => {
-    console.log('🔄 Redémarrage rapide depuis la pause');
-    if (gameRef.current) {
-      gameRef.current.resume(); // Reprendre avant de redémarrer
-      gameRef.current.reset();
-      gameRef.current.setPortfolioData(gameRef.current.portfolioDataCache);
-      gameRef.current.loadPortfolioItems();
-    }
     setShowPauseMenu(false);
-    setCollectedProjects(0);
-    setGameStartTime(Date.now());
+    // Redémarrer avec la même difficulté (va effacer tous les items via reset())
+    if (difficultyConfig && gameRef.current && gameRef.current.portfolioDataCache) {
+      handleGameStart(difficultyConfig, gameRef.current.portfolioDataCache);
+    }
   };
 
   const handlePauseBackToModeSelection = () => {
-    console.log('🔄 Retour à la sélection de mode depuis la pause');
-    if (gameRef.current) {
-      gameRef.current.resume(); // Reprendre avant de réinitialiser
-      gameRef.current.reset();
-    }
     setShowPauseMenu(false);
-    setIsInitializing(true);
-    setMenu(true);
-    setCollectedProjects(0);
-    setGameStartTime(null);
+    // Retourner à la sélection de mode
+    handleRestart();
   };
 
   return (
