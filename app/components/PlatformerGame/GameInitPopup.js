@@ -80,10 +80,12 @@ const translations = {
     // Concept du jeu
     gameConceptIntro: "Découvrez mon portfolio à travers un platformer interactif",
     // Niveaux de difficulté
-    difficulty: "Difficulté :",
+    difficulty: "Mode :",
+    difficultyQuick: "Partie rapide",
     difficultyDiscovery: "Découverte",
     difficultyBattlefield: "Champs de bataille",
     difficultyDarkLord: "Seigneur des ténèbres",
+    difficultyDescQuick: "5 projets - Peu d'ennemis - Idéal pour découvrir",
     difficultyDescDiscovery: "Tous les projets - Peu d'ennemis",
     difficultyDescBattlefield: "15 projets - Beaucoup d'ennemis",
     difficultyDescDarkLord: "Tous les projets - Énormément d'ennemis - Un dégât = mort",
@@ -179,10 +181,12 @@ const translations = {
     // Concept du jeu
     gameConceptIntro: "Discover my portfolio through an interactive platformer",
     // Niveaux de difficulté
-    difficulty: "Difficulty:",
+    difficulty: "Mode :",
+    difficultyQuick: "Quick Game",
     difficultyDiscovery: "Discovery",
     difficultyBattlefield: "Battlefield",
     difficultyDarkLord: "Dark Lord",
+    difficultyDescQuick: "5 projects - Few enemies - Perfect to discover",
     difficultyDescDiscovery: "All projects - Few enemies",
     difficultyDescBattlefield: "15 projects - Many enemies",
     difficultyDescDarkLord: "All projects - Tons of enemies - One hit = death",
@@ -296,7 +300,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [finalCountdown, setFinalCountdown] = useState(5);
   const [showFinalCountdown, setShowFinalCountdown] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('discovery');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('quick');
   const [isDifficultyDropdownOpen, setIsDifficultyDropdownOpen] = useState(false);
   const [victoryConditionsExiting, setVictoryConditionsExiting] = useState(false);
   const { language, setLanguage, t } = useLanguage();
@@ -318,6 +322,14 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
 
   // Configuration des difficultés
   const difficulties = {
+    quick: {
+      name: t('difficultyQuick'),
+      description: t('difficultyDescQuick'),
+      icon: '⚡',
+      projectsRequired: 5,
+      enemyMultiplier: 0.3,
+      oneHitKill: false
+    },
     discovery: {
       name: t('difficultyDiscovery'),
       description: t('difficultyDescDiscovery'),

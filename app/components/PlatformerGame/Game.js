@@ -249,8 +249,9 @@ export default class Game {
       this.availableProjects = [...filtered];
 
       // Trouver les emplacements valides (1ère, 3e, 5e case vide au-dessus d'une plateforme par colonne)
+      // Exclure les 2 premières colonnes (x = 0 et x = 1)
       const validPositions = [];
-      for (let x = 0; x < this.levelWidth; x++) {
+      for (let x = 2; x < this.levelWidth; x++) {
         let found = 0;
         for (let y = 1; y < this.levelHeight; y++) {
           const idx = this.convertCoordinatesToIndex(x, y);
@@ -311,9 +312,10 @@ export default class Game {
     // Ajouter un nouveau projet si disponible
     if (this.availableProjects.length > 0) {
       // Recalcule les positions libres valides (1ère, 3e, 5e case par colonne)
+      // Exclure les 2 premières colonnes (x = 0 et x = 1)
       const usedPositions = this.portfolioItems.map(item => item.x + '-' + item.y);
       const validPositions = [];
-      for (let x = 0; x < this.levelWidth; x++) {
+      for (let x = 2; x < this.levelWidth; x++) {
         let found = 0;
         for (let y = 1; y < this.levelHeight; y++) {
           const idx = this.convertCoordinatesToIndex(x, y);
