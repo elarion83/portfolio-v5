@@ -18,9 +18,20 @@ export default class Camera {
     this.minZoomLevel = 0.5;
     this.maxZoomLevel = 2.5;
     
-    // Dimensions de base pour le calcul du zoom - remises normales
-    this.baseWidth = 16;
-    this.baseHeight = 10;
+    // Dimensions de base pour le calcul du zoom - adaptées pour mobile
+    // Détecter l'orientation et ajuster en conséquence
+    const viewport = this.game.getViewport();
+    const aspectRatio = viewport[0] / viewport[1];
+    
+    if (aspectRatio < 1) {
+      // Mode portrait (mobile) - priorité à la hauteur
+      this.baseWidth = 12;
+      this.baseHeight = 16;
+    } else {
+      // Mode paysage (desktop) - format classique
+      this.baseWidth = 16;
+      this.baseHeight = 10;
+    }
     
     // Calculer les dimensions initiales avec le zoom
     this.endX = this.baseWidth / this.currentZoomLevel;
@@ -123,17 +134,24 @@ export default class Camera {
 
   updateAspectRatio(maintainHeight = true) {
     var viewport = this.game.getViewport();
+    const aspectRatio = viewport[0] / viewport[1];
     
-    // Comportement uniforme pour tous les appareils - adaptation libre selon le viewport
-    if (maintainHeight) {
-      var height = this.getHeight();
-      var newWidth = height * (viewport[0] / viewport[1]);
-      this.setPositionCenterAndSize(...this.getCenter(), newWidth, height);
+    // Recalculer les dimensions de base selon l'orientation
+    if (aspectRatio < 1) {
+      // Mode portrait (mobile)
+      this.baseWidth = 12;
+      this.baseHeight = 16;
     } else {
-      var width = this.getWidth();
-      var newHeight = width * (viewport[1] / viewport[0]);
-      this.setPositionCenterAndSize(...this.getCenter(), width, newHeight);
+      // Mode paysage (desktop)
+      this.baseWidth = 16;
+      this.baseHeight = 10;
     }
+    
+    // Recalculer les dimensions avec le zoom actuel
+    const newWidth = this.baseWidth / this.currentZoomLevel;
+    const newHeight = this.baseHeight / this.currentZoomLevel;
+    
+    this.setPositionCenterAndSize(...this.getCenter(), newWidth, newHeight);
   }
 
   scaleSize(scalar = 1) {
