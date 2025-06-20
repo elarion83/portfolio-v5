@@ -494,9 +494,31 @@ const SpeedrunPopup = ({ isVisible, finalTime, collectedProjects, totalProjects,
             <span>{isSharing ? t('sharing') : t('shareScore')}</span>
           </button>
           
-          <button className="btn-primary restart-btn" onClick={onRestart}>
-            <RotateCcw size={18} />
-            <span>{t('playAgain')}</span>
+          <button 
+            className="btn-primary restart-btn" 
+            onClick={onRestart}
+            style={{ position: 'relative', overflow: 'hidden' }}
+          >
+            {/* Effet de lueur animée qui traverse le bouton */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+              initial={{ x: '-100%' }}
+              animate={{ x: '100%' }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                repeatDelay: 1
+              }}
+              style={{
+                transform: 'skewX(-20deg)',
+                filter: 'blur(1px)'
+              }}
+            />
+            <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
+              <RotateCcw size={18} />
+              <span>{t('playAgain')}</span>
+            </div>
           </button>
         </motion.div>
       </motion.div>

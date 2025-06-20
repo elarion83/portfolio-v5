@@ -11,6 +11,7 @@ import GameControlsPopup from "./GameControlsPopup";
 import ProjectPopup from "./ProjectPopup";
 import SpeedrunPopup from "./SpeedrunPopup";
 import DeathPopup from "./DeathPopup";
+import PauseMenuPopup from "./PauseMenuPopup";
 import DesktopControls from "./DesktopControls";
 import MobileControls from "./MobileControls";
 import "./PlatformerGame.css";
@@ -21,6 +22,7 @@ function App() {
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showSpeedrunModal, setShowSpeedrunModal] = useState(false);
   const [showDeathModal, setShowDeathModal] = useState(false);
+  const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [menu, setMenu] = useState(false);
   const canvasRef = useRef(null);
@@ -81,10 +83,27 @@ function App() {
   // Gérer l'invincibilité globale selon les popups ouvertes
   useEffect(() => {
     if (gameRef.current) {
-      const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || extraInvincibilityTimer !== null;
+      const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || showPauseMenu || extraInvincibilityTimer !== null;
       gameRef.current.setPlayerInvincible(shouldBeInvincible);
     }
-  }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, extraInvincibilityTimer]);
+  }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, showPauseMenu, extraInvincibilityTimer]);
+
+  // Gérer l'event listener de pause avec les bonnes conditions
+  useEffect(() => {
+    const handlePauseModal = () => {
+      // Vérifier les conditions avant d'ouvrir/fermer la pause
+      if (isInitializing || showSpeedrunModal || showDeathModal || showProjectModal || showControlsModal) {
+        return; // Ne pas ouvrir la pause dans ces cas
+      }
+      setShowPauseMenu(prev => !prev);
+    };
+
+    window.addEventListener("openPauseModal", handlePauseModal);
+    
+    return () => {
+      window.removeEventListener("openPauseModal", handlePauseModal);
+    };
+  }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal]);
 
   // Détection des minutes écoulées pour l'animation rouge du chrono
   useEffect(() => {
@@ -385,7 +404,9 @@ function App() {
     };
     window.addEventListener("openDeathModal", handleDeathModal);
 
-    // Event listener pour la touche Échap
+
+
+    // Event listener pour la touche Échap et P (pause)
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
         if (showProjectModal) {
@@ -393,7 +414,15 @@ function App() {
           setCurrentProject(null);
         } else if (showControlsModal) {
           setShowControlsModal(false);
+        } else if (showPauseMenu) {
+          setShowPauseMenu(false);
+        } else if (!isInitializing && !showSpeedrunModal && !showDeathModal) {
+          // Ouvrir le menu de pause seulement si le jeu est en cours
+          setShowPauseMenu(true);
         }
+      } else if (event.key === 'p' || event.key === 'P') {
+        // Déclencher l'événement de pause
+        window.dispatchEvent(new CustomEvent('openPauseModal'));
       }
     };
     window.addEventListener("keydown", handleEscapeKey);
@@ -486,6 +515,25 @@ function App() {
     setExtraInvincibilityTimer(timer);
   };
 
+  // Handlers pour la modale de pause
+  const handlePauseResume = () => {
+    setShowPauseMenu(false);
+  };
+
+  const handlePauseQuickRestart = () => {
+    setShowPauseMenu(false);
+    // Redémarrer avec la même difficulté
+    if (difficultyConfig) {
+      handleGameStart(difficultyConfig);
+    }
+  };
+
+  const handlePauseBackToModeSelection = () => {
+    setShowPauseMenu(false);
+    // Retourner à la sélection de mode
+    handleRestart();
+  };
+
   return (
     <LanguageProvider>
       <AppContent 
@@ -499,6 +547,8 @@ function App() {
         setShowSpeedrunModal={setShowSpeedrunModal}
         showDeathModal={showDeathModal}
         setShowDeathModal={setShowDeathModal}
+        showPauseMenu={showPauseMenu}
+        setShowPauseMenu={setShowPauseMenu}
         currentProject={currentProject}
         setCurrentProject={setCurrentProject}
         menu={menu}
@@ -520,6 +570,10 @@ function App() {
         timerAlert={timerAlert}
         restartKey={restartKey}
         triggerExtraInvincibility={triggerExtraInvincibility}
+        difficultyConfig={difficultyConfig}
+        handlePauseResume={handlePauseResume}
+        handlePauseQuickRestart={handlePauseQuickRestart}
+        handlePauseBackToModeSelection={handlePauseBackToModeSelection}
       />
     </LanguageProvider>
   );
@@ -536,6 +590,8 @@ function AppContent({
   setShowSpeedrunModal,
   showDeathModal,
   setShowDeathModal,
+  showPauseMenu,
+  setShowPauseMenu,
   currentProject,
   setCurrentProject,
   menu,
@@ -556,7 +612,11 @@ function AppContent({
   nearProject,
   timerAlert,
   restartKey,
-  triggerExtraInvincibility
+  triggerExtraInvincibility,
+  difficultyConfig,
+  handlePauseResume,
+  handlePauseQuickRestart,
+  handlePauseBackToModeSelection
 }) {
   // État pour l'effet de particules du compteur
   const [showCounterParticles, setShowCounterParticles] = useState(false);
@@ -616,6 +676,15 @@ function AppContent({
         isVisible={showDeathModal}
         onRestart={handleRestart}
         onBackToSite={handleBackToSite}
+      />
+
+      {/* Modale de pause */}
+      <PauseMenuPopup 
+        isVisible={showPauseMenu}
+        onQuickRestart={handlePauseQuickRestart}
+        onBackToModeSelection={handlePauseBackToModeSelection}
+        onResume={handlePauseResume}
+        currentDifficulty={difficultyConfig}
       />
 
       <div className={"main-menu" + (menu ? " main-menu-show" : "")}>

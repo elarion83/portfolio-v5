@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, ChevronUp, Sword, Minus, Plus, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronUp, Sword, Minus, Plus, Home, Pause } from 'lucide-react';
 
 const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, collectedProjects = 0 }) => {
   const handleTouchStart = (key) => {
@@ -48,6 +48,12 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
     }
   };
 
+  const handlePause = () => {
+    // Simuler l'appui sur la touche P
+    const event = new KeyboardEvent('keydown', { key: 'P' });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className="mobile-controls">
       {/* Contrôles de mouvement */}
@@ -94,6 +100,18 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
           onMouseDown={handleZoomIn}
         >
           <Plus size={16} />
+        </button>
+      </div>
+
+      {/* Bouton pause positionné au-dessus du saut */}
+      <div className="mobile-pause-control">
+        <button
+          className="mobile-btn mobile-btn-pause"
+          onTouchStart={handlePause}
+          onMouseDown={handlePause}
+          title="Pause (P)"
+        >
+          <Pause size={16} />
         </button>
       </div>
 

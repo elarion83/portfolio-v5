@@ -51,6 +51,7 @@ const translations = {
     zoomShort: "Zoom",
     commandShort: "Commande",
     controlsTooltip: "Cliquez pour voir tous les contrôles",
+    pauseTooltip: "Ouvrir le menu de pause",
     // Bouton retour au site
     backToSite: "← Retour au site",
     // Speedrun et fin de jeu
@@ -79,6 +80,12 @@ const translations = {
     locale: "fr-FR",
     // Concept du jeu
     gameConceptIntro: "Découvrez mon portfolio à travers un platformer interactif",
+    // Menu de pause
+    gamePaused: "Jeu en pause",
+    currentMode: "Mode actuel :",
+    resumeGame: "Reprendre",
+    quickRestart: "Recommencer",
+    changeDifficulty: "Changer de mode",
     // Niveaux de difficulté
     difficulty: "Mode :",
     difficultyQuick: "Partie rapide",
@@ -152,6 +159,7 @@ const translations = {
     zoomShort: "Zoom",
     commandShort: "Command",
     controlsTooltip: "Click to see all controls",
+    pauseTooltip: "Open pause menu",
     // Bouton retour au site
     backToSite: "← Back to site",
     // Speedrun et fin de jeu
@@ -180,6 +188,12 @@ const translations = {
     locale: "en-US",
     // Concept du jeu
     gameConceptIntro: "Discover my portfolio through an interactive platformer",
+    // Menu de pause
+    gamePaused: "Game Paused",
+    currentMode: "Current mode:",
+    resumeGame: "Resume",
+    quickRestart: "Quick Restart",
+    changeDifficulty: "Change Mode",
     // Niveaux de difficulté
     difficulty: "Mode :",
     difficultyQuick: "Quick Game",
@@ -587,8 +601,27 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                   <button 
                         className="start-game-btn compact"
                         onClick={handleProceedToStep2}
+                        style={{ position: 'relative', overflow: 'hidden' }}
                   >
-                    {t('startGame')}
+                    {/* Effet de lueur animée qui traverse le bouton */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+                      initial={{ x: '-100%' }}
+                      animate={{ x: '100%' }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        repeatDelay: 1
+                      }}
+                      style={{
+                        transform: 'skewX(-20deg)',
+                        filter: 'blur(1px)'
+                      }}
+                    />
+                    <span style={{ position: 'relative', zIndex: 10, color: '#ffffff' }}>
+                      {t('startGame')}
+                    </span>
                   </button>
                 </motion.div>
               )}
@@ -665,8 +698,27 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                         <button 
                           className="start-game-btn primary"
                           onClick={handleStartFinalCountdown}
+                          style={{ position: 'relative', overflow: 'hidden' }}
                         >
-                          {t('ready')}
+                          {/* Effet de lueur animée qui traverse le bouton */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+                            initial={{ x: '-100%' }}
+                            animate={{ x: '100%' }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                              repeatDelay: 1
+                            }}
+                            style={{
+                              transform: 'skewX(-20deg)',
+                              filter: 'blur(1px)'
+                            }}
+                          />
+                          <span style={{ position: 'relative', zIndex: 10, color: '#ffffff' }}>
+                            {t('ready')}
+                          </span>
                         </button>
                         <button 
                           className="btn-secondary back-btn"

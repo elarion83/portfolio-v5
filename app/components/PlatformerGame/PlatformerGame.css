@@ -261,7 +261,7 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   z-index: 100;
   pointer-events: auto;
 }
@@ -309,6 +309,27 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   transform: scale(0.9);
 }
 
+.mobile-btn-pause {
+  background: rgba(255, 165, 0, 0.08);
+  border-color: rgba(255, 165, 0, 0.18);
+  color: rgba(255, 165, 0, 0.8);
+}
+
+.mobile-btn-pause:active {
+  background: rgba(255, 165, 0, 0.3);
+  border-color: rgba(255, 165, 0, 0.6);
+  transform: scale(0.9);
+}
+
+/* Bouton pause positionné au-dessus du saut */
+.mobile-pause-control {
+  position: fixed;
+  top: calc(20px + 60px); /* 20px du bas + hauteur bouton saut (60px) + gap (10px) + 50px + 100px supplémentaires */
+  right: 20px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
 /* Responsive - Masquer les contrôles desktop sur mobile */
 @media (max-width: 768px) {
   .desktop-controls {
@@ -321,6 +342,9 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
     display: none;
   }
   .mobile-zoom-controls {
+    display: none;
+  }
+  .mobile-pause-control {
     display: none;
   }
 }
@@ -1808,7 +1832,7 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   border: 1px solid rgba(226, 141, 29, 0.5);
   border-radius: 12px;
   padding: 12px 24px;
-  color: #000000;
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -3083,5 +3107,198 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   .start-game-btn.primary {
     width: 100%;
     text-align: center;
+  }
+}
+
+/* Styles pour la modale de pause */
+.pause-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.pause-menu-popup {
+  background: linear-gradient(135deg, rgba(38, 25, 57, 0.95) 0%, rgba(42, 28, 62, 0.95) 100%);
+  border: 2px solid rgba(226, 141, 29, 0.4);
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.pause-menu-popup::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(226, 141, 29, 0.1) 0%, 
+    transparent 25%, 
+    transparent 75%, 
+    rgba(226, 141, 29, 0.1) 100%
+  );
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.pause-menu-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.pause-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #e28d1d 0%, #b86e0e 100%);
+  border-radius: 50%;
+  color: white;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 20px rgba(226, 141, 29, 0.4);
+}
+
+.pause-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #e28d1d;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.current-mode-display {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.current-mode-display h3 {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mode-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mode-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(226, 141, 29, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 141, 29, 0.4);
+}
+
+.mode-details {
+  flex: 1;
+}
+
+.mode-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.mode-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+.pause-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pause-menu-actions .btn-primary,
+.pause-menu-actions .btn-secondary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.resume-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+}
+
+.resume-btn:hover {
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.quick-restart-btn {
+  background: rgba(226, 141, 29, 0.1);
+  border-color: rgba(226, 141, 29, 0.3);
+  color: #e28d1d;
+}
+
+.quick-restart-btn:hover {
+  background: rgba(226, 141, 29, 0.2);
+  border-color: rgba(226, 141, 29, 0.5);
+}
+
+.mode-selection-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mode-selection-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 768px) {
+  .pause-menu-popup {
+    padding: 24px;
+    margin: 16px;
+  }
+
+  .pause-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pause-title {
+    font-size: 1.5rem;
+  }
+
+  .mode-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .mode-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
   }
 }

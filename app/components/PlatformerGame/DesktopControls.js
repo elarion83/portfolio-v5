@@ -15,6 +15,7 @@ const DesktopControls = ({ onShowControlsModal }) => {
         'arrowright': '→',
         ' ': 'Espace',
         'c': 'C',
+        'p': 'P',
         '+': '+',
         '=': '+', // Souvent + nécessite Shift, donc = aussi
         '-': '−',
@@ -47,6 +48,7 @@ const DesktopControls = ({ onShowControlsModal }) => {
         'arrowright': '→',
         ' ': 'Espace',
         'c': 'C',
+        'p': 'P',
         '+': '+',
         '=': '+',
         '-': '−',
@@ -116,6 +118,13 @@ const DesktopControls = ({ onShowControlsModal }) => {
             title={t('controlsTooltip')}
           >
             C
+          </kbd>
+          <kbd 
+            className={pressedKeys.has('P') ? 'key-pressed' : ''}
+            style={{ cursor: 'pointer' }}
+            title={t('pauseTooltip')}
+          >
+            P
           </kbd>
         </div>
       </div>
