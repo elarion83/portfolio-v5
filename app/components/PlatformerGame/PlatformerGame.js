@@ -8,10 +8,10 @@ import SpriteSheetManager from "./SpriteSheetManager";
 import SpriteSheet from "./SpriteSheet";
 import GameInitPopup, { LanguageProvider, useLanguage } from "./GameInitPopup";
 import GameControlsPopup from "./GameControlsPopup";
+import GameInGameMenuPopup from "./GameInGameMenuPopup";
 import ProjectPopup from "./ProjectPopup";
 import SpeedrunPopup from "./SpeedrunPopup";
 import DeathPopup from "./DeathPopup";
-import PauseMenuPopup from "./PauseMenuPopup";
 import DesktopControls from "./DesktopControls";
 import MobileControls from "./MobileControls";
 import ActiveEffectsUI from "./ActiveEffectsUI";
@@ -20,10 +20,10 @@ import "./PlatformerGame.css";
 function App() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [showControlsModal, setShowControlsModal] = useState(false);
+  const [showInGameMenuModal, setShowInGameMenuModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showSpeedrunModal, setShowSpeedrunModal] = useState(false);
   const [showDeathModal, setShowDeathModal] = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [menu, setMenu] = useState(false);
   const canvasRef = useRef(null);
@@ -63,7 +63,7 @@ function App() {
   // Timer avec millisecondes
   useEffect(() => {
     let interval;
-    if (!isInitializing && !menu && !gameCompleted && !showPauseMenu && gameStartTime) {
+    if (!isInitializing && !menu && !gameCompleted && gameStartTime) {
       interval = setInterval(() => {
         const now = Date.now();
         const elapsed = now - gameStartTime;
@@ -72,7 +72,7 @@ function App() {
       }, 10); // Mise à jour toutes les 10ms pour la précision
     }
     return () => clearInterval(interval);
-  }, [isInitializing, menu, gameCompleted, showPauseMenu, gameStartTime]);
+  }, [isInitializing, menu, gameCompleted, gameStartTime]);
 
   // Assigner le gameTime à l'objet game pour l'animation du tooltip
   useEffect(() => {
@@ -84,27 +84,10 @@ function App() {
   // Gérer l'invincibilité globale selon les popups ouvertes
   useEffect(() => {
     if (gameRef.current) {
-      const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || showPauseMenu || extraInvincibilityTimer !== null;
+      const shouldBeInvincible = isInitializing || showProjectModal || showSpeedrunModal || showDeathModal || showControlsModal || showInGameMenuModal || extraInvincibilityTimer !== null;
       gameRef.current.setPlayerInvincible(shouldBeInvincible);
     }
-  }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, showPauseMenu, extraInvincibilityTimer]);
-
-  // Gérer l'event listener de pause avec les bonnes conditions
-  useEffect(() => {
-    const handlePauseModal = () => {
-      // Vérifier les conditions avant d'ouvrir/fermer la pause
-      if (isInitializing || showSpeedrunModal || showDeathModal || showProjectModal || showControlsModal) {
-        return; // Ne pas ouvrir la pause dans ces cas
-      }
-      setShowPauseMenu(prev => !prev);
-    };
-
-    window.addEventListener("openPauseModal", handlePauseModal);
-    
-    return () => {
-      window.removeEventListener("openPauseModal", handlePauseModal);
-    };
-  }, [isInitializing, showSpeedrunModal, showDeathModal, showProjectModal, showControlsModal]);
+  }, [isInitializing, showProjectModal, showSpeedrunModal, showDeathModal, showControlsModal, showInGameMenuModal, extraInvincibilityTimer]);
 
   // Détection des intervalles écoulés pour l'animation rouge du chrono
   useEffect(() => {
@@ -415,6 +398,12 @@ function App() {
     };
     window.addEventListener("openControlsModal", handleControlsModal);
 
+    // Event listener pour la touche T
+    const handleInGameMenuModal = () => {
+      setShowInGameMenuModal(true);
+    };
+    window.addEventListener("openInGameMenuModal", handleInGameMenuModal);
+
     // Event listener pour l'ouverture de la popup projet
     const handleProjectModal = (event) => {
       setCurrentProject(event.detail);
@@ -428,8 +417,6 @@ function App() {
     };
     window.addEventListener("openDeathModal", handleDeathModal);
 
-
-
     // Event listener pour la touche Échap et P (pause)
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
@@ -438,15 +425,9 @@ function App() {
           setCurrentProject(null);
         } else if (showControlsModal) {
           setShowControlsModal(false);
-        } else if (showPauseMenu) {
-          setShowPauseMenu(false);
-        } else if (!isInitializing && !showSpeedrunModal && !showDeathModal) {
-          // Ouvrir le menu de pause seulement si le jeu est en cours
-          setShowPauseMenu(true);
+        } else if (showInGameMenuModal) {
+          setShowInGameMenuModal(false);
         }
-      } else if (event.key === 'p' || event.key === 'P') {
-        // Déclencher l'événement de pause
-        window.dispatchEvent(new CustomEvent('openPauseModal'));
       }
     };
     window.addEventListener("keydown", handleEscapeKey);
@@ -461,6 +442,7 @@ function App() {
       }
       
       window.removeEventListener("openControlsModal", handleControlsModal);
+      window.removeEventListener("openInGameMenuModal", handleInGameMenuModal);
       window.removeEventListener("openProjectModal", handleProjectModal);
       window.removeEventListener("openDeathModal", handleDeathModal);
       window.removeEventListener("keydown", handleEscapeKey);
@@ -541,29 +523,6 @@ function App() {
     setExtraInvincibilityTimer(timer);
   };
 
-  // Handlers pour la modale de pause
-  const handlePauseResume = () => {
-    setShowPauseMenu(false);
-    // Déclencher l'invincibilité prolongée après fermeture de PauseMenu (avec un petit délai)
-    setTimeout(() => {
-      triggerExtraInvincibility();
-    }, 100);
-  };
-
-  const handlePauseQuickRestart = () => {
-    setShowPauseMenu(false);
-    // Redémarrer avec la même difficulté (va effacer tous les items via reset())
-    if (difficultyConfig && gameRef.current && gameRef.current.portfolioDataCache) {
-      handleGameStart(difficultyConfig, gameRef.current.portfolioDataCache);
-    }
-  };
-
-  const handlePauseBackToModeSelection = () => {
-    setShowPauseMenu(false);
-    // Retourner à la sélection de mode
-    handleRestart();
-  };
-
   return (
     <LanguageProvider>
       <AppContent 
@@ -571,14 +530,14 @@ function App() {
         isInitializing={isInitializing}
         showControlsModal={showControlsModal}
         setShowControlsModal={setShowControlsModal}
+        showInGameMenuModal={showInGameMenuModal}
+        setShowInGameMenuModal={setShowInGameMenuModal}
         showProjectModal={showProjectModal}
         setShowProjectModal={setShowProjectModal}
         showSpeedrunModal={showSpeedrunModal}
         setShowSpeedrunModal={setShowSpeedrunModal}
         showDeathModal={showDeathModal}
         setShowDeathModal={setShowDeathModal}
-        showPauseMenu={showPauseMenu}
-        setShowPauseMenu={setShowPauseMenu}
         currentProject={currentProject}
         setCurrentProject={setCurrentProject}
         menu={menu}
@@ -601,9 +560,6 @@ function App() {
         restartKey={restartKey}
         triggerExtraInvincibility={triggerExtraInvincibility}
         difficultyConfig={difficultyConfig}
-        handlePauseResume={handlePauseResume}
-        handlePauseQuickRestart={handlePauseQuickRestart}
-        handlePauseBackToModeSelection={handlePauseBackToModeSelection}
       />
     </LanguageProvider>
   );
@@ -614,14 +570,14 @@ function AppContent({
   isInitializing,
   showControlsModal,
   setShowControlsModal,
+  showInGameMenuModal,
+  setShowInGameMenuModal,
   showProjectModal,
   setShowProjectModal,
   showSpeedrunModal,
   setShowSpeedrunModal,
   showDeathModal,
   setShowDeathModal,
-  showPauseMenu,
-  setShowPauseMenu,
   currentProject,
   setCurrentProject,
   menu,
@@ -643,10 +599,7 @@ function AppContent({
   timerAlert,
   restartKey,
   triggerExtraInvincibility,
-  difficultyConfig,
-  handlePauseResume,
-  handlePauseQuickRestart,
-  handlePauseBackToModeSelection
+  difficultyConfig
 }) {
   // État pour l'effet de particules du compteur
   const [showCounterParticles, setShowCounterParticles] = useState(false);
@@ -672,6 +625,13 @@ function AppContent({
       <GameControlsPopup 
         isVisible={showControlsModal} 
         onClose={() => setShowControlsModal(false)} 
+      />
+
+      {/* Modale in-game menu */}
+      <GameInGameMenuPopup 
+        isVisible={showInGameMenuModal} 
+        onClose={() => setShowInGameMenuModal(false)}
+        onBackToModeSelection={handleRestart}
       />
 
       {/* Modale de projet */}
@@ -709,21 +669,6 @@ function AppContent({
         onBackToSite={handleBackToSite}
         difficultyConfig={difficultyConfig}
       />
-
-      {/* Modale de pause */}
-      <PauseMenuPopup 
-        isVisible={showPauseMenu}
-        onQuickRestart={handlePauseQuickRestart}
-        onBackToModeSelection={handlePauseBackToModeSelection}
-        onResume={handlePauseResume}
-        currentDifficulty={difficultyConfig}
-        gameTime={gameMilliseconds}
-        collectedProjects={collectedProjects}
-        totalProjects={totalProjects}
-        formatTimeSimple={formatTimeSimple}
-      />
-
-
 
       <canvas ref={canvasRef} />
 

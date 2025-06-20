@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, ChevronUp, Sword, Minus, Plus, Home, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronUp, Sword, Minus, Plus, Home, Menu } from 'lucide-react';
 
 // Icône de main personnalisée pour le bouton O
 const HandIcon = ({ size = 20 }) => (
@@ -88,9 +88,9 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
     }
   };
 
-  const handlePause = () => {
-    // Simuler l'appui sur la touche P
-    const event = new KeyboardEvent('keydown', { key: 'P' });
+  const handleMenu = () => {
+    // Simuler l'appui sur la touche M
+    const event = new KeyboardEvent('keydown', { key: 'M' });
     window.dispatchEvent(event);
   };
 
@@ -143,15 +143,15 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
         </button>
       </div>
 
-      {/* Bouton pause positionné au-dessus du saut */}
-      <div className="mobile-pause-control">
+      {/* Bouton Menu en haut à droite */}
+      <div className="mobile-menu-control">
         <button
-          className="mobile-btn mobile-btn-pause"
-          onTouchStart={handlePause}
-          onMouseDown={handlePause}
-          title="Pause (P)"
+          className="mobile-btn mobile-btn-menu"
+          onTouchStart={handleMenu}
+          onMouseDown={handleMenu}
+          title="Menu (M)"
         >
-          <Pause size={16} />
+          <Menu size={18} />
         </button>
       </div>
 

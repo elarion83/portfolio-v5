@@ -131,6 +131,11 @@ export default class Controller {
         // Émettre un événement personnalisé pour ouvrir la modale des contrôles
         window.dispatchEvent(new CustomEvent('openControlsModal'));
       }
+
+      if (this.game.inputManager.isKeyPressed("m")) {
+        // Émettre un événement personnalisé pour ouvrir la modale in-game menu
+        window.dispatchEvent(new CustomEvent('openInGameMenuModal'));
+      }
     }
 
     if (this.game.inputManager.isKeyPressed("-")) {
