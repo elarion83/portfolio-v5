@@ -201,11 +201,35 @@ function App() {
     window.game = game;
 
     var cb = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // Obtenir les dimensions réelles du viewport
+      let width = window.innerWidth;
+      let height = window.innerHeight;
 
-      canvas.style.width = window.innerWidth + "px";
-      canvas.style.height = window.innerHeight + "px";
+      // Sur mobile, on doit gérer le problème du viewport dynamique
+      // et éviter l'étirement causé par la barre d'adresse du navigateur
+      if (window.innerWidth <= 768) { // Mobile
+        // Utiliser la hauteur de viewport CSS si disponible
+        if (window.visualViewport) {
+          height = window.visualViewport.height;
+        } else {
+          // Fallback : utiliser document.documentElement.clientHeight qui exclut les barres de navigation
+          height = Math.min(window.innerHeight, document.documentElement.clientHeight);
+        }
+        
+        // S'assurer que le ratio d'aspect reste raisonnable sur mobile
+        const aspectRatio = width / height;
+        
+        // Si le ratio est trop étroit (viewport trop haut), on limite la hauteur
+        if (aspectRatio < 0.6) {
+          height = width / 0.6; // Forcer un ratio minimum de 0.6
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
 
       game.camera.updateAspectRatio();
     };
@@ -336,6 +360,11 @@ function App() {
     };
 
     window.addEventListener("resize", cb);
+    
+    // Sur mobile, écouter aussi les changements de visualViewport
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", cb);
+    }
 
     // Event listener pour la touche C
     const handleControlsModal = () => {
@@ -372,6 +401,12 @@ function App() {
     return () => {
       cancelAnimationFrame(update);
       window.removeEventListener("resize", cb);
+      
+      // Nettoyer aussi l'event listener visualViewport
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", cb);
+      }
+      
       window.removeEventListener("openControlsModal", handleControlsModal);
       window.removeEventListener("openProjectModal", handleProjectModal);
       window.removeEventListener("openDeathModal", handleDeathModal);

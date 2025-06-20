@@ -509,7 +509,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
                       
-                      {/* Blocs de gameplay */}
+                      {/* Blocs de gameplay 
                       <div className="gameplay-blocks">
                         <div className="gameplay-block">
                           <div className="gameplay-icon">🗺️</div>
@@ -523,7 +523,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
                           <div className="gameplay-icon">⏱️</div>
                           <h4>{t('gameplaySpeedrun')}</h4>
                         </div>
-                      </div>
+                      </div>*/}
                       <h2 className="game-init-title">{t('difficulty')}</h2>
 
                   {/* Sélecteur de difficulté */}
