@@ -6,8 +6,8 @@ export default class ItemManager {
     this.game = game;
     this.items = [];
     this.spawnTimer = 0;
-    this.spawnInterval = 10000;
-    this.maxItems = 5;
+    this.spawnInterval = 5000;
+    this.maxItems = 8;
     this.lastSpawnTime = 0;
     
     this.spawnProbabilities = {
@@ -18,13 +18,24 @@ export default class ItemManager {
   update(delta) {
     if (this.game.isInitializing) return;
 
+    // Filtrer les items collectés ou expirés
+    const itemsBeforeFilter = this.items.length;
     this.items = this.items.filter(item => {
-      if (item.collected) {
+      if (item.collected || item.expired) {
+        if (item.expired) {
+          console.log(`⏰ Item expiré: ${item.name}`);
+        }
         return false;
       }
       item.update(delta);
       return true;
     });
+    
+    // Log si des items ont été supprimés
+    const itemsRemoved = itemsBeforeFilter - this.items.length;
+    if (itemsRemoved > 0) {
+      console.log(`🗑️ ${itemsRemoved} item(s) supprimé(s) (collectés ou expirés)`);
+    }
 
     this.updateSpawning(delta);
   }

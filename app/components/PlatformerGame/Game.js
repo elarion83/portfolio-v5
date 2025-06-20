@@ -350,36 +350,36 @@ export default class Game {
       return;
     }
     
-    const diffKey = this.getDifficultyKey();
+      const diffKey = this.getDifficultyKey();
     const filtered = this.portfolioDataCache; // Données déjà filtrées (sans id 1602)
     console.log(`📊 ${filtered.length} projets disponibles en cache`);
-    
-    if (diffKey === 'discovery') {
-      // Mode chronologique : inverser l'ordre des projets et placement séquentiel
-      this.allProjects = [...filtered].reverse(); // Ordre chronologique inverse (le plus ancien en premier)
-      this.availableProjects = [...this.allProjects];
       
-      console.log(`🌟 Mode Histoire: ${this.allProjects.length} projets chargés`);
-      console.log(`📅 Premier projet (le plus ancien): ${this.allProjects[0]?.title?.rendered} (${this.allProjects[0]?.acf?.annee})`);
-      
-      // Créer des positions séquentielles proches les unes des autres
-      this.portfolioItems = [];
-      this.chronologicalIndex = 0; // Index pour suivre la progression chronologique
-      
-      // Placer seulement le premier projet au début (le plus ancien)
-      if (this.availableProjects.length > 0) {
-        const firstProject = this.availableProjects[0];
-        console.log(`🎯 Placement du premier projet: ${decodeHtmlEntities(firstProject.title.rendered)}`);
-        this.portfolioItems.push(
-          new PortfolioItem(this, 3, 18, { // Position de départ
-            id: firstProject.id,
-            title: decodeHtmlEntities(firstProject.title.rendered),
-            description: firstProject.acf?.socle_technique || 'Projet',
-            url: firstProject.acf?.url_projet || firstProject.link,
-            type: 'web',
-            imageUrl: firstProject.acf?.image_background || '',
-            logoUrl: firstProject.acf?.logo_url || '',
-            department: firstProject.department_name || '',
+      if (diffKey === 'discovery') {
+        // Mode chronologique : inverser l'ordre des projets et placement séquentiel
+        this.allProjects = [...filtered].reverse(); // Ordre chronologique inverse (le plus ancien en premier)
+        this.availableProjects = [...this.allProjects];
+        
+        console.log(`🌟 Mode Histoire: ${this.allProjects.length} projets chargés`);
+        console.log(`📅 Premier projet (le plus ancien): ${this.allProjects[0]?.title?.rendered} (${this.allProjects[0]?.acf?.annee})`);
+        
+        // Créer des positions séquentielles proches les unes des autres
+        this.portfolioItems = [];
+        this.chronologicalIndex = 0; // Index pour suivre la progression chronologique
+        
+        // Placer seulement le premier projet au début (le plus ancien)
+        if (this.availableProjects.length > 0) {
+          const firstProject = this.availableProjects[0];
+          console.log(`🎯 Placement du premier projet: ${decodeHtmlEntities(firstProject.title.rendered)}`);
+          this.portfolioItems.push(
+            new PortfolioItem(this, 3, 18, { // Position de départ
+              id: firstProject.id,
+              title: decodeHtmlEntities(firstProject.title.rendered),
+              description: firstProject.acf?.socle_technique || 'Projet',
+              url: firstProject.acf?.url_projet || firstProject.link,
+              type: 'web',
+              imageUrl: firstProject.acf?.image_background || '',
+              logoUrl: firstProject.acf?.logo_url || '',
+              department: firstProject.department_name || '',
             year: firstProject.acf?.annee || '',
             pagespeed: firstProject.acf?.informations_pagespeed ? {
               performance: parseInt(firstProject.acf.informations_pagespeed.performance) || 0,
@@ -387,35 +387,35 @@ export default class Game {
               bestPractices: parseInt(firstProject.acf.informations_pagespeed.bonnes) || 0,
               seo: parseInt(firstProject.acf.informations_pagespeed.seo) || 0
             } : null
-          })
-        );
-        console.log(`✅ Mode Histoire: 1 seul projet placé initialement`);
-      }
-    } else {
-      // Modes normaux : placement aléatoire
-      this.allProjects = filtered;
-      
-      // Déterminer le nombre de projets selon le mode
-      let maxProjects;
-      if (this.difficultyConfig && this.difficultyConfig.projectsRequired) {
-        // Utiliser la configuration de difficulté pour tous les modes
-        maxProjects = this.difficultyConfig.projectsRequired;
-      } else {
-        // Fallback sur l'ancienne logique si pas de config
-        if (diffKey === 'quick') {
-          maxProjects = 10;
-        } else if (diffKey === 'battlefield') {
-          maxProjects = 15;
-        } else if (diffKey === 'darklord') {
-          maxProjects = filtered.length;
-        } else {
-          maxProjects = 10;
+            })
+          );
+          console.log(`✅ Mode Histoire: 1 seul projet placé initialement`);
         }
-      }
-      
-      // Limiter les projets disponibles selon le mode
-      this.availableProjects = [...filtered].slice(0, maxProjects);
-      console.log(`🎯 Mode ${diffKey}: ${this.availableProjects.length} projets sur ${filtered.length} disponibles`);
+      } else {
+        // Modes normaux : placement aléatoire
+      this.allProjects = filtered;
+        
+        // Déterminer le nombre de projets selon le mode
+        let maxProjects;
+        if (this.difficultyConfig && this.difficultyConfig.projectsRequired) {
+        // Utiliser la configuration de difficulté pour tous les modes
+            maxProjects = this.difficultyConfig.projectsRequired;
+        } else {
+          // Fallback sur l'ancienne logique si pas de config
+          if (diffKey === 'quick') {
+            maxProjects = 10;
+          } else if (diffKey === 'battlefield') {
+            maxProjects = 15;
+          } else if (diffKey === 'darklord') {
+            maxProjects = filtered.length;
+          } else {
+            maxProjects = 10;
+          }
+        }
+        
+        // Limiter les projets disponibles selon le mode
+        this.availableProjects = [...filtered].slice(0, maxProjects);
+        console.log(`🎯 Mode ${diffKey}: ${this.availableProjects.length} projets sur ${filtered.length} disponibles`);
 
       // Trouver les emplacements valides (1ère, 3e, 5e case vide au-dessus d'une plateforme par colonne)
       // Exclure les 2 premières colonnes (x = 0 et x = 1)
@@ -443,10 +443,10 @@ export default class Game {
         [validPositions[i], validPositions[j]] = [validPositions[j], validPositions[i]];
       }
 
-      // Créer les items initiaux (max 10 visibles simultanément)
+        // Créer les items initiaux (max 10 visibles simultanément)
       this.portfolioItems = [];
-      const itemsToPlace = Math.min(validPositions.length, this.availableProjects.length, 10);
-      for (let i = 0; i < itemsToPlace; i++) {
+        const itemsToPlace = Math.min(validPositions.length, this.availableProjects.length, 10);
+        for (let i = 0; i < itemsToPlace; i++) {
         const pos = validPositions[i];
         const project = this.availableProjects.shift();
         this.portfolioItems.push(
@@ -468,8 +468,8 @@ export default class Game {
             } : null
           })
         );
-      }
-      console.log(`✅ ${this.portfolioItems.length} projets placés initialement`);
+        }
+        console.log(`✅ ${this.portfolioItems.length} projets placés initialement`);
     }
   }
 
@@ -589,15 +589,15 @@ export default class Game {
         }
         
         this.portfolioItems.push(
-                      new PortfolioItem(this, finalX, finalY, {
-              id: nextProject.id,
-              title: decodeHtmlEntities(nextProject.title.rendered),
-              description: nextProject.acf?.socle_technique || 'Projet',
-              url: nextProject.acf?.url_projet || nextProject.link,
-              type: 'web',
-              imageUrl: nextProject.acf?.image_background || '',
-              logoUrl: nextProject.acf?.logo_url || '',
-              department: nextProject.department_name || '',
+          new PortfolioItem(this, finalX, finalY, {
+            id: nextProject.id,
+            title: decodeHtmlEntities(nextProject.title.rendered),
+            description: nextProject.acf?.socle_technique || 'Projet',
+            url: nextProject.acf?.url_projet || nextProject.link,
+            type: 'web',
+            imageUrl: nextProject.acf?.image_background || '',
+            logoUrl: nextProject.acf?.logo_url || '',
+            department: nextProject.department_name || '',
               year: nextProject.acf?.annee || '',
               pagespeed: nextProject.acf?.informations_pagespeed ? {
                 performance: parseInt(nextProject.acf.informations_pagespeed.performance) || 0,
@@ -605,7 +605,7 @@ export default class Game {
                 bestPractices: parseInt(nextProject.acf.informations_pagespeed.bonnes) || 0,
                 seo: parseInt(nextProject.acf.informations_pagespeed.seo) || 0
               } : null
-            })
+          })
         );
         console.log(`✅ Nouveau projet placé en (${finalX}, ${finalY}): ${decodeHtmlEntities(nextProject.title.rendered)}`);
       }

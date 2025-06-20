@@ -81,15 +81,30 @@ export default class Camera {
         );
       }
 
-      var diffX = followingCenter[0] - cameraCenter[0];
-      var diffY = followingCenter[1] - cameraCenter[1];
+      // Calculer la position cible de la caméra selon la direction du joueur
+      var targetCameraCenter = [followingCenter[0], followingCenter[1]];
+      
+      // Ajuster la position horizontale selon la direction du joueur
+      if (this.followingObject.facing !== undefined) {
+        const cameraWidth = this.getWidth();
+        if (this.followingObject.facing === 0) {
+          // Joueur regarde à gauche : positionner le joueur à 70% de la gauche (pour voir plus à gauche)
+          targetCameraCenter[0] = followingCenter[0] - (cameraWidth * 0.2); // Décaler caméra vers la droite
+        } else {
+          // Joueur regarde à droite : positionner le joueur à 70% de la droite (pour voir plus à droite)
+          targetCameraCenter[0] = followingCenter[0] + (cameraWidth * 0.2); // Décaler caméra vers la gauche
+        }
+      }
+
+      var diffX = targetCameraCenter[0] - cameraCenter[0];
+      var diffY = targetCameraCenter[1] - cameraCenter[1];
 
       if (Math.abs(diffX) > 0.01 || Math.abs(diffY) > 0.01) {
         var newCenter = [cameraCenter[0], cameraCenter[1]];
         var speed =
           getDistance(
-            followingCenter[0],
-            followingCenter[1],
+            targetCameraCenter[0],
+            targetCameraCenter[1],
             cameraCenter[0],
             cameraCenter[1]
           ) *
@@ -97,17 +112,17 @@ export default class Camera {
           this.followSpeed;
 
         function move(dim) {
-          if (newCenter[dim] < followingCenter[dim]) {
-            if (newCenter[dim] + speed < followingCenter[dim]) {
+          if (newCenter[dim] < targetCameraCenter[dim]) {
+            if (newCenter[dim] + speed < targetCameraCenter[dim]) {
               newCenter[dim] += speed;
             } else {
-              newCenter[dim] = followingCenter[dim];
+              newCenter[dim] = targetCameraCenter[dim];
             }
-          } else if (newCenter[dim] > followingCenter[dim]) {
-            if (newCenter[dim] - speed > followingCenter[dim]) {
+          } else if (newCenter[dim] > targetCameraCenter[dim]) {
+            if (newCenter[dim] - speed > targetCameraCenter[dim]) {
               newCenter[dim] -= speed;
             } else {
-              newCenter[dim] = followingCenter[dim];
+              newCenter[dim] = targetCameraCenter[dim];
             }
           }
         }

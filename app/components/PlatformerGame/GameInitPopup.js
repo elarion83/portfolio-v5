@@ -91,9 +91,12 @@ const translations = {
     // Menu de pause
     gamePaused: "Jeu en pause",
     currentMode: "Mode actuel :",
-    resumeGame: "Reprendre",
+    resumeGame: "[Échap] Reprendre",
+    resumeGameMobile: "Reprendre",
     quickRestart: "Recommencer",
     changeDifficulty: "Changer de mode",
+    time: "Temps",
+    projectsCollected: "Projets collectés",
     // Niveaux de difficulté
     difficulty: "Mode",
     difficultyQuick: "Partie rapide",
@@ -101,7 +104,7 @@ const translations = {
     difficultyBattlefield: "Champs de bataille",
     difficultyDarkLord: "Seigneur des ténèbres",
     difficultyDescQuick: "10 projets - Peu d'ennemis - Idéal pour découvrir",
-    difficultyDescDiscovery: "35 projets par ordre chronologique - Peu d'ennemis",
+    difficultyDescDiscovery: "Retracer mon histoire sur le web - 35 projets chronologiques",
     difficultyDescBattlefield: "15 projets - Beaucoup d'ennemis",
     difficultyDescDarkLord: "35 projets - Énormément d'ennemis - Un dégât = mort",
     // Popup de défaite
@@ -127,7 +130,7 @@ const translations = {
     gameplaySpeedrun: "Chronométrez",
     // Caractéristiques du mode
     modeFeatures: "Caractéristiques :",
-    noTimer: "Aucun chrono",
+    noTimer: "Ordre chronologique",
     withTimer: "Chrono activé",
     projectsToCollect: "Projets à collecter",
     healthPoints: "Points de vie",
@@ -226,9 +229,12 @@ const translations = {
     // Menu de pause
     gamePaused: "Game Paused",
     currentMode: "Current mode:",
-    resumeGame: "Resume",
+    resumeGame: "[Esc] Resume",
+    resumeGameMobile: "Resume",
     quickRestart: "Quick Restart",
     changeDifficulty: "Change Mode",
+    time: "Time",
+    projectsCollected: "Projects Collected",
     // Niveaux de difficulté
     difficulty: "Mode",
     difficultyQuick: "Quick Game",
@@ -236,7 +242,7 @@ const translations = {
     difficultyBattlefield: "Battlefield",
     difficultyDarkLord: "Dark Lord",
     difficultyDescQuick: "10 projects - Few enemies - Perfect to discover",
-    difficultyDescDiscovery: "35 projects by chronological order - Few enemies",
+    difficultyDescDiscovery: "Trace my web history - 35 chronological projects",
     difficultyDescBattlefield: "15 projects - Many enemies",
     difficultyDescDarkLord: "35 projects - Tons of enemies - One hit = death",
     // Popup de défaite
@@ -262,7 +268,7 @@ const translations = {
     gameplaySpeedrun: "Speedrun",
     // Caractéristiques du mode
     modeFeatures: "Features:",
-    noTimer: "No timer",
+    noTimer: "Chronological order",
     withTimer: "Timer enabled",
     projectsToCollect: "Projects to collect",
     healthPoints: "Health points",

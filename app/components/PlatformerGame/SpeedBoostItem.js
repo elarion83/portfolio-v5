@@ -4,6 +4,10 @@ export default class SpeedBoostItem extends Item {
   constructor(game, x, y) {
     super(game, x, y, 'speed_boost');
     
+    // Définir une durée de vie aléatoire entre 4 et 10 secondes
+    const lifespanSeconds = 4 + Math.random() * 6; // 4 à 10 secondes
+    this.setLifespan(lifespanSeconds * 1000); // Convertir en millisecondes
+    
     // Propriétés visuelles spécifiques au boost de vitesse
     this.primaryColor = 'rgba(255, 200, 50, 0.9)';
     this.secondaryColor = 'rgba(255, 255, 100, 0.8)';
@@ -18,7 +22,7 @@ export default class SpeedBoostItem extends Item {
     // Calculer le pourcentage pour l'affichage
     const percentage = Math.round(this.effectData.speedMultiplier * 100);
     this.name = `Vitesse x${percentage}%`;
-    this.description = `Augmente la vitesse de ${percentage - 100}% pendant 5 secondes`;
+    this.description = `Augmente la vitesse de ${percentage - 100}% pendant 5 secondes (disparaît dans ${Math.round(lifespanSeconds)}s)`;
     
     // Animation plus rapide pour suggérer la vitesse
     this.pulseSpeed = 4;

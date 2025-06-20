@@ -63,7 +63,7 @@ function App() {
   // Timer avec millisecondes
   useEffect(() => {
     let interval;
-    if (!isInitializing && !menu && !gameCompleted && gameStartTime) {
+    if (!isInitializing && !menu && !gameCompleted && !showPauseMenu && gameStartTime) {
       interval = setInterval(() => {
         const now = Date.now();
         const elapsed = now - gameStartTime;
@@ -72,7 +72,7 @@ function App() {
       }, 10); // Mise à jour toutes les 10ms pour la précision
     }
     return () => clearInterval(interval);
-  }, [isInitializing, menu, gameCompleted, gameStartTime]);
+  }, [isInitializing, menu, gameCompleted, showPauseMenu, gameStartTime]);
 
   // Assigner le gameTime à l'objet game pour l'animation du tooltip
   useEffect(() => {
@@ -717,6 +717,10 @@ function AppContent({
         onBackToModeSelection={handlePauseBackToModeSelection}
         onResume={handlePauseResume}
         currentDifficulty={difficultyConfig}
+        gameTime={gameMilliseconds}
+        collectedProjects={collectedProjects}
+        totalProjects={totalProjects}
+        formatTimeSimple={formatTimeSimple}
       />
 
 

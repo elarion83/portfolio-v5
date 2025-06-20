@@ -460,6 +460,10 @@ export default class PortfolioItem extends GameObject {
     // Shake de caméra
     this.game.camera.shake(0.3, 4);
     
+    // Marquer ce projet comme non proche et émettre l'événement
+    this.game.nearProject = false;
+    window.dispatchEvent(new CustomEvent('projectProximity', { detail: { near: false } }));
+    
     // Émettre un événement pour mettre à jour le compteur
     window.dispatchEvent(new CustomEvent('projectCollected'));
     

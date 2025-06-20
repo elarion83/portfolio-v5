@@ -5,8 +5,21 @@ import { motion } from 'framer-motion';
 import { useLanguage } from './GameInitPopup';
 import { RotateCcw, Settings, Pause } from 'lucide-react';
 
-const PauseMenuPopup = ({ isVisible, onQuickRestart, onBackToModeSelection, onResume, currentDifficulty }) => {
+const PauseMenuPopup = ({ 
+  isVisible, 
+  onQuickRestart, 
+  onBackToModeSelection, 
+  onResume, 
+  currentDifficulty,
+  gameTime,
+  collectedProjects,
+  totalProjects,
+  formatTimeSimple
+}) => {
   const { t } = useLanguage();
+  
+  // Détecter si on est sur mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
   if (!isVisible) return null;
 
@@ -40,24 +53,39 @@ const PauseMenuPopup = ({ isVisible, onQuickRestart, onBackToModeSelection, onRe
           </motion.h2>
         </div>
 
-        {/* Mode actuel */}
-        {currentDifficulty && (
-          <motion.div 
-            className="current-mode-display"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
-          >
-            <h3>{t('currentMode')}</h3>
-            <div className="mode-info">
-              <span className="mode-icon">{currentDifficulty.icon}</span>
-              <div className="mode-details">
-                <div className="mode-name">{currentDifficulty.name}</div>
-                <div className="mode-desc">{currentDifficulty.description}</div>
+        {/* Statistiques du jeu */}
+        <motion.div 
+          className="pause-game-stats"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+        >
+          {/* Mode de jeu */}
+          {currentDifficulty && (
+            <div className="pause-stat-item">
+              <span className="pause-stat-label">{t('currentMode')}</span>
+              <div className="pause-stat-value pause-mode-value">
+                <span className="pause-mode-name">{currentDifficulty.name}</span>
               </div>
             </div>
-          </motion.div>
-        )}
+          )}
+
+          {/* Chronomètre */}
+          <div className="pause-stat-item">
+            <span className="pause-stat-label">{t('time')}</span>
+            <span className="pause-stat-value pause-time-value">{formatTimeSimple ? formatTimeSimple(gameTime) : '00:00.000'}</span>
+          </div>
+
+          {/* Projets collectés */}
+          <div className="pause-stat-item">
+            <span className="pause-stat-label">{t('projectsCollected')}</span>
+            <span className="pause-stat-value pause-projects-value">
+              <span className="pause-collected">{collectedProjects || 0}</span>
+              <span className="pause-separator"> / </span>
+              <span className="pause-total">{totalProjects || 0}</span>
+            </span>
+          </div>
+        </motion.div>
 
         {/* Actions */}
         <motion.div 
@@ -88,7 +116,7 @@ const PauseMenuPopup = ({ isVisible, onQuickRestart, onBackToModeSelection, onRe
               }}
             />
             <span style={{ position: 'relative', zIndex: 10, color: '#ffffff' }}>
-              {t('resumeGame')}
+              {isMobile ? t('resumeGameMobile') : t('resumeGame')}
             </span>
           </button>
           
