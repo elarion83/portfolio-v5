@@ -237,6 +237,22 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   border-color: rgba(226, 141, 29, 0.7);
 }
 
+.mobile-btn-collect.first-project-pulse {
+  animation: firstProjectPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(226, 141, 29, 0.6);
+}
+
+@keyframes firstProjectPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(226, 141, 29, 0.6);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(226, 141, 29, 0.8);
+  }
+}
+
 /* Contrôles de zoom */
 .mobile-zoom-controls {
   position: fixed;
@@ -480,12 +496,17 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 
 .game-concept-intro {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   text-align: center;
-  margin: 0 0 32px 0;
+  margin: 12px 0 12px 0;
   font-style: italic;
-  opacity: 0.9;
   line-height: 1.4;
+  background: rgba(226, 141, 29, 0.1);
+  border: 1px solid rgba(226, 141, 29, 0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .game-init-section {
@@ -778,11 +799,17 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   
   .game-concept-intro {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
-    margin: 0 0 24px 0;
+    margin: 6px 0 6px 0;
     font-style: italic;
-    opacity: 0.9;
+    line-height: 1.4;
+    background: rgba(226, 141, 29, 0.1);
+    border: 1px solid rgba(226, 141, 29, 0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .game-init-section h3 {

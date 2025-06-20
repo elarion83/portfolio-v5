@@ -683,6 +683,7 @@ function AppContent({
         onKeyPress={handleMobileKeyPress}
         onKeyRelease={handleMobileKeyRelease}
         showCollectButton={nearProject}
+        collectedProjects={collectedProjects}
       />
     </div>
   );

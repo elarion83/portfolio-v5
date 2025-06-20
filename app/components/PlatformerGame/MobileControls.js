@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronUp, Sword, Minus, Plus, Home } from 'lucide-react';
 
-const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false }) => {
+const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, collectedProjects = 0 }) => {
   const handleTouchStart = (key) => {
     onKeyPress(key);
   };
@@ -103,7 +103,7 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false })
         {showCollectButton && (
           <div className="mobile-actions-left">
             <button
-              className="mobile-btn mobile-btn-collect"
+              className={`mobile-btn mobile-btn-collect ${collectedProjects === 0 ? 'first-project-pulse' : ''}`}
               onTouchStart={() => handleTouchStart('e')}
               onTouchEnd={() => handleTouchEnd('e')}
               onMouseDown={() => handleTouchStart('e')}
