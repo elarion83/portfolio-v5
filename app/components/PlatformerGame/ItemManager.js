@@ -32,6 +32,12 @@ export default class ItemManager {
     const itemsBeforeFilter = this.items.length;
     this.items = this.items.filter(item => {
       if (item.collected || item.expired) {
+        // Vérifier si l'item était visible à l'écran quand il a disparu
+        if (item.expired && this.isItemVisibleOnScreen(item)) {
+          // Déclencher un texte flottant
+          this.game.particleSystem.spawnDisappearText(item.x + item.w / 2, item.y + item.h / 2);
+        }
+        
         if (item.expired) {
           console.log(`⏰ Item expiré: ${item.name}`);
         }
@@ -180,6 +186,19 @@ export default class ItemManager {
     }
     
     return true;
+  }
+
+  // Vérifier si un item est visible à l'écran
+  isItemVisibleOnScreen(item) {
+    const isMobile = window.innerWidth <= 768;
+    const renderMargin = isMobile ? 3 : 0;
+    
+    return (
+      item.x + item.w > this.game.camera.startX - renderMargin &&
+      item.y + item.h > this.game.camera.startY - renderMargin &&
+      item.x < this.game.camera.endX + renderMargin &&
+      item.y < this.game.camera.endY + renderMargin
+    );
   }
 
   render() {

@@ -154,6 +154,10 @@ export default class PlatformEffectManager {
         this.renderGlow(screenX, screenY, screenW - screenX, screenH - screenY, effect, time);
         break;
       
+      case 'dangerous_border':
+        this.renderDangerousBorder(screenX, screenY, screenW - screenX, screenH - screenY, effect, time);
+        break;
+      
       case 'shake':
         // Le shake sera géré différemment car il affecte la position
         break;
@@ -196,6 +200,47 @@ export default class PlatformEffectManager {
     this.game.ctx.save();
     this.game.ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${0.3 * effect.options.intensity})`;
     this.game.ctx.fillRect(x, y, w, h);
+    this.game.ctx.restore();
+  }
+
+  renderDangerousBorder(x, y, w, h, effect, time) {
+    this.game.ctx.save();
+    
+    // Animation de pulsation pour l'intensité
+    const pulseIntensity = Math.sin(time * effect.options.speed * 8) * 0.3 + 0.7;
+    
+    // Couleur rouge foncée avec animation
+    const baseColor = '#8B0000'; // Rouge foncé
+    const animatedColor = `rgba(139, 0, 0, ${pulseIntensity * effect.options.intensity * 0.8})`;
+    
+    // Appliquer l'effet de flou
+    this.game.ctx.filter = 'blur(1px)';
+    
+    // Dessiner la bordure principale avec flou
+    this.game.ctx.strokeStyle = animatedColor;
+    this.game.ctx.lineWidth = 3;
+    this.game.ctx.globalAlpha = pulseIntensity * effect.options.intensity;
+    this.game.ctx.strokeRect(x - 1, y - 1, w + 2, h + 2);
+    
+    // Effet de lueur rouge foncée
+    this.game.ctx.shadowColor = '#8B0000';
+    this.game.ctx.shadowBlur = 8;
+    this.game.ctx.strokeRect(x - 1, y - 1, w + 2, h + 2);
+    
+    // Bordure interne plus brillante
+    this.game.ctx.filter = 'blur(0.5px)';
+    this.game.ctx.strokeStyle = `rgba(255, 0, 0, ${pulseIntensity * effect.options.intensity * 0.6})`;
+    this.game.ctx.lineWidth = 1;
+    this.game.ctx.strokeRect(x, y, w, h);
+    
+    // Animation de rotation pour l'effet de danger
+    const rotationAngle = time * effect.options.speed * 2;
+    this.game.ctx.translate(x + w/2, y + h/2);
+    this.game.ctx.rotate(rotationAngle);
+    this.game.ctx.strokeStyle = `rgba(255, 0, 0, ${pulseIntensity * effect.options.intensity * 0.3})`;
+    this.game.ctx.lineWidth = 2;
+    this.game.ctx.strokeRect(-w/2 - 2, -h/2 - 2, w + 4, h + 4);
+    
     this.game.ctx.restore();
   }
 

@@ -1517,11 +1517,12 @@ export default class Game {
     const neighbors = this.getAdjacentPlatforms(startPlatform);
     console.log(`🔗 Voisins trouvés: ${neighbors.length}`);
 
-    // 4. Créer la liste des plateformes à affecter (la plateforme de départ + 2 voisins max)
+    // 4. Créer la liste des plateformes à affecter (la plateforme de départ + voisins aléatoires)
     const platformsToAffect = [startPlatform];
-    // Mélanger les voisins pour en prendre deux au hasard
+    // Mélanger les voisins et en prendre un nombre aléatoire entre 1 et 5
     const shuffledNeighbors = neighbors.sort(() => 0.5 - Math.random());
-    platformsToAffect.push(...shuffledNeighbors.slice(0, 2));
+    const numAdditionalPlatforms = getRandomInteger(1, Math.min(5, neighbors.length));
+    platformsToAffect.push(...shuffledNeighbors.slice(0, numAdditionalPlatforms));
     
     console.log(`🎨 Plateformes à affecter: ${platformsToAffect.length}`);
 
@@ -1535,11 +1536,22 @@ export default class Game {
                 intensity: 1.0
             });
             
+            // Ajouter l'effet de bordure dangereuse
+            this.platformEffects.addEffect(platform.id, 'dangerous_border', {
+                color: '#8B0000',
+                duration: 15000, // Durée de 15 secondes
+                intensity: 1.0,
+                speed: 1.5 // Vitesse d'animation
+            });
+            
             // Ajouter l'ID à la liste des plateformes dangereuses
             if (!this.dangerousPlatformIds.includes(platform.id)) {
                 this.dangerousPlatformIds.push(platform.id);
                 console.log(`💀 Plateforme ${platform.id} ajoutée à la liste dangereuse (total: ${this.dangerousPlatformIds.length})`);
             }
+            
+            // Spawner des particules d'avertissement sur la plateforme
+            this.particleSystem.spawnDangerousPlatformWarning(platform.x, platform.y);
         } else {
             console.log(`⚠️ Plateforme invalide:`, platform);
         }

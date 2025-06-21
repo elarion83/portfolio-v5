@@ -12,6 +12,23 @@ export default class ParticleSystem {
      * @type {Array.<{ x: number, y: number, size: number, ticks: number, vx: number, vy: number, alpha: number }>}
      */
     this.particles = [];
+
+    /**
+     * @type {Array.<{ x: number, y: number, text: string, ticks: number, vy: number, alpha: number, fontSize: number }>}
+     */
+    this.floatingTexts = [];
+
+    // Messages pour les items qui disparaissent
+    this.disappearMessages = [
+      'Too late',
+      'Bye bye',
+      'Ciao...',
+      'Hasta la vista...',
+      'Missed it',
+      'Gone...',
+      'Adios',
+      'See ya'
+    ];
   }
 
   spawnParticles(x, y, amount = 5, sizeScale = 1) {
@@ -76,7 +93,50 @@ export default class ParticleSystem {
     }
   }
 
+  spawnDangerousPlatformWarning(platformX, platformY) {
+    // Génère un seed unique basé sur la position pour chaque plateforme dangereuse
+    if (!this.dangerousSeeds) this.dangerousSeeds = {};
+    const key = `${platformX},${platformY}`;
+    if (!this.dangerousSeeds[key]) {
+      this.dangerousSeeds[key] = Math.floor(Math.random() * 100000);
+    }
+  }
+
   render() {
+    // Rendu des particules orbitales sur les plateformes dangereuses
+    if (this.dangerousSeeds && this.game.dangerousPlatformIds) {
+      for (const platformId of this.game.dangerousPlatformIds) {
+        const platform = this.game.getPlatformById(platformId);
+        if (platform) {
+          const key = `${platform.x},${platform.y}`;
+          const seed = this.dangerousSeeds[key];
+          if (seed !== undefined) {
+            this.drawDangerousOrbitalParticles(platform.x + 0.5, platform.y + 0.5, 1.0, 0, seed);
+          }
+        }
+      }
+    }
+
+    // Rendu des textes flottants
+    for (const text of this.floatingTexts) {
+      const [screenX, screenY] = this.game.camera.transformCoordinates(text.x, text.y);
+      
+      this.game.ctx.save();
+      this.game.ctx.globalAlpha = text.alpha * 0.6; // Opacité globale réduite
+      this.game.ctx.fillStyle = '#ffa07a'; // Couleur plus claire (light salmon)
+      this.game.ctx.font = `${text.fontSize}px Arial`;
+      this.game.ctx.textAlign = 'center';
+      this.game.ctx.textBaseline = 'middle';
+      
+      // Effet de lueur plus discret
+      this.game.ctx.shadowColor = '#ffa07a';
+      this.game.ctx.shadowBlur = 2; // Lueur réduite
+      
+      this.game.ctx.fillText(text.text, screenX, screenY);
+      this.game.ctx.restore();
+    }
+
+    // Rendu des autres particules
     for (var particle of this.particles) {
       this.game.ctx.globalAlpha = Math.min(1, Math.max(0, particle.alpha));
 
@@ -120,12 +180,40 @@ export default class ParticleSystem {
   update(delta) {
     var deleting = [];
 
+    // Mise à jour des textes flottants
+    for (let i = 0; i < this.floatingTexts.length; i++) {
+      const text = this.floatingTexts[i];
+      
+      // Mouvement vers le haut
+      text.y += delta * text.vy * 60;
+      text.ticks += delta;
+      
+      // Calculer l'alpha basé sur le temps écoulé
+      const elapsed = Date.now() - text.startTime;
+      const progress = elapsed / text.duration;
+      
+      if (progress >= 1) {
+        // Texte expiré
+        deleting.unshift(i);
+      } else {
+        // Fade-out progressif
+        text.alpha = Math.max(0, 1 - progress);
+      }
+    }
+
+    // Supprimer les textes expirés
+    for (var i = 0; i < deleting.length; i++) {
+      this.floatingTexts.splice(deleting[i], 1);
+    }
+
+    // Mise à jour des particules
+    deleting = [];
     for (var i = 0; i < this.particles.length; i++) {
       var particle = this.particles[i];
 
+      // Gestion normale pour toutes les particules
       particle.x += delta * particle.vx;
       particle.y += delta * particle.vy;
-
       particle.ticks += delta;
 
       if (particle.ticks > 2) {
@@ -143,5 +231,55 @@ export default class ParticleSystem {
     for (var i = 0; i < deleting.length; i++) {
       this.particles.splice(deleting[i], 1);
     }
+  }
+
+  // Particules orbitales rouges foncées pour plateformes dangereuses
+  drawDangerousOrbitalParticles(centerX, centerY, intensity, delta, particleSeed = 0) {
+    if (intensity < 0.2) return;
+    const [screenX, screenY] = this.game.camera.transformCoordinates(centerX, centerY);
+    this.game.ctx.save();
+    const particleCount = Math.floor(intensity * 2.5 + 2); // 2 à 4 particules
+    const time = Date.now() * 0.001;
+    const seedOffset = particleSeed * 0.001;
+    const speedMultiplier = 0.7 + (Math.sin(particleSeed) * 0.3);
+    const radiusOffset = Math.sin(particleSeed * 0.5) * 0.08;
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (time * speedMultiplier + seedOffset + i * (Math.PI * 2 / particleCount)) % (Math.PI * 2);
+      const radius = this.game.camera.transformX(0.22 + radiusOffset + Math.sin(time * 2.5 + i + seedOffset) * 0.09);
+      const particleX = screenX + Math.cos(angle) * radius;
+      const particleY = screenY + Math.sin(angle) * radius * 0.6;
+      const baseSize = this.game.camera.transformX(0.035);
+      const sizeVariation = Math.sin(particleSeed + i) * 0.13;
+      const size = baseSize * (0.8 + 0.4 * Math.sin(time * 3 + i + seedOffset) + sizeVariation);
+      const opacity = Math.min(0.5, intensity * 0.45 * (0.6 + 0.4 * Math.sin(time * 2.5 + i + seedOffset)));
+      // Couleur rouge/orange foncé
+      this.game.ctx.fillStyle = `rgba(180, 40, 40, ${opacity})`;
+      this.game.ctx.beginPath();
+      this.game.ctx.arc(particleX, particleY, size, 0, Math.PI * 2);
+      this.game.ctx.fill();
+      // Particule interne plus brillante
+      this.game.ctx.fillStyle = `rgba(255, 80, 40, ${opacity * 0.7})`;
+      this.game.ctx.beginPath();
+      this.game.ctx.arc(particleX, particleY, size * 0.4, 0, Math.PI * 2);
+      this.game.ctx.fill();
+    }
+    this.game.ctx.restore();
+  }
+
+  // Créer un texte flottant quand un item disparaît
+  spawnDisappearText(x, y) {
+    const randomMessage = this.disappearMessages[Math.floor(Math.random() * this.disappearMessages.length)];
+    
+    this.floatingTexts.push({
+      x: x,
+      y: y,
+      text: randomMessage,
+      ticks: 0,
+      vy: -0.015, // Mouvement plus lent vers le haut
+      alpha: 0.7, // Opacité initiale réduite
+      fontSize: 10 + Math.random() * 4, // Taille plus petite : 10 à 14px
+      startTime: Date.now(),
+      duration: 2000 // 2 secondes au lieu de 2.5
+    });
   }
 }
