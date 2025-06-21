@@ -90,7 +90,7 @@ export default class Game {
       [5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5,5,5,0,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5],
       [5,5,5,5,5,5,5,5,0,0,0,0,0,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5,5,0,0,0,0,0,5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5],
       [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],
-  ];
+    ];
 
     this.showInfo = false;
     this.levelData = level; // Sauvegarder les données de niveau
@@ -103,6 +103,7 @@ export default class Game {
     this.platforms = this.generatePlatformIds(level);
     
     // Les effets seront appliqués dans start() après le reset
+    // this.applyAutomaticPlatformEffects(); // Commenté pour retirer les effets d'exemple
     this.camera.endY = this.levelHeight - 7;
     this.camera.startY = this.levelHeight - 15;
     this.camera.maxY = this.levelHeight;
@@ -141,6 +142,15 @@ export default class Game {
       enemyMultiplier: 1.0,
       oneHitKill: false
     };
+    
+    // Timer pour la génération d'effets de plateforme
+    this.effectGenerationTimer = 0;
+
+    // Tableau pour tracker les plateformes avec effets rouges (dangereuses)
+    this.dangerousPlatformIds = [];
+    
+    // Cooldown pour les dégâts des plateformes dangereuses (2 secondes)
+    this.dangerousPlatformDamageCooldown = 0;
     
     // Cache pour les données portfolio
     this.portfolioDataCache = null;
@@ -329,10 +339,10 @@ export default class Game {
     this.configureHealthSystem();
     
     // Appliquer les effets visuels automatiques après le reset
-    setTimeout(() => {
-      this.applyAutomaticPlatformEffects();
-      console.log('🎨 Effets visuels appliqués après démarrage');
-    }, 200); // Délai pour s'assurer que tout est initialisé
+    // setTimeout(() => {
+    //   this.applyAutomaticPlatformEffects();
+    //   console.log('🎨 Effets visuels appliqués après démarrage');
+    // }, 200); // Délai pour s'assurer que tout est initialisé
     
     console.log('✅ Jeu démarré');
   }
@@ -432,8 +442,13 @@ export default class Game {
 
   // Méthode utilitaire pour récupérer une plateforme par ses coordonnées
   getPlatformByCoordinates(x, y) {
-    const index = this.convertCoordinatesToIndex(x, y);
-    return this.platforms.get(index);
+    // Trouve la première plateforme qui correspond aux coordonnées x, y
+    for (const [index, platform] of this.platforms.entries()) {
+      if (platform.x === x && platform.y === y) {
+        return platform;
+      }
+    }
+    return null;
   }
 
   // Méthode utilitaire pour récupérer une plateforme par son ID
@@ -504,7 +519,7 @@ export default class Game {
     console.log(`🔄 ID ${newId} assigné à la répétition ${repetition}, plateforme (${x}, ${y}) -> local (${localX}, ${y})`);
     
     // Appliquer un effet visuel avec une certaine probabilité
-    this.maybeApplyEffectToNewPlatform(platformData);
+    // this.maybeApplyEffectToNewPlatform(platformData); // Désactivé pour retirer les effets automatiques
     
     return platformData;
   }
@@ -603,23 +618,10 @@ export default class Game {
   }
 
   // Appliquer des effets visuels automatiques sur certaines plateformes avec propagation
-  applyAutomaticPlatformEffects() {
-    console.log(`[SIMPLIFIED TEST] Application des effets automatiques...`);
-
-    // Test 1: Forcer un effet GLOW BLEU sur la plateforme 10
-    console.log("  - Application d'un GLOW BLEU sur la plateforme 10");
-    this.platformEffects.addEffect(10, 'glow', { color: '#0080ff', intensity: 1.2 });
-
-    // Test 2: Forcer un effet PULSE ORANGE sur la plateforme 20
-    console.log("  - Application d'un PULSE ORANGE sur la plateforme 20");
-    this.platformEffects.addEffect(20, 'pulse', { color: '#ff8000', speed: 2 });
-
-    // Test 3: Forcer un effet HIGHLIGHT ROUGE sur la plateforme 30
-    console.log("  - Application d'un HIGHLIGHT ROUGE sur la plateforme 30");
-    this.platformEffects.addEffect(30, 'highlight', { color: '#ff0000', intensity: 0.8 });
-    
-    console.log(`[SIMPLIFIED TEST] Effets appliqués.`);
-  }
+  // MÉTHODE DÉSACTIVÉE - Plus d'effets d'exemple au démarrage
+  // applyAutomaticPlatformEffects() {
+  //   // Méthode désactivée pour retirer les effets d'exemple
+  // }
 
   // Créer une zone d'effet autour d'une plateforme avec intensité dégressive
   createEffectZone(centerPlatform, effectType, color) {
@@ -664,65 +666,10 @@ export default class Game {
   }
 
   // Appliquer un effet à une nouvelle plateforme selon certaines probabilités
-  maybeApplyEffectToNewPlatform(platform) {
-    const effects = ['highlight', 'pulse', 'glow'];
-    const colors = {
-      highlight: { color: '#ff0000', intensity: 0.8 }, // Rouge
-      pulse: { color: '#ff8000', speed: 2 },           // Orange
-      glow: { color: '#0080ff', intensity: 1.2 }       // Bleu
-    };
-    
-    let shouldApplyEffect = false;
-    let effectType = '';
-    
-    // Probabilités similaires au système automatique
-    switch (platform.type) {
-      case 'isolated':
-        if (Math.random() < 0.7) {
-          shouldApplyEffect = true;
-          effectType = 'glow';
-        }
-        break;
-        
-      case 'top_surface':
-        if (Math.random() < 0.25) {
-          shouldApplyEffect = true;
-          effectType = 'pulse';
-        }
-        break;
-        
-      case 'left_edge':
-      case 'right_edge':
-        if (Math.random() < 0.2) {
-          shouldApplyEffect = true;
-          effectType = 'highlight';
-        }
-        break;
-        
-      case 'horizontal_bridge':
-      case 'vertical_pillar':
-        if (Math.random() < 0.3) {
-          shouldApplyEffect = true;
-          effectType = effects[Math.floor(Math.random() * effects.length)];
-        }
-        break;
-        
-      default:
-        if (Math.random() < 0.08) {
-          shouldApplyEffect = true;
-          effectType = effects[Math.floor(Math.random() * effects.length)];
-        }
-        break;
-    }
-    
-    // Appliquer l'effet si déterminé
-    if (shouldApplyEffect && effectType) {
-      const color = colors[effectType];
-      
-      this.platformEffects.addEffect(platform.id, effectType, color);
-      console.log(`✨ Effet ${effectType} appliqué à la nouvelle plateforme ID:${platform.id} (répétition ${platform.repetition})`);
-    }
-  }
+  // MÉTHODE DÉSACTIVÉE - Plus d'effets automatiques sur les nouvelles plateformes
+  // maybeApplyEffectToNewPlatform(platform) {
+  //   // Méthode désactivée pour retirer les effets automatiques
+  // }
 
   // Scanner toutes les plateformes visibles et attribuer des IDs si nécessaire
   scanVisiblePlatforms() {
@@ -1292,7 +1239,7 @@ export default class Game {
     this.particleSystem.render();
 
     // Rendu des effets de plateformes (avant les items pour qu'ils soient en arrière-plan)
-   // this.platformEffects.render();
+    this.platformEffects.render();
 
     // Affichage des items portfolio
     for (const item of this.portfolioItems) {
@@ -1435,6 +1382,27 @@ export default class Game {
   }
 
   updateGame(delta) {
+    if (this.isPaused) {
+      return;
+    }
+
+    // Mise à jour du timer pour la génération d'effets
+    this.effectGenerationTimer += delta;
+    const difficultyKey = this.getDifficultyKey();
+    // 5 secondes en mode 'darklord', sinon 20 secondes (delta est en secondes)
+    const effectInterval = difficultyKey === 'darklord' ? 5 : 20;
+
+    if (this.effectGenerationTimer >= effectInterval) {
+        console.log(`⏰ Timer déclenché après ${this.effectGenerationTimer.toFixed(1)}s (intervalle: ${effectInterval}s)`);
+        this.effectGenerationTimer = 0; // Réinitialiser le timer
+        this.triggerAdjacentPlatformEffects();
+    }
+
+    if (this.isInitializing) {
+      // Attendre que l'initialisation soit terminée
+      return;
+    }
+
     this.fpsTick += delta;
     if (this.fpsTick > 0.5) {
       this.fpsTick = 0;
@@ -1479,9 +1447,181 @@ export default class Game {
     this.platformEffects.update(delta);
     this.camera.update(delta);
 
+    // Vérifier les collisions avec les plateformes dangereuses
+    this.checkDangerousPlatformCollision();
+    
+    // Mettre à jour le cooldown des dégâts de plateformes dangereuses
+    if (this.dangerousPlatformDamageCooldown > 0) {
+      this.dangerousPlatformDamageCooldown -= delta;
+      if (this.dangerousPlatformDamageCooldown <= 0) {
+        this.dangerousPlatformDamageCooldown = 0;
+        console.log(`✅ Cooldown des dégâts de plateforme terminé`);
+      }
+    }
+    
+    // Nettoyer les plateformes dangereuses expirées (toutes les 5 secondes)
+    if (Math.floor(this.effectGenerationTimer) % 5 === 0 && this.effectGenerationTimer > 0) {
+      this.cleanupExpiredDangerousPlatforms();
+    }
+
     // Update des items portfolio
     for (const item of this.portfolioItems) {
       item.update(delta);
     }
+  }
+
+  getAdjacentPlatforms(centerPlatform) {
+    const neighbors = [];
+    const { x, y } = centerPlatform;
+
+    // Coordonnées des voisins potentiels (haut, bas, gauche, droite)
+    const potentialNeighborsCoords = [
+        { x: x + 1, y: y },
+        { x: x - 1, y: y },
+        { x: x, y: y + 1 },
+        { x: x, y: y - 1 },
+    ];
+
+    for (const coords of potentialNeighborsCoords) {
+        const neighbor = this.getPlatformByCoordinates(coords.x, coords.y);
+        // Ajoute le voisin s'il existe et n'est pas une plateforme d'arrière-plan
+        if (neighbor && neighbor.type !== 'background' && neighbor.type !== 'invisible') {
+            neighbors.push(neighbor);
+        }
+    }
+    return neighbors;
+  }
+
+  triggerAdjacentPlatformEffects() {
+    console.log('🎯 Déclenchement des effets de plateforme...');
+    
+    // 1. S'assurer qu'il y a des plateformes éligibles
+    const eligiblePlatforms = [];
+    for (const [index, platform] of this.platforms.entries()) {
+      if (platform.type !== 'background' && platform.type !== 'invisible') {
+        eligiblePlatforms.push(platform);
+      }
+    }
+    console.log(`📊 Plateformes éligibles trouvées: ${eligiblePlatforms.length}`);
+    
+    if (eligiblePlatforms.length === 0) {
+        console.log('❌ Aucune plateforme éligible trouvée');
+        return; // Pas de plateformes sur lesquelles appliquer des effets
+    }
+
+    // 2. Choisir une plateforme de départ au hasard
+    const startPlatform = eligiblePlatforms[getRandomInteger(0, eligiblePlatforms.length - 1)];
+    console.log(`🎲 Plateforme de départ choisie: ${startPlatform.id} à (${startPlatform.x}, ${startPlatform.y})`);
+
+    // 3. Obtenir ses voisins
+    const neighbors = this.getAdjacentPlatforms(startPlatform);
+    console.log(`🔗 Voisins trouvés: ${neighbors.length}`);
+
+    // 4. Créer la liste des plateformes à affecter (la plateforme de départ + 2 voisins max)
+    const platformsToAffect = [startPlatform];
+    // Mélanger les voisins pour en prendre deux au hasard
+    const shuffledNeighbors = neighbors.sort(() => 0.5 - Math.random());
+    platformsToAffect.push(...shuffledNeighbors.slice(0, 2));
+    
+    console.log(`🎨 Plateformes à affecter: ${platformsToAffect.length}`);
+
+    // 5. Appliquer l'effet "pulse" rouge
+    for (const platform of platformsToAffect) {
+        if (platform && platform.id) {
+            console.log(`✨ Application de l'effet pulse rouge sur ${platform.id} à (${platform.x}, ${platform.y})`);
+            this.platformEffects.addEffect(platform.id, 'pulse', {
+                color: 'rgba(255, 0, 0, 0.7)',
+                duration: 15000, // Durée de 15 secondes
+                intensity: 1.0
+            });
+            
+            // Ajouter l'ID à la liste des plateformes dangereuses
+            if (!this.dangerousPlatformIds.includes(platform.id)) {
+                this.dangerousPlatformIds.push(platform.id);
+                console.log(`💀 Plateforme ${platform.id} ajoutée à la liste dangereuse (total: ${this.dangerousPlatformIds.length})`);
+            }
+        } else {
+            console.log(`⚠️ Plateforme invalide:`, platform);
+        }
+    }
+    
+    console.log('✅ Effets de plateforme appliqués');
+  }
+
+  // Vérifier si le joueur touche une plateforme dangereuse
+  checkDangerousPlatformCollision() {
+    if (!this.player || this.dangerousPlatformIds.length === 0) {
+      return;
+    }
+
+    // Vérifier le cooldown des dégâts
+    if (this.dangerousPlatformDamageCooldown > 0) {
+      return; // En cooldown, pas de dégâts
+    }
+
+    // Vérifier chaque plateforme dangereuse pour une collision avec le joueur
+    for (const platformId of this.dangerousPlatformIds) {
+      const platform = this.getPlatformById(platformId);
+      if (!platform) continue;
+
+      // Vérifier si le joueur touche cette plateforme (même logique que les ennemis)
+      if (this.player.x < platform.x + 1 &&
+          this.player.x + this.player.w > platform.x &&
+          this.player.y < platform.y + 1 &&
+          this.player.y + this.player.h > platform.y) {
+        
+        console.log(`💥 Joueur touché par plateforme dangereuse ${platformId}!`);
+        
+        // Vérifier si le joueur est invincible (popup projet ouverte)
+        if (this.playerInvincible) {
+          console.log(`🛡️ Joueur invincible - pas de dégât`);
+          return; // Pas de dégâts si invincible
+        }
+
+        // Vérifier si c'est la difficulté "one hit kill"
+        if (this.difficultyConfig && this.difficultyConfig.oneHitKill) {
+          console.log(`💀 Mode one hit kill - mort instantanée`);
+          this.player.die();
+        } else {
+          // Modes avec système de vie : infliger des dégâts
+          const playerDied = this.player.takeDamage(1);
+          if (playerDied) {
+            console.log(`💀 Joueur mort - déclenchement de la popup de défaite`);
+            this.player.die();
+          } else {
+            console.log(`🩸 Dégât appliqué! Vie restante: ${this.player.currentHealth}`);
+          }
+        }
+        
+        // Activer le cooldown de 2 secondes
+        this.dangerousPlatformDamageCooldown = 2;
+        console.log(`⏰ Cooldown de 2 secondes activé pour les dégâts de plateforme`);
+        
+        // Sortir de la boucle après avoir appliqué les dégâts
+        break;
+      }
+    }
+  }
+
+  // Nettoyer les plateformes qui ne sont plus dangereuses (effet expiré)
+  cleanupExpiredDangerousPlatforms() {
+    const stillDangerous = [];
+    
+    for (const platformId of this.dangerousPlatformIds) {
+      const platform = this.getPlatformById(platformId);
+      if (platform) {
+        // Vérifier si l'effet est encore actif en regardant si la plateforme a encore des effets
+        const hasActiveEffect = this.platformEffects.effects.has(platformId);
+        if (hasActiveEffect) {
+          stillDangerous.push(platformId);
+        } else {
+          console.log(`🔄 Plateforme ${platformId} retirée de la liste dangereuse (effet expiré)`);
+        }
+      } else {
+        console.log(`🗑️ Plateforme ${platformId} retirée de la liste dangereuse (plateforme supprimée)`);
+      }
+    }
+    
+    this.dangerousPlatformIds = stillDangerous;
   }
 }

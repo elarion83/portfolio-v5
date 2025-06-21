@@ -354,6 +354,13 @@ export default class Player extends GameObject {
     
     this.currentHealth = Math.max(0, this.currentHealth - amount);
     
+    // Déclencher l'animation de particules vertes pour les dégâts
+    if (this.game.particleSystem) {
+      const healthBarX = this.x + this.w / 2;
+      const healthBarY = this.y - 0.15; // Même position que la barre de vie
+      this.game.particleSystem.spawnHealthChangeParticles(healthBarX, healthBarY, 'damage');
+    }
+    
     if (this.currentHealth <= 0) {
       // Déclencher la popup de défaite
       window.dispatchEvent(new CustomEvent('openDeathModal'));
@@ -367,6 +374,13 @@ export default class Player extends GameObject {
     // Le soin doit fonctionner même si la barre de vie n'est pas visible.
     this.currentHealth = Math.min(this.maxHealth, this.currentHealth + amount);
     console.log(`❤️ Joueur soigné. Vie actuelle: ${this.currentHealth}/${this.maxHealth}`);
+    
+    // Déclencher l'animation de particules vertes pour le soin
+    if (this.game.particleSystem) {
+      const healthBarX = this.x + this.w / 2;
+      const healthBarY = this.y - 0.15; // Même position que la barre de vie
+      this.game.particleSystem.spawnHealthChangeParticles(healthBarX, healthBarY, 'heal');
+    }
   }
 
   resetHealth() {

@@ -473,7 +473,8 @@ function App() {
         // Touche E: Tester les effets automatiques
         if (event.key === 'e' || event.key === 'E') {
           console.log('🧪 Test des effets automatiques...');
-          gameRef.current.applyAutomaticPlatformEffects();
+          // Initialiser les effets de plateformes
+          // gameRef.current.applyAutomaticPlatformEffects(); // Commenté pour retirer les effets d'exemple
         }
         
         // Touche T: Tester manuellement quelques effets visibles
