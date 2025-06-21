@@ -437,6 +437,39 @@ function App() {
           console.log(`🔧 Informations plateformes: ${gameRef.current.showInfo ? 'ACTIVÉES' : 'DÉSACTIVÉES'}`);
         }
       }
+      
+      // Raccourcis pour tester les effets de plateformes
+      if (gameRef.current && gameRef.current.platformEffects) {
+        // Touche 1: Appliquer effet highlight rouge à la plateforme 1
+        if (event.key === '1') {
+          gameRef.current.platformEffects.addEffect(1, 'highlight', { color: '#ff0000', intensity: 0.8 });
+          console.log('🎨 Effet highlight rouge ajouté à la plateforme 1');
+        }
+        
+        // Touche 2: Appliquer effet pulse bleu aux plateformes 2-5
+        if (event.key === '2') {
+          gameRef.current.platformEffects.addEffect([2, 3, 4, 5], 'pulse', { color: '#0080ff', speed: 2 });
+          console.log('🎨 Effet pulse bleu ajouté aux plateformes 2-5');
+        }
+        
+        // Touche 3: Appliquer effet glow vert à la plateforme 10
+        if (event.key === '3') {
+          gameRef.current.platformEffects.addEffect(10, 'glow', { color: '#00ff00', intensity: 1.5 });
+          console.log('🎨 Effet glow vert ajouté à la plateforme 10');
+        }
+        
+        // Touche 4: Appliquer effet rainbow aux plateformes 15-20
+        if (event.key === '4') {
+          gameRef.current.platformEffects.addEffect([15, 16, 17, 18, 19, 20], 'rainbow', { speed: 1.5 });
+          console.log('🎨 Effet rainbow ajouté aux plateformes 15-20');
+        }
+        
+        // Touche 0: Supprimer tous les effets
+        if (event.key === '0') {
+          gameRef.current.platformEffects.clearAllEffects();
+          console.log('🗑️ Tous les effets de plateformes supprimés');
+        }
+      }
     };
     window.addEventListener("keydown", handleEscapeKey);
 

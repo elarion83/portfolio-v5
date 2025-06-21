@@ -8,6 +8,7 @@ import Render from "./Render";
 import SpriteSheetManager from "./SpriteSheetManager";
 import { v4 } from "uuid";
 import { getRandomInteger } from "./random";
+import PlatformEffectManager from "./PlatformEffectManager";
 import PortfolioItem from "./PortfolioItem";
 import ItemManager from "./ItemManager";
 import EffectManager from "./EffectManager";
@@ -55,6 +56,7 @@ export default class Game {
     this.particleSystem = new ParticleSystem(this);
     this.itemManager = new ItemManager(this);
     this.effectManager = new EffectManager(this);
+    this.platformEffects = new PlatformEffectManager(this);
 
     this.player = new Player(this);
     this.controller = new Controller(this);
@@ -101,11 +103,11 @@ export default class Game {
     this.showInfo = false;
     this.map = level.flat(1);
 
-    // Générer les IDs des plateformes avec métadonnées
-    this.platforms = this.generatePlatformIds(level);
-
     this.levelWidth = level[0].length;
     this.levelHeight = level.length;
+
+    // Générer les IDs des plateformes avec métadonnées (après avoir défini levelWidth/levelHeight)
+    this.platforms = this.generatePlatformIds(level);
     this.camera.endY = this.levelHeight - 7;
     this.camera.startY = this.levelHeight - 15;
     this.camera.maxY = this.levelHeight;
@@ -297,6 +299,7 @@ export default class Game {
     const particlesCount = this.particleSystem.particles.length;
     this.particleSystem.particles = [];
     this.effectManager.clear();
+    this.platformEffects.clearAllEffects();
     console.log(`🗑️ ${particlesCount} particules effacées`);
     
     // Réinitialiser le joueur
@@ -428,8 +431,19 @@ export default class Game {
 
   // Méthode utilitaire pour récupérer une plateforme par ses coordonnées
   getPlatformByCoordinates(x, y) {
-    const index = this.convertCoordinatesToIndex(x, y);
+    // Gérer la répétition de la carte sur l'axe X
+    const wrappedX = x % this.levelWidth;
+    const index = this.convertCoordinatesToIndex(wrappedX, y);
     return this.platforms.get(index);
+  }
+
+  // Générer un ID unique pour une plateforme en tenant compte des répétitions
+  getPlatformUniqueId(x, y) {
+    const basePlatform = this.getPlatformByCoordinates(x, y);
+    if (!basePlatform) return null;
+    
+    const repetitionOffset = Math.floor(x / this.levelWidth);
+    return basePlatform.id + (repetitionOffset * this.platforms.size);
   }
 
   // Méthode utilitaire pour récupérer une plateforme par son ID
@@ -923,6 +937,9 @@ export default class Game {
 
     this.particleSystem.render();
 
+    // Rendu des effets de plateformes (avant les items pour qu'ils soient en arrière-plan)
+    this.platformEffects.render();
+
     // Affichage des items portfolio
     for (const item of this.portfolioItems) {
       item.render();
@@ -1006,22 +1023,25 @@ export default class Game {
       const y = platform.y;
 
       // Vérifier si la plateforme est visible
-      if (
+      const isVisible = (
         x + 1 > this.camera.startX - renderMargin &&
         y + 1 > this.camera.startY - renderMargin &&
         x <= this.camera.endX + renderMargin &&
         y <= this.camera.endY + renderMargin
-      ) {
+      );
+
+      if (isVisible) {
         visiblePlatforms++;
         
-        // Afficher l'ID de la plateforme au centre de celle-ci
+        // Afficher l'ID unique de la plateforme au centre de celle-ci
         const [screenX, screenY] = this.camera.transformCoordinates(x + 0.5, y + 0.5);
+        const uniqueId = this.getPlatformUniqueId(x, y);
         
         this.ctx.save();
         this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
         this.ctx.font = '12px Arial';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText(`ID:${platform.id}`, screenX, screenY - 5);
+        this.ctx.fillText(`ID:${uniqueId}`, screenX, screenY - 5);
         this.ctx.fillStyle = 'rgba(200, 200, 200, 0.8)';
         this.ctx.font = '10px Arial';
         this.ctx.fillText(platform.type, screenX, screenY + 10);
@@ -1103,6 +1123,7 @@ export default class Game {
     this.particleSystem.update(delta);
     this.itemManager.update(delta);
     this.effectManager.update(delta);
+    this.platformEffects.update(delta);
     this.camera.update(delta);
 
     // Update des items portfolio
