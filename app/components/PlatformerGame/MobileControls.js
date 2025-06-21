@@ -42,15 +42,27 @@ const SearchXIcon = ({ size = 14 }) => (
 );
 
 const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, collectedProjects = 0 }) => {
-  const handleTouchStart = (key) => {
+  const handleTouchStart = (key, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     onKeyPress(key);
   };
 
-  const handleTouchEnd = (key) => {
+  const handleTouchEnd = (key, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     onKeyRelease(key);
   };
 
-  const handleAttackStart = () => {
+  const handleAttackStart = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     // Simuler un clic de souris pour l'attaque
     if (window.game && window.game.inputManager) {
       if (window.game.controller.controlling.onGround) {
@@ -62,7 +74,11 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
     }
   };
 
-  const handleAttackEnd = () => {
+  const handleAttackEnd = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     console.log('📱 Attack END');
     // Relâcher l'attaque
     if (window.game && window.game.inputManager) {
@@ -70,28 +86,45 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
     }
   };
 
-  const handleZoomIn = () => {
+  const handleZoomIn = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (window.game && window.game.camera) {
       window.game.camera.zoomIn();
     }
   };
 
-  const handleZoomOut = () => {
+  const handleZoomOut = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (window.game && window.game.camera) {
       window.game.camera.zoomOut();
     }
   };
 
-  const handleZoomReset = () => {
+  const handleZoomReset = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (window.game && window.game.camera) {
       window.game.camera.resetZoom();
     }
   };
 
-  const handleMenu = () => {
-    // Simuler l'appui sur la touche M
-    const event = new KeyboardEvent('keydown', { key: 'M' });
-    window.dispatchEvent(event);
+  const handleMenu = (e) => {
+    // Empêcher la propagation pour éviter les conflits
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Déclencher directement l'événement personnalisé comme dans le Controller
+    window.dispatchEvent(new CustomEvent('openInGameMenuModal'));
   };
 
   return (
@@ -100,19 +133,21 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
       <div className="mobile-movement">
         <button
           className="mobile-btn mobile-btn-left"
-          onTouchStart={() => handleTouchStart('a')}
-          onTouchEnd={() => handleTouchEnd('a')}
-          onMouseDown={() => handleTouchStart('a')}
-          onMouseUp={() => handleTouchEnd('a')}
+          onTouchStart={(e) => handleTouchStart('a', e)}
+          onTouchEnd={(e) => handleTouchEnd('a', e)}
+          onMouseDown={(e) => handleTouchStart('a', e)}
+          onMouseUp={(e) => handleTouchEnd('a', e)}
+          style={{ touchAction: 'manipulation', userSelect: 'none' }}
         >
           <ChevronLeft size={24} />
         </button>
         <button
           className="mobile-btn mobile-btn-right"
-          onTouchStart={() => handleTouchStart('d')}
-          onTouchEnd={() => handleTouchEnd('d')}
-          onMouseDown={() => handleTouchStart('d')}
-          onMouseUp={() => handleTouchEnd('d')}
+          onTouchStart={(e) => handleTouchStart('d', e)}
+          onTouchEnd={(e) => handleTouchEnd('d', e)}
+          onMouseDown={(e) => handleTouchStart('d', e)}
+          onMouseUp={(e) => handleTouchEnd('d', e)}
+          style={{ touchAction: 'manipulation', userSelect: 'none' }}
         >
           <ChevronRight size={24} />
         </button>
@@ -123,21 +158,33 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
         <button
           className="mobile-btn mobile-btn-zoom-out"
           onTouchStart={handleZoomOut}
+          onTouchEnd={(e) => e.preventDefault()}
           onMouseDown={handleZoomOut}
+          onMouseUp={(e) => e.preventDefault()}
+          onClick={handleZoomOut}
+          style={{ touchAction: 'manipulation', userSelect: 'none' }}
         >
           <Minus size={16} />
         </button>
         <button
           className="mobile-btn mobile-btn-zoom-reset"
           onTouchStart={handleZoomReset}
+          onTouchEnd={(e) => e.preventDefault()}
           onMouseDown={handleZoomReset}
+          onMouseUp={(e) => e.preventDefault()}
+          onClick={handleZoomReset}
+          style={{ touchAction: 'manipulation', userSelect: 'none' }}
         >
           <SearchXIcon size={14} />
         </button>
         <button
           className="mobile-btn mobile-btn-zoom-in"
           onTouchStart={handleZoomIn}
+          onTouchEnd={(e) => e.preventDefault()}
           onMouseDown={handleZoomIn}
+          onMouseUp={(e) => e.preventDefault()}
+          onClick={handleZoomIn}
+          style={{ touchAction: 'manipulation', userSelect: 'none' }}
         >
           <Plus size={16} />
         </button>
@@ -148,8 +195,17 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
         <button
           className="mobile-btn mobile-btn-menu"
           onTouchStart={handleMenu}
+          onTouchEnd={(e) => e.preventDefault()}
           onMouseDown={handleMenu}
+          onMouseUp={(e) => e.preventDefault()}
+          onClick={handleMenu}
           title="Menu (M)"
+          style={{ 
+            touchAction: 'manipulation',
+            userSelect: 'none',
+            WebkitTouchCallout: 'none',
+            WebkitTapHighlightColor: 'transparent'
+          }}
         >
           <Menu size={18} />
         </button>
@@ -162,10 +218,11 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
           <div className="mobile-actions-left">
             <button
               className={`mobile-btn mobile-btn-collect ${collectedProjects === 0 ? 'first-project-pulse' : ''}`}
-              onTouchStart={() => handleTouchStart('o')}
-              onTouchEnd={() => handleTouchEnd('o')}
-              onMouseDown={() => handleTouchStart('o')}
-              onMouseUp={() => handleTouchEnd('o')}
+              onTouchStart={(e) => handleTouchStart('o', e)}
+              onTouchEnd={(e) => handleTouchEnd('o', e)}
+              onMouseDown={(e) => handleTouchStart('o', e)}
+              onMouseUp={(e) => handleTouchEnd('o', e)}
+              style={{ touchAction: 'manipulation', userSelect: 'none' }}
             >
               <HandIcon size={20} />
             </button>
@@ -176,10 +233,11 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
         <div className="mobile-actions-right">
           <button
             className="mobile-btn mobile-btn-jump"
-            onTouchStart={() => handleTouchStart(' ')}
-            onTouchEnd={() => handleTouchEnd(' ')}
-            onMouseDown={() => handleTouchStart(' ')}
-            onMouseUp={() => handleTouchEnd(' ')}
+            onTouchStart={(e) => handleTouchStart(' ', e)}
+            onTouchEnd={(e) => handleTouchEnd(' ', e)}
+            onMouseDown={(e) => handleTouchStart(' ', e)}
+            onMouseUp={(e) => handleTouchEnd(' ', e)}
+            style={{ touchAction: 'manipulation', userSelect: 'none' }}
           >
             <ChevronUp size={24} />
           </button>
@@ -189,6 +247,7 @@ const MobileControls = ({ onKeyPress, onKeyRelease, showCollectButton = false, c
             onTouchEnd={handleAttackEnd}
             onMouseDown={handleAttackStart}
             onMouseUp={handleAttackEnd}
+            style={{ touchAction: 'manipulation', userSelect: 'none' }}
           >
             <Sword size={20} />
           </button>

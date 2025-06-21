@@ -90,6 +90,9 @@ const translations = {
     gameConceptIntro: "Découvrez mon portfolio à travers un jeu-vidéo platformer interactif",
     // Menu de pause
     gamePaused: "Jeu en pause",
+    gameMenu: "Menu du jeu",
+    gameInProgress: "Partie en cours",
+    currentTime: "Temps actuel",
     currentMode: "Mode actuel :",
     resumeGame: "[Échap] Reprendre",
     resumeGameMobile: "Reprendre",
@@ -228,6 +231,9 @@ const translations = {
     gameConceptIntro: "Discover my portfolio through an interactive platformer",
     // Menu de pause
     gamePaused: "Game Paused",
+    gameMenu: "Game Menu",
+    gameInProgress: "Game in Progress",
+    currentTime: "Current Time",
     currentMode: "Current mode:",
     resumeGame: "[Esc] Resume",
     resumeGameMobile: "Resume",

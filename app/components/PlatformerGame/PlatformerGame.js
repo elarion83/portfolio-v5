@@ -632,6 +632,11 @@ function AppContent({
         isVisible={showInGameMenuModal} 
         onClose={() => setShowInGameMenuModal(false)}
         onBackToModeSelection={handleRestart}
+        gameTime={gameMilliseconds}
+        collectedProjects={collectedProjects}
+        totalProjects={totalProjects}
+        formatTime={formatTimeSimple}
+        difficultyConfig={difficultyConfig}
       />
 
       {/* Modale de projet */}

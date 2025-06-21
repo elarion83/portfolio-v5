@@ -2063,10 +2063,18 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   margin-bottom: 0;
 }
 .speedrun-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
+  display: flex;
+  gap: 16px;
   margin-bottom: 30px;
+}
+
+.speedrun-stats .stat-card {
+  flex: 1;
+  min-width: 0; /* Permet au contenu de se comprimer */
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  padding: 24px 16px;
 }
 .stat-card {
   background: rgba(255, 255, 255, 0.05);
@@ -2092,6 +2100,18 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 .stat-card.grade-card {
   border-width: 2px;
 }
+.speedrun-stats .stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #e28d1d;
+  margin-bottom: 12px;
+}
+
 .stat-icon {
   display: flex;
   align-items: center;
@@ -2108,9 +2128,23 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
 .grade-emoji {
   font-size: 1.5rem;
 }
+.speedrun-stats .stat-content {
+  text-align: center;
+  width: 100%;
+}
+
 .stat-content {
   flex: 1;
 }
+.speedrun-stats .stat-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
 .stat-label {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
@@ -2119,6 +2153,14 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   letter-spacing: 0.5px;
   font-weight: 500;
 }
+.speedrun-stats .stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  font-family: 'Courier New', monospace;
+  line-height: 1.2;
+}
+
 .stat-value {
   font-size: 1.4rem;
   font-weight: 700;
@@ -3113,5 +3155,192 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   }
   .step1-feature-text {
     font-size: 0.8rem;
+  }
+}
+
+/* ===== GAME IN-GAME MENU POPUP STYLES ===== */
+/* Utilise les mêmes styles de base que speedrun-popup */
+.speedrun-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.speedrun-close-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.4);
+  transform: scale(1.1);
+}
+
+/* Header pour la modal menu */
+.pause-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #e28d1d 0%, #b86e0e 100%);
+  border-radius: 50%;
+  color: white;
+  margin-bottom: 20px;
+  box-shadow: 
+    0 8px 20px rgba(226, 141, 29, 0.4),
+    0 0 30px rgba(226, 141, 29, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.pause-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(120deg, #ffffff, #e28d1d);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  animation: gradientFlow 8s ease infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.pause-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0;
+}
+
+/* Styles spécifiques pour les statistiques en cours de jeu */
+.stat-value .collected-count {
+  color: #10b981;
+  font-weight: 800;
+}
+
+.stat-value .total-separator {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+}
+
+.stat-value .total-count {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.speedrun-stats .progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.mode-description {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* Boutons d'action pour la modal menu */
+.resume-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+}
+
+.resume-btn:hover {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
+}
+
+.change-difficulty-btn {
+  background: linear-gradient(135deg, #e28d1d 0%, #b86e0e 100%);
+  border: 2px solid rgba(226, 141, 29, 0.4);
+  color: white;
+  box-shadow: 0 4px 16px rgba(226, 141, 29, 0.25);
+}
+
+.change-difficulty-btn:hover {
+  background: linear-gradient(135deg, #f39c2b 0%, #c97a1a 100%);
+  border-color: rgba(226, 141, 29, 0.6);
+  box-shadow: 0 8px 25px rgba(226, 141, 29, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Responsive pour la modal menu */
+@media (max-width: 768px) {
+  .pause-title {
+    font-size: 2rem;
+  }
+  
+  .pause-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .speedrun-close-btn {
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+  }
+
+  .speedrun-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .speedrun-stats .stat-card {
+    flex: none;
   }
 }
