@@ -101,6 +101,9 @@ export default class Game {
     this.showInfo = false;
     this.map = level.flat(1);
 
+    // Générer les IDs des plateformes avec métadonnées
+    this.platforms = this.generatePlatformIds(level);
+
     this.levelWidth = level[0].length;
     this.levelHeight = level.length;
     this.camera.endY = this.levelHeight - 7;
@@ -336,6 +339,118 @@ export default class Game {
 
   convertCoordinatesToIndex(x, y) {
     return y * this.levelWidth + x;
+  }
+
+  generatePlatformIds(level) {
+    const platforms = new Map();
+    let platformId = 1;
+
+    for (let y = 0; y < level.length; y++) {
+      for (let x = 0; x < level[y].length; x++) {
+        const tileValue = level[y][x];
+        
+        if (tileValue === 5) { // Si c'est une plateforme
+          const index = this.convertCoordinatesToIndex(x, y);
+          
+          // Déterminer le type de plateforme basé sur sa position
+          const platformType = this.determinePlatformType(level, x, y);
+          
+          const platformData = {
+            id: platformId,
+            type: platformType,
+            x: x,
+            y: y,
+            index: index,
+            tileValue: tileValue,
+            neighbors: this.getPlatformNeighbors(level, x, y),
+            createdAt: Date.now()
+          };
+          
+          platforms.set(index, platformData);
+          platformId++;
+        }
+      }
+    }
+
+    console.log(`🧱 Généré ${platforms.size} plateformes avec IDs uniques`);
+    return platforms;
+  }
+
+  determinePlatformType(level, x, y) {
+    const hasTop = y > 0 && level[y - 1][x] === 5;
+    const hasBottom = y < level.length - 1 && level[y + 1][x] === 5;
+    const hasLeft = x > 0 && level[y][x - 1] === 5;
+    const hasRight = x < level[y].length - 1 && level[y][x + 1] === 5;
+
+    // Déterminer le type basé sur les connexions
+    if (!hasTop && !hasBottom && !hasLeft && !hasRight) {
+      return 'isolated'; // Plateforme isolée
+    } else if (!hasTop && hasBottom) {
+      return 'top_surface'; // Surface du dessus
+    } else if (hasTop && !hasBottom) {
+      return 'bottom_surface'; // Surface du dessous
+    } else if (!hasLeft && hasRight) {
+      return 'left_edge'; // Bord gauche
+    } else if (hasLeft && !hasRight) {
+      return 'right_edge'; // Bord droit
+    } else if (!hasTop && !hasBottom) {
+      return 'horizontal_bridge'; // Pont horizontal
+    } else if (!hasLeft && !hasRight) {
+      return 'vertical_pillar'; // Pilier vertical
+    } else {
+      return 'interior'; // Plateforme intérieure
+    }
+  }
+
+  getPlatformNeighbors(level, x, y) {
+    const neighbors = {
+      top: null,
+      bottom: null,
+      left: null,
+      right: null
+    };
+
+    if (y > 0 && level[y - 1][x] === 5) {
+      neighbors.top = this.convertCoordinatesToIndex(x, y - 1);
+    }
+    if (y < level.length - 1 && level[y + 1][x] === 5) {
+      neighbors.bottom = this.convertCoordinatesToIndex(x, y + 1);
+    }
+    if (x > 0 && level[y][x - 1] === 5) {
+      neighbors.left = this.convertCoordinatesToIndex(x - 1, y);
+    }
+    if (x < level[y].length - 1 && level[y][x + 1] === 5) {
+      neighbors.right = this.convertCoordinatesToIndex(x + 1, y);
+    }
+
+    return neighbors;
+  }
+
+  // Méthode utilitaire pour récupérer une plateforme par ses coordonnées
+  getPlatformByCoordinates(x, y) {
+    const index = this.convertCoordinatesToIndex(x, y);
+    return this.platforms.get(index);
+  }
+
+  // Méthode utilitaire pour récupérer une plateforme par son ID
+  getPlatformById(id) {
+    for (const [index, platform] of this.platforms.entries()) {
+      if (platform.id === id) {
+        return platform;
+      }
+    }
+    return null;
+  }
+
+  // Méthode utilitaire pour récupérer toutes les plateformes d'un type donné
+  getPlatformsByType(type) {
+    const result = [];
+    for (const [index, platform] of this.platforms.entries()) {
+      if (platform.type === type) {
+        result.push(platform);
+      }
+    }
+    return result;
   }
 
   loadPortfolioItems() {
@@ -819,6 +934,10 @@ export default class Game {
     // Indicateur directionnel vers le projet le plus proche
     this.renderDirectionalIndicator();
     
+    // Afficher les informations des plateformes si le mode debug est activé
+    if (this.showInfo) {
+      this.renderPlatformInfo();
+    }
   }
 
   renderDirectionalIndicator() {
@@ -871,6 +990,75 @@ export default class Game {
         closestDistance
       );
     }
+  }
+
+  renderPlatformInfo() {
+    // Afficher des informations sur les plateformes visibles à l'écran
+    const isMobile = window.innerWidth <= 768;
+    const renderMargin = isMobile ? 3 : 0;
+
+    // Compter les plateformes par type
+    const platformCounts = {};
+    let visiblePlatforms = 0;
+
+    for (const [index, platform] of this.platforms.entries()) {
+      const x = platform.x;
+      const y = platform.y;
+
+      // Vérifier si la plateforme est visible
+      if (
+        x + 1 > this.camera.startX - renderMargin &&
+        y + 1 > this.camera.startY - renderMargin &&
+        x <= this.camera.endX + renderMargin &&
+        y <= this.camera.endY + renderMargin
+      ) {
+        visiblePlatforms++;
+        
+        // Afficher l'ID de la plateforme au centre de celle-ci
+        const [screenX, screenY] = this.camera.transformCoordinates(x + 0.5, y + 0.5);
+        
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.ctx.font = '12px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(`ID:${platform.id}`, screenX, screenY - 5);
+        this.ctx.fillStyle = 'rgba(200, 200, 200, 0.8)';
+        this.ctx.font = '10px Arial';
+        this.ctx.fillText(platform.type, screenX, screenY + 10);
+        this.ctx.restore();
+        
+        // Compter par type
+        platformCounts[platform.type] = (platformCounts[platform.type] || 0) + 1;
+      }
+    }
+
+    // Afficher les statistiques globales dans le coin supérieur gauche
+    const [statsX, statsY] = this.camera.transformCoordinates(this.camera.startX + 0.5, this.camera.startY + 0.5);
+    
+    this.ctx.save();
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.ctx.fillRect(statsX, statsY, 200, 120);
+    
+    this.ctx.fillStyle = 'white';
+    this.ctx.font = '14px Arial';
+    this.ctx.textAlign = 'left';
+    
+    let lineY = statsY + 20;
+    this.ctx.fillText(`Total plateformes: ${this.platforms.size}`, statsX + 10, lineY);
+    lineY += 18;
+    this.ctx.fillText(`Plateformes visibles: ${visiblePlatforms}`, statsX + 10, lineY);
+    lineY += 15;
+    
+    this.ctx.font = '12px Arial';
+    this.ctx.fillText(`Types:`, statsX + 10, lineY);
+    lineY += 15;
+    
+    for (const [type, count] of Object.entries(platformCounts)) {
+      this.ctx.fillText(`  ${type}: ${count}`, statsX + 10, lineY);
+      lineY += 12;
+    }
+    
+    this.ctx.restore();
   }
 
   updateGame(delta) {

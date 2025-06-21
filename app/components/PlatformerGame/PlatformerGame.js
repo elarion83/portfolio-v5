@@ -429,6 +429,14 @@ function App() {
           setShowInGameMenuModal(false);
         }
       }
+      
+      // Touche I pour activer/désactiver les informations sur les plateformes
+      if (event.key === 'i' || event.key === 'I') {
+        if (gameRef.current) {
+          gameRef.current.showInfo = !gameRef.current.showInfo;
+          console.log(`🔧 Informations plateformes: ${gameRef.current.showInfo ? 'ACTIVÉES' : 'DÉSACTIVÉES'}`);
+        }
+      }
     };
     window.addEventListener("keydown", handleEscapeKey);
 

@@ -648,12 +648,23 @@ export default class Player extends GameObject {
           // Mettre à jour le timestamp de la tile existante
           this.tilesHistory[existingIndex].timestamp = Date.now();
         } else {
-          // Ajouter la nouvelle tile avec un seed aléatoire pour les particules
+          // Récupérer les informations de la plateforme via le système d'ID
+          const platform = this.game.platforms.get(parseInt(tileIndex));
+          
+          // Ajouter la nouvelle tile avec un seed aléatoire pour les particules et les infos de plateforme
           this.tilesHistory.push({
             index: tileIndex,
             timestamp: Date.now(),
-            particleSeed: Math.random() * 1000 // Seed unique pour randomiser les particules
+            particleSeed: Math.random() * 1000, // Seed unique pour randomiser les particules
+            platformId: platform ? platform.id : null,
+            platformType: platform ? platform.type : 'unknown',
+            platformData: platform || null // Données complètes de la plateforme
           });
+          
+          // Log pour debug (seulement si showInfo est activé)
+          if (this.game.showInfo && platform) {
+            console.log(`🦶 Joueur touche plateforme ID:${platform.id} (${platform.type}) à (${platform.x}, ${platform.y})`);
+          }
         }
       }
       
