@@ -649,9 +649,7 @@ export default class Player extends GameObject {
           this.tilesHistory[existingIndex].timestamp = Date.now();
         } else {
           // Récupérer les informations de la plateforme via le système d'ID
-          const tileCoords = this.game.convertIndexToCoordinates(parseInt(tileIndex));
-          const platform = this.game.getPlatformByCoordinates(tileCoords[0], tileCoords[1]);
-          const uniqueId = this.game.getPlatformUniqueId(tileCoords[0], tileCoords[1]);
+          const platform = this.game.platforms.get(parseInt(tileIndex));
           
           // Ajouter la nouvelle tile avec un seed aléatoire pour les particules et les infos de plateforme
           this.tilesHistory.push({
@@ -659,14 +657,13 @@ export default class Player extends GameObject {
             timestamp: Date.now(),
             particleSeed: Math.random() * 1000, // Seed unique pour randomiser les particules
             platformId: platform ? platform.id : null,
-            platformUniqueId: uniqueId,
             platformType: platform ? platform.type : 'unknown',
             platformData: platform || null // Données complètes de la plateforme
           });
           
           // Log pour debug (seulement si showInfo est activé)
           if (this.game.showInfo && platform) {
-            console.log(`🦶 Joueur touche plateforme ID:${uniqueId} (base:${platform.id}, ${platform.type}) à (${tileCoords[0]}, ${tileCoords[1]})`);
+            console.log(`🦶 Joueur touche plateforme ID:${platform.id} (${platform.type}) à (${platform.x}, ${platform.y})`);
           }
         }
       }

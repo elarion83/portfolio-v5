@@ -107,14 +107,25 @@ export default class PlatformEffectManager {
 
     // Parcourir toutes les plateformes avec effets
     for (const [platformId, effects] of this.effects.entries()) {
-      // Vérifier les plateformes visibles pour cet ID (incluant les répétitions)
-      const visibleInstances = this.getVisiblePlatformInstances(platformId);
+      const platform = this.game.getPlatformById(platformId);
+      if (!platform) continue;
+
+      // Vérifier si la plateforme est visible
+      const isMobile = window.innerWidth <= 768;
+      const renderMargin = isMobile ? 3 : 0;
       
-      visibleInstances.forEach(platformInstance => {
-        // Appliquer chaque effet de cette plateforme
-        effects.forEach(effect => {
-          this.renderEffect(platformInstance, effect, delta);
-        });
+      const isVisible = (
+        platform.x + 1 > this.game.camera.startX - renderMargin &&
+        platform.y + 1 > this.game.camera.startY - renderMargin &&
+        platform.x <= this.game.camera.endX + renderMargin &&
+        platform.y <= this.game.camera.endY + renderMargin
+      );
+
+      if (!isVisible) continue;
+
+      // Appliquer chaque effet de cette plateforme
+      effects.forEach(effect => {
+        this.renderEffect(platform, effect, delta);
       });
     }
   }
@@ -206,51 +217,5 @@ export default class PlatformEffectManager {
   hasEffect(platformId, effectType) {
     const effects = this.effects.get(platformId);
     return effects ? effects.some(effect => effect.type === effectType) : false;
-  }
-
-  /**
-   * Obtenir toutes les instances visibles d'une plateforme (incluant les répétitions)
-   * @param {number} platformId - ID de la plateforme
-   * @returns {Array} Liste des instances visibles avec leurs coordonnées réelles
-   */
-  getVisiblePlatformInstances(platformId) {
-    const basePlatform = this.game.getPlatformById(platformId);
-    if (!basePlatform) return [];
-
-    const instances = [];
-    const isMobile = window.innerWidth <= 768;
-    const renderMargin = isMobile ? 3 : 0;
-    
-    // Calculer combien de répétitions sont potentiellement visibles
-    const cameraStartX = this.game.camera.startX - renderMargin;
-    const cameraEndX = this.game.camera.endX + renderMargin;
-    
-    const startRepetition = Math.floor(cameraStartX / this.game.levelWidth);
-    const endRepetition = Math.ceil(cameraEndX / this.game.levelWidth);
-    
-    // Vérifier chaque répétition possible
-    for (let rep = startRepetition; rep <= endRepetition; rep++) {
-      const actualX = basePlatform.x + (rep * this.game.levelWidth);
-      const actualY = basePlatform.y;
-      
-      // Vérifier si cette instance est visible
-      const isVisible = (
-        actualX + 1 > cameraStartX &&
-        actualY + 1 > this.game.camera.startY - renderMargin &&
-        actualX <= cameraEndX &&
-        actualY <= this.game.camera.endY + renderMargin
-      );
-      
-      if (isVisible) {
-        instances.push({
-          ...basePlatform,
-          x: actualX,
-          y: actualY,
-          repetition: rep
-        });
-      }
-    }
-    
-    return instances;
   }
 } 
