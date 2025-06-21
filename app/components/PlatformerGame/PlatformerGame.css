@@ -3343,4 +3343,9 @@ body:has(.hide-cursor) .fixed.top-4.left-4 {
   .speedrun-stats .stat-card {
     flex: none;
   }
+
+  /* Cacher les icônes des statistiques sur mobile */
+  .speedrun-stats .stat-icon {
+    display: none;
+  }
 }
