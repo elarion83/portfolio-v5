@@ -1,17 +1,27 @@
 import Item from "./Item";
 import SpeedBoostItem from "./SpeedBoostItem";
+import HealthItem from "./HealthItem";
 
 export default class ItemManager {
   constructor(game) {
     this.game = game;
     this.items = [];
     this.spawnTimer = 0;
-    this.spawnInterval = 5000;
-    this.maxItems = 8;
     this.lastSpawnTime = 0;
     
+    // Définir les taux de spawn en fonction de l'environnement
+    if (process.env.NODE_ENV === 'development') {
+      this.spawnInterval = 1500; // 1.5 secondes en dev
+      this.maxItems = 15;        // Jusqu'à 15 items en dev
+      console.log('🔧 Mode DEV: Taux de spawn des items augmenté.');
+    } else {
+      this.spawnInterval = 5000; // 5 secondes en production
+      this.maxItems = 8;
+    }
+    
     this.spawnProbabilities = {
-      'speed_boost': 100
+      'speed_boost': 0.6, // 60% de chance
+      'health_pack': 0.4  // 40% de chance
     };
   }
 
@@ -66,16 +76,59 @@ export default class ItemManager {
     }
   }
 
+  /**
+   * Fait apparaître un item d'un type spécifique près du joueur.
+   * C'est une fonction de débogage.
+   * @param {string} itemType - Le type de l'item à faire apparaître (ex: 'health_pack').
+   */
+  spawnItemNearPlayer(itemType) {
+    if (!this.game.player) return null;
+
+    const playerCenter = this.game.player.getCenter();
+    // Apparaît légèrement au-dessus du joueur pour qu'il tombe
+    const position = { x: playerCenter[0], y: playerCenter[1] - 2 }; 
+
+    // On vérifie si la position est valide, sinon on ne fait rien.
+    if (!this.isValidSpawnPosition(position.x, position.y)) {
+        console.warn(`🔧 [DEBUG] Position de spawn près du joueur non valide.`);
+        // On pourrait chercher une autre position, mais pour un debug simple, on s'arrête là.
+        return null;
+    }
+
+    const item = this.createItem(itemType, position.x, position.y);
+    if (item) {
+      this.items.push(item);
+      console.log(`🔧 [DEBUG] Item forcé: ${item.name} près du joueur.`);
+      return item;
+    }
+    return null;
+  }
+
   createItem(type, x, y) {
     switch (type) {
       case 'speed_boost':
         return new SpeedBoostItem(this.game, x, y);
+      case 'health_pack':
+        return new HealthItem(this.game, x, y);
       default:
-        return new Item(this.game, x, y, type);
+        // Retourne null si le type n'est pas reconnu
+        console.warn(`Type d'item inconnu: ${type}`);
+        return null;
     }
   }
 
   getRandomItemType() {
+    const rand = Math.random();
+    let cumulativeProbability = 0;
+
+    for (const type in this.spawnProbabilities) {
+      cumulativeProbability += this.spawnProbabilities[type];
+      if (rand <= cumulativeProbability) {
+        return type;
+      }
+    }
+
+    // Fallback au cas où
     return 'speed_boost';
   }
 

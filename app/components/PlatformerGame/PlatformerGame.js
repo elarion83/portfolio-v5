@@ -469,7 +469,42 @@ function App() {
           gameRef.current.platformEffects.clearAllEffects();
           console.log('🗑️ Tous les effets de plateformes supprimés');
         }
+
+        // Touche E: Tester les effets automatiques
+        if (event.key === 'e' || event.key === 'E') {
+          console.log('🧪 Test des effets automatiques...');
+          gameRef.current.applyAutomaticPlatformEffects();
+        }
+        
+        // Touche T: Tester manuellement quelques effets visibles
+        if (event.key === 't' || event.key === 'T') {
+          console.log('🧪 Application d\'effets de test...');
+          let testCount = 0;
+          for (const [index, platform] of gameRef.current.platforms.entries()) {
+            if (testCount >= 5) break; // Seulement 5 plateformes pour le test
+            
+            const effects = ['highlight', 'pulse', 'glow'];
+            const colors = ['red', 'orange', 'blue'];
+            const randomEffect = effects[testCount % effects.length];
+            const randomColor = colors[testCount % colors.length];
+            
+            gameRef.current.platformEffects.addEffect(platform.id, randomEffect, randomColor, -1);
+            console.log(`🧪 Effet ${randomEffect} ${randomColor} appliqué à la plateforme ID:${platform.id} à (${platform.x}, ${platform.y})`);
+            testCount++;
+          }
+          console.log(`🧪 ${testCount} effets de test appliqués`);
+        }
+
+        // Touche H: Forcer l'apparition d'un pack de soin près du joueur
+        if (event.key === 'h' || event.key === 'H') {
+          if (gameRef.current && gameRef.current.itemManager) {
+            console.log("🔧 [DEBUG] Commande reçue: Apparition d'un Health Pack...");
+            gameRef.current.itemManager.spawnItemNearPlayer('health_pack');
+          }
+        }
       }
+
+
     };
     window.addEventListener("keydown", handleEscapeKey);
 

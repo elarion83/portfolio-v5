@@ -364,8 +364,9 @@ export default class Player extends GameObject {
   }
 
   heal(amount = 1) {
-    if (!this.showHealthBar) return;
+    // Le soin doit fonctionner même si la barre de vie n'est pas visible.
     this.currentHealth = Math.min(this.maxHealth, this.currentHealth + amount);
+    console.log(`❤️ Joueur soigné. Vie actuelle: ${this.currentHealth}/${this.maxHealth}`);
   }
 
   resetHealth() {

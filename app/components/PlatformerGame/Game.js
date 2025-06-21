@@ -70,37 +70,30 @@ export default class Game {
     this.isInitializing = true;
 
     const level = [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 5, 0, 5, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0],
-      [0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0],
-      [0, 5, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 0],
-      [0, 5, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5, 0, 0, 0],
-      [0, 5, 5, 5, 5, 5, 0, 0, 5, 5, 5, 5, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0],
-      [0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0, 5, 5, 0],
-      [0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 5, 5],
-      [0, 0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 5, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0],
-      [5, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0],
-      [0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [5, 5, 5, 0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5],
-      [5, 5, 5, 0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5],
-      [5, 5, 5, 0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5],
-      [5, 5, 5, 0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5],
-      [5, 5, 5, 0, 0, 0, 5, 5, 0, 0, 0, 5, 5, 5, 5],
-      [5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5],
-      [5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5],
-      [5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5],
-      [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
-    ];
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0],
+      [5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,0,0,0,5],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,5,5,5,5,5,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,5,5,5,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,5,5,5,5,5,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,5,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,0,0,0,0,0,0,0,0,0,5,5,5,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,5,5,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0],
+      [5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0],
+      [5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0],
+      [5,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0],
+      [5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5,5,5,0,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5],
+      [5,5,5,5,5,5,5,5,0,0,0,0,0,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5,5,0,0,0,0,0,5,5,5,5,5,5,5,5,0,5,5,5,5,5,5,5,5,0,5,5,5],
+      [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],
+  ];
 
     this.showInfo = false;
+    this.levelData = level; // Sauvegarder les données de niveau
     this.map = level.flat(1);
 
     this.levelWidth = level[0].length;
@@ -108,6 +101,8 @@ export default class Game {
 
     // Générer les IDs des plateformes avec métadonnées (après avoir défini levelWidth/levelHeight)
     this.platforms = this.generatePlatformIds(level);
+    
+    // Les effets seront appliqués dans start() après le reset
     this.camera.endY = this.levelHeight - 7;
     this.camera.startY = this.levelHeight - 15;
     this.camera.maxY = this.levelHeight;
@@ -333,6 +328,12 @@ export default class Game {
     // Configurer le système de vie au démarrage
     this.configureHealthSystem();
     
+    // Appliquer les effets visuels automatiques après le reset
+    setTimeout(() => {
+      this.applyAutomaticPlatformEffects();
+      console.log('🎨 Effets visuels appliqués après démarrage');
+    }, 200); // Délai pour s'assurer que tout est initialisé
+    
     console.log('✅ Jeu démarré');
   }
 
@@ -454,6 +455,361 @@ export default class Game {
       }
     }
     return result;
+  }
+
+  // Attribuer un ID pour les répétitions du niveau
+  assignPlatformIdForRepetition(x, y, index) {
+    // Déterminer la répétition basée sur la position X
+    const repetition = Math.floor(x / this.levelWidth) + 1;
+    
+    // Si c'est la première répétition, utiliser la méthode normale
+    if (repetition === 1) {
+      return this.assignPlatformId(x, y, index);
+    }
+    
+    // Pour les répétitions suivantes, générer un ID avec préfixe
+    const localX = x % this.levelWidth;
+    const originalIndex = this.convertCoordinatesToIndex(localX, y);
+    
+    // Trouver le prochain ID disponible pour cette répétition
+    const repetitionPrefix = `R${repetition}`;
+    let repetitionId = 1;
+    
+    // Chercher un ID libre pour cette répétition
+    while (this.getPlatformById(`${repetitionPrefix}${repetitionId.toString().padStart(3, '0')}`)) {
+      repetitionId++;
+    }
+    
+    const newId = `${repetitionPrefix}${repetitionId.toString().padStart(3, '0')}`;
+    
+    // Déterminer le type de plateforme
+    const platformType = this.determinePlatformTypeFromMap(x, y);
+    
+    const platformData = {
+      id: newId,
+      type: platformType,
+      x: x,
+      y: y,
+      index: index,
+      tileValue: 5,
+      repetition: repetition,
+      localX: localX,
+      originalIndex: originalIndex,
+      neighbors: this.getPlatformNeighborsFromMap(x, y),
+      createdAt: Date.now(),
+      dynamicallyAssigned: true
+    };
+    
+    this.platforms.set(index, platformData);
+    console.log(`🔄 ID ${newId} assigné à la répétition ${repetition}, plateforme (${x}, ${y}) -> local (${localX}, ${y})`);
+    
+    // Appliquer un effet visuel avec une certaine probabilité
+    this.maybeApplyEffectToNewPlatform(platformData);
+    
+    return platformData;
+  }
+
+  // Attribuer automatiquement un ID à une plateforme qui n'en a pas
+  assignPlatformId(x, y, providedIndex = null) {
+    const index = providedIndex !== null ? providedIndex : this.convertCoordinatesToIndex(x, y);
+    const tileValue = this.map[index];
+    
+    // Vérifier si c'est bien une plateforme (5) et qu'elle n'a pas déjà d'ID
+    if (tileValue === 5 && !this.platforms.has(index)) {
+      // Trouver le prochain ID disponible
+      let maxId = 0;
+      for (const [_, platform] of this.platforms.entries()) {
+        if (platform.id > maxId) {
+          maxId = platform.id;
+        }
+      }
+      
+      const newId = maxId + 1;
+      
+      // Déterminer le type de plateforme
+      const platformType = this.determinePlatformTypeFromMap(x, y);
+      
+      const platformData = {
+        id: newId,
+        type: platformType,
+        x: x,
+        y: y,
+        index: index,
+        tileValue: tileValue,
+        neighbors: this.getPlatformNeighborsFromMap(x, y),
+        createdAt: Date.now(),
+        dynamicallyAssigned: true // Marquer comme assigné dynamiquement
+      };
+      
+      this.platforms.set(index, platformData);
+      console.log(`🆔 ID ${newId} assigné automatiquement à la plateforme (${x}, ${y})`);
+      
+      return platformData;
+    }
+    
+    return null;
+  }
+
+  // Version adaptée pour déterminer le type depuis la map existante
+  determinePlatformTypeFromMap(x, y) {
+    const hasTop = y > 0 && this.map[this.convertCoordinatesToIndex(x, y - 1)] === 5;
+    const hasBottom = y < this.levelHeight - 1 && this.map[this.convertCoordinatesToIndex(x, y + 1)] === 5;
+    const hasLeft = x > 0 && this.map[this.convertCoordinatesToIndex(x - 1, y)] === 5;
+    const hasRight = x < this.levelWidth - 1 && this.map[this.convertCoordinatesToIndex(x + 1, y)] === 5;
+
+    // Déterminer le type basé sur les connexions
+    if (!hasTop && !hasBottom && !hasLeft && !hasRight) {
+      return 'isolated'; // Plateforme isolée
+    } else if (!hasTop && hasBottom) {
+      return 'top_surface'; // Surface du dessus
+    } else if (hasTop && !hasBottom) {
+      return 'bottom_surface'; // Surface du dessous
+    } else if (!hasLeft && hasRight) {
+      return 'left_edge'; // Bord gauche
+    } else if (hasLeft && !hasRight) {
+      return 'right_edge'; // Bord droit
+    } else if (!hasTop && !hasBottom) {
+      return 'horizontal_bridge'; // Pont horizontal
+    } else if (!hasLeft && !hasRight) {
+      return 'vertical_pillar'; // Pilier vertical
+    } else {
+      return 'interior'; // Plateforme intérieure
+    }
+  }
+
+  // Version adaptée pour les voisins depuis la map existante
+  getPlatformNeighborsFromMap(x, y) {
+    const neighbors = {
+      top: null,
+      bottom: null,
+      left: null,
+      right: null
+    };
+
+    if (y > 0 && this.map[this.convertCoordinatesToIndex(x, y - 1)] === 5) {
+      neighbors.top = this.convertCoordinatesToIndex(x, y - 1);
+    }
+    if (y < this.levelHeight - 1 && this.map[this.convertCoordinatesToIndex(x, y + 1)] === 5) {
+      neighbors.bottom = this.convertCoordinatesToIndex(x, y + 1);
+    }
+    if (x > 0 && this.map[this.convertCoordinatesToIndex(x - 1, y)] === 5) {
+      neighbors.left = this.convertCoordinatesToIndex(x - 1, y);
+    }
+    if (x < this.levelWidth - 1 && this.map[this.convertCoordinatesToIndex(x + 1, y)] === 5) {
+      neighbors.right = this.convertCoordinatesToIndex(x + 1, y);
+    }
+
+    return neighbors;
+  }
+
+  // Appliquer des effets visuels automatiques sur certaines plateformes avec propagation
+  applyAutomaticPlatformEffects() {
+    console.log(`[SIMPLIFIED TEST] Application des effets automatiques...`);
+
+    // Test 1: Forcer un effet GLOW BLEU sur la plateforme 10
+    console.log("  - Application d'un GLOW BLEU sur la plateforme 10");
+    this.platformEffects.addEffect(10, 'glow', { color: '#0080ff', intensity: 1.2 });
+
+    // Test 2: Forcer un effet PULSE ORANGE sur la plateforme 20
+    console.log("  - Application d'un PULSE ORANGE sur la plateforme 20");
+    this.platformEffects.addEffect(20, 'pulse', { color: '#ff8000', speed: 2 });
+
+    // Test 3: Forcer un effet HIGHLIGHT ROUGE sur la plateforme 30
+    console.log("  - Application d'un HIGHLIGHT ROUGE sur la plateforme 30");
+    this.platformEffects.addEffect(30, 'highlight', { color: '#ff0000', intensity: 0.8 });
+    
+    console.log(`[SIMPLIFIED TEST] Effets appliqués.`);
+  }
+
+  // Créer une zone d'effet autour d'une plateforme avec intensité dégressive
+  createEffectZone(centerPlatform, effectType, color) {
+    const zone = [];
+    const maxDistance = 1; // Rayon réduit à 1 (seulement les voisins directs)
+    
+    // Ajouter la plateforme centrale (intensité 100%)
+    this.platformEffects.addEffect(centerPlatform.id, effectType, color);
+    zone.push({ platform: centerPlatform, distance: 0, intensity: 1.0 });
+    
+    // Propager aux plateformes voisines
+    for (let distance = 1; distance <= maxDistance; distance++) {
+      const platformsAtDistance = this.getPlatformsAtDistance(centerPlatform, distance);
+      
+      for (const platform of platformsAtDistance) {
+        // Probabilité réduite de propagation (seulement 40% des voisins)
+        if (Math.random() < 0.4) {
+          this.platformEffects.addEffect(platform.id, effectType, color);
+          zone.push({ platform: platform, distance: distance, intensity: 0.6 });
+        }
+      }
+    }
+    
+    return zone;
+  }
+
+  // Trouver toutes les plateformes à une distance donnée d'une plateforme centrale
+  getPlatformsAtDistance(centerPlatform, targetDistance) {
+    const result = [];
+    const centerX = centerPlatform.x;
+    const centerY = centerPlatform.y;
+    
+    for (const [index, platform] of this.platforms.entries()) {
+      const distance = Math.abs(platform.x - centerX) + Math.abs(platform.y - centerY); // Distance Manhattan
+      
+      if (distance === targetDistance) {
+        result.push(platform);
+      }
+    }
+    
+    return result;
+  }
+
+  // Appliquer un effet à une nouvelle plateforme selon certaines probabilités
+  maybeApplyEffectToNewPlatform(platform) {
+    const effects = ['highlight', 'pulse', 'glow'];
+    const colors = {
+      highlight: { color: '#ff0000', intensity: 0.8 }, // Rouge
+      pulse: { color: '#ff8000', speed: 2 },           // Orange
+      glow: { color: '#0080ff', intensity: 1.2 }       // Bleu
+    };
+    
+    let shouldApplyEffect = false;
+    let effectType = '';
+    
+    // Probabilités similaires au système automatique
+    switch (platform.type) {
+      case 'isolated':
+        if (Math.random() < 0.7) {
+          shouldApplyEffect = true;
+          effectType = 'glow';
+        }
+        break;
+        
+      case 'top_surface':
+        if (Math.random() < 0.25) {
+          shouldApplyEffect = true;
+          effectType = 'pulse';
+        }
+        break;
+        
+      case 'left_edge':
+      case 'right_edge':
+        if (Math.random() < 0.2) {
+          shouldApplyEffect = true;
+          effectType = 'highlight';
+        }
+        break;
+        
+      case 'horizontal_bridge':
+      case 'vertical_pillar':
+        if (Math.random() < 0.3) {
+          shouldApplyEffect = true;
+          effectType = effects[Math.floor(Math.random() * effects.length)];
+        }
+        break;
+        
+      default:
+        if (Math.random() < 0.08) {
+          shouldApplyEffect = true;
+          effectType = effects[Math.floor(Math.random() * effects.length)];
+        }
+        break;
+    }
+    
+    // Appliquer l'effet si déterminé
+    if (shouldApplyEffect && effectType) {
+      const color = colors[effectType];
+      
+      this.platformEffects.addEffect(platform.id, effectType, color);
+      console.log(`✨ Effet ${effectType} appliqué à la nouvelle plateforme ID:${platform.id} (répétition ${platform.repetition})`);
+    }
+  }
+
+  // Scanner toutes les plateformes visibles et attribuer des IDs si nécessaire
+  scanVisiblePlatforms() {
+    const isMobile = window.innerWidth <= 768;
+    const renderMargin = isMobile ? 3 : 0;
+    let assignedCount = 0;
+
+    for (let i = 0; i < this.map.length; i++) {
+      const [x, y] = this.convertIndexToCoordinates(i);
+      
+      const isVisible = (
+        x + 1 > this.camera.startX - renderMargin &&
+        y + 1 > this.camera.startY - renderMargin &&
+        x <= this.camera.endX + renderMargin &&
+        y <= this.camera.endY + renderMargin
+      );
+
+      if (isVisible && this.map[i] === 5) {
+        const index = this.convertCoordinatesToIndex(x, y);
+        if (!this.platforms.has(index)) {
+          if (this.assignPlatformId(x, y)) {
+            assignedCount++;
+          }
+        }
+      }
+    }
+
+    if (assignedCount > 0) {
+      console.log(`🔍 Scan terminé: ${assignedCount} nouveaux IDs attribués aux plateformes visibles`);
+    }
+    
+    return assignedCount;
+  }
+
+  // Ajouter une plateforme dynamiquement à la map et lui attribuer un ID
+  addDynamicPlatform(x, y) {
+    if (x < 0 || x >= this.levelWidth || y < 0 || y >= this.levelHeight) {
+      console.warn(`❌ Position invalide pour ajouter une plateforme: (${x}, ${y})`);
+      return null;
+    }
+
+    const index = this.convertCoordinatesToIndex(x, y);
+    
+    // Ajouter la plateforme à la map
+    this.map[index] = 5;
+    
+    // Recalculer la collision map pour cette position
+    this.updateCollisionForTile(x, y);
+    
+    // Attribuer automatiquement un ID
+    const platform = this.assignPlatformId(x, y);
+    
+    if (platform) {
+      console.log(`➕ Plateforme dynamique ajoutée: ID ${platform.id} à (${x}, ${y})`);
+    }
+    
+    return platform;
+  }
+
+  // Mettre à jour la collision map pour une tuile spécifique
+  updateCollisionForTile(x, y) {
+    const index = this.convertCoordinatesToIndex(x, y);
+    const block = this.map[index];
+    
+    let flag = 0;
+    
+    if (block) {
+      const top = this.map[this.convertCoordinatesToIndex(x, y - 1)];
+      const bottom = this.map[this.convertCoordinatesToIndex(x, y + 1)];
+      const left = this.map[this.convertCoordinatesToIndex(x - 1, y)];
+      const right = this.map[this.convertCoordinatesToIndex(x + 1, y)];
+
+      if (x !== 0) {
+        flag |= !left ? 1 : 0;
+      }
+      if (x !== this.levelWidth - 1) {
+        flag |= !right ? 2 : 0;
+      }
+      if (y !== 0) {
+        flag |= !top ? 4 : 0;
+      }
+      if (y !== this.levelHeight - 1) {
+        flag |= !bottom ? 8 : 0;
+      }
+    }
+    
+    this.collisionMap[index] = flag;
   }
 
   loadPortfolioItems() {
@@ -794,12 +1150,21 @@ export default class Game {
       const isMobile = window.innerWidth <= 768;
       const renderMargin = isMobile ? 3 : 0; // 3 tiles de marge supplémentaire sur mobile
 
-      if (
+      const isVisible = (
         x + 1 > this.camera.startX - renderMargin &&
         y + 1 > this.camera.startY - renderMargin &&
         x <= this.camera.endX + renderMargin &&
         y <= this.camera.endY + renderMargin
-      ) {
+      );
+
+      if (isVisible) {
+        // Vérifier si c'est une plateforme (5) et lui attribuer un ID si elle n'en a pas
+        if (this.map[i] === 5) {
+          if (!this.platforms.has(i)) {
+            this.assignPlatformIdForRepetition(x, y, i);
+          }
+        }
+
         var width = 0.03;
 
         // Bordures glassmorphism modernes
@@ -927,7 +1292,7 @@ export default class Game {
     this.particleSystem.render();
 
     // Rendu des effets de plateformes (avant les items pour qu'ils soient en arrière-plan)
-    this.platformEffects.render();
+   // this.platformEffects.render();
 
     // Affichage des items portfolio
     for (const item of this.portfolioItems) {
