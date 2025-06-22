@@ -53,20 +53,15 @@ export default class PortfolioItem extends GameObject {
     const floatY = Math.sin(time + this.floatOffset) * 0.05;
     const currentY = this.y + floatY;
     
-    // Effet de lueur
+    // Effet de lueur (maintenant hexagonal)
     this.glowIntensity = 0.3 + Math.sin(time * 3) * 0.2;
-    this.game.render.drawCircle(
-      this.x + this.w / 2, 
-      currentY + this.h / 2, 
-      this.w * 0.8, 
-      `rgba(255, 215, 0, ${this.glowIntensity * 0.3})`
-    );
+    // this.game.render.drawCircle( ... ) // Remplacé par le glow hexagonal dans drawItemBody
     
     // Corps principal de l'item
     this.drawItemBody(this.x + this.w / 2, currentY + this.h / 2, time);
     
-    // Icône du projet
-    this.drawProjectIcon(this.x + this.w / 2, currentY + this.h / 2, time);
+    // Icône du projet (SUPPRIMÉE pour voir l'image)
+    // this.drawProjectIcon(this.x + this.w / 2, currentY + this.h / 2, time);
     
     // Tooltip si survolé ou en animation de sortie
     if (this.showTooltip || this.tooltipOpacity > 0) {
@@ -74,41 +69,210 @@ export default class PortfolioItem extends GameObject {
     }
   }
 
+  drawHexagonPath(radius) {
+    const ctx = this.game.ctx;
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI / 3) * i - Math.PI / 2; // Pointy-top hexagon
+      const x = radius * Math.cos(angle);
+      const y = radius * Math.sin(angle);
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.closePath();
+  }
+
   drawItemBody(centerX, centerY, time) {
     const ctx = this.game.ctx;
     const [screenX, screenY] = this.game.camera.transformCoordinates(centerX, centerY);
-    const screenSize = this.game.camera.transformX(this.w * 0.6);
+    const screenSize = this.game.camera.transformX(this.w * 1.0); // Encore 10% plus gros
     
     ctx.save();
     
-    // Rotation subtile
-    this.rotationAngle += 0.02;
+    // Rotation du portal
+    this.rotationAngle += 0.015;
     ctx.translate(screenX, screenY);
     ctx.rotate(this.rotationAngle);
     
-    // Gradient radial pour le corps
-    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, screenSize);
-    gradient.addColorStop(0, 'rgba(255, 215, 0, 0.9)');
-    gradient.addColorStop(0.6, 'rgba(255, 165, 0, 0.7)');
-    gradient.addColorStop(1, 'rgba(255, 140, 0, 0.4)');
+    // 1. Aura extérieure magique (bleue, hexagonale)
+    const outerRadius = screenSize * 1.6;
+    const outerGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, outerRadius);
+    outerGradient.addColorStop(0, 'rgba(0, 220, 255, 0.1)'); // Cyan/Bleu
+    outerGradient.addColorStop(0.5, 'rgba(0, 220, 255, 0.05)');
+    outerGradient.addColorStop(1, 'rgba(0, 220, 255, 0)');
     
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(0, 0, screenSize, 0, Math.PI * 2);
+    ctx.fillStyle = outerGradient;
+    this.drawHexagonPath(outerRadius);
     ctx.fill();
     
-    // Bordure brillante
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+    // 2. Particules orbitales à l'extérieur (AVANT le portal)
+    this.drawOrbitalParticles(0, 0, screenSize * 1.3, time);
+    
+    // 3. Bordure floue et animée (orange, hexagonale)
+    const portalRadius = screenSize;
+    const borderPulse = 0.6 + Math.sin(time * 3) * 0.4;
+    const borderRotation = time * 0.5; // Bordure plus lente
+    
+    // Bordure floue extérieure (effet de glow orange)
+    ctx.save();
+    ctx.shadowColor = 'rgba(226, 141, 29, 0.8)'; // Orange
+    ctx.shadowBlur = 15;
+    this.drawHexagonPath(portalRadius * 1.1);
+    ctx.strokeStyle = `rgba(226, 141, 29, ${borderPulse * 0.6})`; // Orange
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    ctx.restore();
+    
+    // Bordures principales animées tournantes
+    // Bordure orange
+    ctx.save();
+    ctx.rotate(borderRotation);
+    this.drawHexagonPath(portalRadius * 1.05);
+    ctx.strokeStyle = `rgba(226, 141, 29, ${borderPulse * 0.9})`;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.restore();
+    
+    // Bordure bleu clair
+    ctx.save();
+    ctx.rotate(-borderRotation * 1.5); // Vitesse différente
+    this.drawHexagonPath(portalRadius * 1.02);
+    ctx.strokeStyle = `rgba(100, 200, 255, ${borderPulse * 0.7})`;
     ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.restore();
     
-    // Effet de brillance
-    ctx.globalCompositeOperation = 'screen';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.beginPath();
-    ctx.arc(-screenSize * 0.3, -screenSize * 0.3, screenSize * 0.4, 0, Math.PI * 2);
+    // 4. Portal principal avec image background (hexagonal)
+    this.drawHexagonPath(portalRadius);
+    ctx.clip();
+    
+    // Fond du portal (gradient bleu-orange)
+    const portalGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, portalRadius);
+    portalGradient.addColorStop(0, 'rgba(226, 141, 29, 0.2)');   // Orange au centre
+    portalGradient.addColorStop(0.5, 'rgba(226, 141, 29, 0.1)');
+    portalGradient.addColorStop(0.8, 'rgba(0, 220, 255, 0.1)');
+    portalGradient.addColorStop(1, 'rgba(0, 220, 255, 0.2)');   // Bleu au bord
+    
+    ctx.fillStyle = portalGradient;
+    this.drawHexagonPath(portalRadius); // Redessiner le chemin pour le fill
     ctx.fill();
-    ctx.globalCompositeOperation = 'source-over';
+    
+    // 5. Image background du projet
+    if (this.imageLoaded && this.imageObj) {
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      
+      // Annuler la rotation pour l'image (elle ne doit pas tourner)
+      ctx.rotate(-this.rotationAngle);
+      
+      const diameter = portalRadius * 2;
+      const imageAspectRatio = this.imageObj.width / this.imageObj.height;
+      
+      let scaledWidth, scaledHeight;
+      if (imageAspectRatio > 1) { // Image plus large que haute
+        scaledHeight = diameter;
+        scaledWidth = diameter * imageAspectRatio;
+      } else { // Image plus haute que large ou carrée
+        scaledWidth = diameter;
+        scaledHeight = diameter / imageAspectRatio;
+      }
+      
+      const offsetX = -scaledWidth / 2;
+      const offsetY = -scaledHeight / 2;
+
+      // Centrer l'image parfaitement
+      ctx.drawImage(this.imageObj, offsetX, offsetY, scaledWidth, scaledHeight);
+      ctx.restore();
+    }
+    
+    // 6. Effet de brillance central (SUPPRIMÉ - point blanc retiré)
+    // ctx.globalCompositeOperation = 'screen';
+    // ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    // ctx.beginPath();
+    // ctx.arc(-portalRadius * 0.2, -portalRadius * 0.2, portalRadius * 0.3, 0, Math.PI * 2);
+    // ctx.fill();
+    // ctx.globalCompositeOperation = 'source-over';
+    
+    ctx.restore();
+  }
+
+  drawOrbitalParticles(centerX, centerY, radius, time) {
+    const ctx = this.game.ctx;
+    const particleCount = 16; // Plus de particules (doublé)
+    const particleSize = 4; // Légèrement plus grosses
+    
+    ctx.save();
+    
+    // Deux anneaux de particules
+    const innerRingRadius = radius * 0.9;
+    const outerRingRadius = radius * 1.1;
+    
+    for (let ring = 0; ring < 2; ring++) {
+      const ringRadius = ring === 0 ? innerRingRadius : outerRingRadius;
+      const ringParticles = particleCount / 2;
+      const ringSpeed = ring === 0 ? 0.8 : 1.2; // Vitesses ralenties
+      const ringColor = ring === 0 ? 'rgba(226, 141, 29,' : 'rgba(0, 220, 255,'; // Anneau 1: Orange, Anneau 2: Bleu
+      
+      for (let i = 0; i < ringParticles; i++) {
+        const angle = (i / ringParticles) * Math.PI * 2 + time * ringSpeed;
+        const x = centerX + Math.cos(angle) * ringRadius;
+        const y = centerY + Math.sin(angle) * ringRadius;
+        
+        // Effet de pulsation pour chaque particule
+        const pulse = 0.4 + Math.sin(time * 3 + i * 0.3) * 0.6;
+        const alpha = 0.4 + pulse * 0.5;
+        
+        const particleRadius = Math.max(0.5, particleSize * pulse);
+        
+        // Particule avec glow de sa couleur
+        ctx.save();
+        ctx.shadowColor = `${ringColor} 0.8)`;
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = `${ringColor} ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, particleRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        
+        // Traînée de particule plus longue
+        const trailLength = 4;
+        for (let j = 1; j <= trailLength; j++) {
+          const trailAngle = angle - j * 0.08;
+          const trailX = centerX + Math.cos(trailAngle) * ringRadius;
+          const trailY = centerY + Math.sin(trailAngle) * ringRadius;
+          const trailAlpha = alpha * (1 - j / trailLength) * 0.4;
+          
+          const trailRadius = Math.max(0.5, particleSize * 0.6);
+          
+          ctx.fillStyle = `${ringColor} ${trailAlpha})`;
+          ctx.beginPath();
+          ctx.arc(trailX, trailY, trailRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    
+    // Particules flottantes supplémentaires (plus petites)
+    const floatingParticles = 8;
+    for (let i = 0; i < floatingParticles; i++) {
+      const floatAngle = (i / floatingParticles) * Math.PI * 2 + time * 0.5; // Ralenti (était 0.8)
+      const floatRadius = radius * (0.7 + Math.sin(time * 1.5 + i) * 0.2); // Ralenti (était time * 2)
+      const x = centerX + Math.cos(floatAngle) * floatRadius;
+      const y = centerY + Math.sin(floatAngle) * floatRadius;
+      
+      const floatPulse = 0.3 + Math.sin(time * 2 + i * 0.7) * 0.4; // Ralenti (était time * 3)
+      const floatAlpha = 0.2 + floatPulse * 0.3;
+      
+      const floatParticleRadius = Math.max(0.5, 2 * floatPulse);
+      
+      ctx.fillStyle = `rgba(200, 230, 255, ${floatAlpha})`; // Blanc bleuté
+      ctx.beginPath();
+      ctx.arc(x, y, floatParticleRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
     
     ctx.restore();
   }
@@ -116,48 +280,50 @@ export default class PortfolioItem extends GameObject {
   drawProjectIcon(centerX, centerY, time) {
     const ctx = this.game.ctx;
     const [screenX, screenY] = this.game.camera.transformCoordinates(centerX, centerY);
-    const iconSize = this.game.camera.transformX(this.w * 0.3);
+    const iconSize = this.game.camera.transformX(this.w * 0.25); // Plus petit pour ne pas masquer l'image
     
     ctx.save();
     ctx.translate(screenX, screenY);
-    ctx.rotate(-this.rotationAngle); // Contre-rotation pour garder l'icône droite
+    ctx.rotate(-this.rotationAngle * 0.7); // Contre-rotation plus lente
     
-    // Icône basée sur le type de projet
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    // Icône flottante au-dessus du portal
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
     ctx.lineWidth = 1;
+    
+    // Effet de lueur autour de l'icône
+    ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
+    ctx.shadowBlur = 8;
     
     switch (this.projectData.type) {
       case 'web':
-        // Icône de globe
+        // Icône de globe simplifiée
         ctx.beginPath();
-        ctx.arc(0, 0, iconSize * 0.6, 0, Math.PI * 2);
+        ctx.arc(0, 0, iconSize * 0.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(0, 0, iconSize * 0.4, 0, Math.PI * 2);
         ctx.stroke();
         break;
       case 'mobile':
-        // Icône de téléphone
-        ctx.fillRect(-iconSize * 0.4, -iconSize * 0.6, iconSize * 0.8, iconSize * 1.2);
-        ctx.strokeRect(-iconSize * 0.4, -iconSize * 0.6, iconSize * 0.8, iconSize * 1.2);
+        // Icône de téléphone simplifiée
+        ctx.fillRect(-iconSize * 0.3, -iconSize * 0.4, iconSize * 0.6, iconSize * 0.8);
+        ctx.strokeRect(-iconSize * 0.3, -iconSize * 0.4, iconSize * 0.6, iconSize * 0.8);
         break;
       case 'game':
-        // Icône de manette
+        // Icône de manette simplifiée
         ctx.beginPath();
-        ctx.arc(-iconSize * 0.3, 0, iconSize * 0.2, 0, Math.PI * 2);
+        ctx.arc(-iconSize * 0.2, 0, iconSize * 0.15, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(iconSize * 0.3, 0, iconSize * 0.2, 0, Math.PI * 2);
+        ctx.arc(iconSize * 0.2, 0, iconSize * 0.15, 0, Math.PI * 2);
         ctx.fill();
         break;
       default:
-        // Icône de code
-        ctx.fillRect(-iconSize * 0.4, -iconSize * 0.3, iconSize * 0.8, iconSize * 0.6);
-        ctx.strokeRect(-iconSize * 0.4, -iconSize * 0.3, iconSize * 0.8, iconSize * 0.6);
+        // Icône de code simplifiée
+        ctx.fillRect(-iconSize * 0.3, -iconSize * 0.2, iconSize * 0.6, iconSize * 0.4);
+        ctx.strokeRect(-iconSize * 0.3, -iconSize * 0.2, iconSize * 0.6, iconSize * 0.4);
     }
     
+    ctx.shadowBlur = 0;
     ctx.restore();
   }
 
