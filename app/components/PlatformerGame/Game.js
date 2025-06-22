@@ -792,7 +792,7 @@ export default class Game {
           const firstProject = this.availableProjects[0];
           console.log(`🎯 Placement du premier projet: ${decodeHtmlEntities(firstProject.title.rendered)}`);
           this.portfolioItems.push(
-            new PortfolioItem(this, 3, 18, { // Position de départ
+            new PortfolioItem(this, 3, 16, { // Position de départ CORRIGÉE (était y: 18)
               id: firstProject.id,
               title: decodeHtmlEntities(firstProject.title.rendered),
               description: firstProject.acf?.socle_technique || 'Projet',
