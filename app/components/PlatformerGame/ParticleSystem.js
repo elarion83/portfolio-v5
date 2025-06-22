@@ -67,13 +67,13 @@ export default class ParticleSystem {
       
       // Direction vers le haut avec très peu de dispersion
       var angle = getRandom(-Math.PI / 12, Math.PI / 12) - Math.PI / 2; // -15° à +15° - 90° (vers le haut)
-      var speed = getRandom(1.5, 2.5) / 100; // Vitesse plus uniforme
+      var speed = getRandom(0.8, 1.5) / 100; // Vitesse réduite pour monter plus lentement
       
       // Propriétés visuelles variées
       const fontSize = getRandom(14, 20);
       const baseAlpha = getRandom(0.8, 1.0);
       const vx = Math.cos(angle) * speed;
-      const vy = Math.sin(angle) * speed - 0.002;
+      const vy = Math.sin(angle) * speed - 0.001; // Vitesse verticale réduite
 
       this.particles.push({
         relOffsetX,
@@ -88,7 +88,8 @@ export default class ParticleSystem {
         color: color,
         type: 'health',
         symbol: symbol,
-        fontSize: fontSize
+        fontSize: fontSize,
+        maxHeight: 0.8 // Hauteur maximale réduite (au lieu de monter indéfiniment)
       });
     }
   }
@@ -211,20 +212,40 @@ export default class ParticleSystem {
     for (var i = 0; i < this.particles.length; i++) {
       var particle = this.particles[i];
 
-      // Gestion normale pour toutes les particules
-      particle.x += delta * particle.vx;
-      particle.y += delta * particle.vy;
-      particle.ticks += delta;
-
-      if (particle.ticks > 2) {
-        particle.size -= delta / 200;
-        particle.alpha -= delta / 2;
-
-        if (particle.size < 0.0001 || particle.alpha < 0.0001) {
+      // Gestion spéciale pour les particules de santé
+      if (particle.type === 'health') {
+        // Mouvement vers le haut avec limite de hauteur
+        particle.x += delta * particle.vx * 60;
+        particle.y += delta * particle.vy * 60;
+        particle.ticks += delta;
+        
+        // Limiter la hauteur maximale et faire disparaître plus rapidement
+        const maxHeight = 0.15; // Hauteur maximale très réduite à 0.15 unités
+        const startY = particle.playerRef ? particle.playerRef.y - 0.15 : this.game.player.y - 0.15;
+        const currentHeight = startY - particle.y;
+        
+        if (currentHeight > maxHeight || particle.ticks > 1.0) { // Disparaître après 1 seconde ou si trop haut
           deleting.unshift(i);
+        } else {
+          // Fade-out progressif
+          particle.alpha = Math.max(0, particle.baseAlpha - (particle.ticks * 1.0)); // Fade-out plus rapide
         }
-      } else if (particle.alpha < 1) {
-        particle.alpha += delta * 3;
+      } else {
+        // Gestion normale pour les autres particules
+        particle.x += delta * particle.vx;
+        particle.y += delta * particle.vy;
+        particle.ticks += delta;
+
+        if (particle.ticks > 2) {
+          particle.size -= delta / 200;
+          particle.alpha -= delta / 2;
+
+          if (particle.size < 0.0001 || particle.alpha < 0.0001) {
+            deleting.unshift(i);
+          }
+        } else if (particle.alpha < 1) {
+          particle.alpha += delta * 3;
+        }
       }
     }
 
