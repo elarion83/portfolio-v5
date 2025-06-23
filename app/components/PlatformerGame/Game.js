@@ -136,6 +136,10 @@ export default class Game {
     this.lastProjectCollectedTime = Date.now();
     this.nearProject = false; // Track if player is near any project // Temps de la dernière collecte
     
+    // Position de départ du joueur
+    this.playerStartX = 8;
+    this.playerStartY = this.levelHeight - 12;
+    
     // Configuration de difficulté par défaut
     this.difficultyConfig = {
       projectsRequired: 20,
