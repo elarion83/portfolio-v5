@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://www.nicolas-gruwe.fr/img/platformer.jpg',
+        url: 'https://www.nicolas-gruwe.fr/img/platformer.JPG',
         width: 1200,
         height: 630,
         alt: 'Jeu de plateforme portfolio interactif',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Platformer Interactif | Nicolas Gruwe',
     description: 'Explorez mon portfolio de manière interactive dans un jeu de plateforme 2D !',
-    images: ['https://www.nicolas-gruwe.fr/img/platformer.jpg'],
+    images: ['https://www.nicolas-gruwe.fr/img/platformer.JPG'],
   },
 }
 
