@@ -1,0 +1,9 @@
+# Exclure les dossiers qui peuvent causer des problèmes de récursion
+public/PlatformerGame/
+public/platformer/
+node_modules/
+.next/
+.git/
+.vercel/
+*.log
+.env* 
