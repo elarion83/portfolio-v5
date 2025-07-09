@@ -80,7 +80,7 @@ const AboutContent = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/temoignage?per_page=50')
+        const response = await fetch('/api/testimonials')
         const data = await response.json()
         setTestimonials(data)
       } catch (error) {

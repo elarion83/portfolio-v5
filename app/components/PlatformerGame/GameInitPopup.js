@@ -476,7 +476,7 @@ const GameInitPopup = ({ isVisible, onGameStart, resetKey }) => {
       const loadPortfolioData = async () => {
         try {
           console.log('📡 Chargement des données portfolio depuis l\'API...');
-          const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=100');
+          const res = await fetch('/api/portfolio');
           if (!res.ok) throw new Error('Erreur API');
           const data = await res.json();
           // Exclure le projet id 1602 et traiter les données

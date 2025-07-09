@@ -74,7 +74,7 @@ export function AchievementPopup({ achievementId, isVisible, level, onClose, onS
                 {/* Particle effects */}
                 {particles.map((particle, i) => (
                   <motion.div
-                    key={i}
+                    key={`particle-${achievementId}-${i}`}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{
                       scale: [0, 1, 0],

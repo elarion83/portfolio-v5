@@ -1,20 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter, Poppins } from 'next/font/google'
+import Script from 'next/script'
+import { inter, poppins } from './fonts'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
-import GoogleAnalytics from './components/GoogleAnalytics'
-import PageTracker from './components/PageTracker'
 import './globals.css'
 import './styles/custom.css'
 import './styles/pages.css'
-
-const inter = Inter({ subsets: ['latin'] })
-const poppins = Poppins({ 
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-poppins'
-})
 
 export const metadata: Metadata = {
   title: 'Nicolas Gruwe - Développeur WordPress & Full Stack Expert',
@@ -54,11 +46,23 @@ export default function RootLayout({
     <html lang="fr">
       <head>
         <link rel="icon" href="https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico" />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-GKXF35YJ15"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-GKXF35YJ15');
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.className} ${poppins.variable} bg-background text-foreground`}>
-        <GoogleAnalytics />
         <LanguageProvider>
-          <PageTracker />
           <div className="relative overflow-x-hidden w-full">
             <LanguageSwitch />
             <Navigation />
@@ -67,6 +71,41 @@ export default function RootLayout({
             </main>
           </div>
         </LanguageProvider>
+        <Script
+          id="page-tracking"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Page tracking script
+              if (typeof window !== 'undefined') {
+                const trackPageView = (url) => {
+                  if (window.gtag) {
+                    window.gtag('config', 'G-GKXF35YJ15', {
+                      page_path: url,
+                    });
+                  }
+                };
+
+                // Track initial page
+                trackPageView(window.location.pathname + window.location.search);
+
+                // Track route changes
+                let currentPath = window.location.pathname;
+                const observer = new MutationObserver(() => {
+                  if (window.location.pathname !== currentPath) {
+                    currentPath = window.location.pathname;
+                    trackPageView(currentPath + window.location.search);
+                  }
+                });
+
+                observer.observe(document.body, {
+                  childList: true,
+                  subtree: true
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   )

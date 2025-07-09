@@ -56,7 +56,7 @@ export function CommentForm({ postId, onCommentSubmitted }: CommentFormProps) {
     setSubmitError(null);
     
     try {
-      const response = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/comments', {
+      const response = await fetch('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

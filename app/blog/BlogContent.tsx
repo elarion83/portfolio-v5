@@ -13,10 +13,10 @@ interface BlogPost {
     rendered: string
   }
   date: string
-  excerpt: {
+  excerpt?: {
     rendered: string
   }
-  content: {
+  content?: {
     rendered: string
   }
   slug: string
@@ -43,7 +43,8 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
     }).format(date)
   }
 
-  const getReadTime = (content: string) => {
+  const getReadTime = (content?: string) => {
+    if (!content) return language === 'fr' ? '5 min de lecture' : '5 min read'
     const wordsPerMinute = 200
     const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length
     const minutes = Math.ceil(words / wordsPerMinute)
@@ -68,10 +69,12 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
           {initialPosts.map((post, index) => {
             const isFeature = index === 0
             const isSecondary = index === 1 || index === 2
+            const postId = post.id || index
+            const postSlug = post.slug || `post-${index}`
 
             return (
               <motion.article
-                key={post.id}
+                key={`post-${postId}-${postSlug}-${index}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -95,13 +98,13 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
 
                   <div className="relative h-full p-6 flex flex-col justify-end">
                     <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm rounded-full text-sm">
+                      <div key={`date-${postId}`} className="flex items-center gap-2 px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm rounded-full text-sm">
                         <Calendar className="w-4 h-4 text-[#e28d1d]" />
                         <time dateTime={post.date} className="text-gray-300">{formatDate(post.date)}</time>
                       </div>
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm rounded-full text-sm">
+                      <div key={`readtime-${postId}`} className="flex items-center gap-2 px-3 py-1.5 bg-[#261939]/80 backdrop-blur-sm rounded-full text-sm">
                         <Clock className="w-4 h-4 text-[#e28d1d]" />
-                        <span className="text-gray-300">{getReadTime(post.content.rendered)}</span>
+                        <span className="text-gray-300">{getReadTime(post.content?.rendered)}</span>
                       </div>
                     </div>
 
@@ -114,7 +117,7 @@ export function BlogContent({ initialPosts }: BlogContentProps) {
 
                     <div 
                       className="text-gray-300 mb-4 line-clamp-3"
-                      dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
+                      dangerouslySetInnerHTML={{ __html: post.excerpt?.rendered || '' }}
                     />
 
                     <div className="flex items-center gap-2 text-[#e28d1d] group-hover:translate-x-2 transition-transform">

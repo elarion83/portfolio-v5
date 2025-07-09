@@ -30,7 +30,7 @@ const menuItems = [
     path: '/blog',
     icon: BookOpen,
     label: 'Blog',
-    bgImage: '/img/blog.avif'
+    bgImage: '/img/blog.webp'
   },
   {
     path: '/contact',

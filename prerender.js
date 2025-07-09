@@ -1,16 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fetch from 'node-fetch';
 import { renderToString } from 'react-dom/server';
 import { Helmet } from 'react-helmet';
+import { getBlogPosts } from './app/lib/api.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function fetchAllPosts() {
   try {
-    const response = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?_embed&per_page=100');
-    return await response.json();
+    return await getBlogPosts();
   } catch (error) {
     console.error('Error fetching posts:', error);
     return [];

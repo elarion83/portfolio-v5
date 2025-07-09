@@ -39,23 +39,10 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&#8216;/g, "'");
 }
 
-async function getProjects() {
-  const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=50', {
-    next: { 
-      revalidate: 86400, // Revalidate every 24 hours instead of 1 hour
-      tags: ['portfolio'] 
-    },
-    headers: {
-      'Accept-Encoding': 'gzip, deflate, br',
-      'Accept': 'application/json',
-    }
-  })
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch projects')
-  }
+import { getPortfolioItems } from '../lib/api'
 
-  const data = await res.json()
+async function getProjects() {
+  const data = await getPortfolioItems()
   
   interface WPResponse {
     id: number;

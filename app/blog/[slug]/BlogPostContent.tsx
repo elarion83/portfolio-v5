@@ -40,7 +40,7 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
 
   const fetchComments = async (postId: number) => {
     try {
-      const response = await fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/comments?post=${postId}&order=desc`);
+      const response = await fetch(`/api/comments?post=${postId}&order=desc`);
       if (!response.ok) {
         throw new Error('Failed to fetch comments');
       }
@@ -55,8 +55,8 @@ export function BlogPostContent({ params }: { params: { slug: string } }) {
     const fetchPost = async () => {
       try {
         const [postResponse, allPostsResponse] = await Promise.all([
-          fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/posts?slug=${postId}&_embed`),
-          fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?per_page=100&_fields=title,slug')
+          fetch(`/api/posts?slug=${postId}&_embed`),
+          fetch('/api/posts')
         ]);
 
         if (!postResponse.ok || !allPostsResponse.ok) {

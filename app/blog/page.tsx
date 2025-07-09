@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { BlogContent } from './BlogContent'
+import { getBlogPosts } from '../lib/api'
 import { decodeHtmlEntities } from '../utils/textUtils'
 
 interface BlogPost {
@@ -8,10 +9,10 @@ interface BlogPost {
     rendered: string
   }
   date: string
-  excerpt: {
+  excerpt?: {
     rendered: string
   }
-  content: {
+  content?: {
     rendered: string
   }
   slug: string
@@ -26,19 +27,11 @@ interface BlogPost {
 export const revalidate = 3600 // Revalidate every hour
 
 async function getPosts() {
-  const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?_embed', {
-    next: { revalidate: 3600 }
-  })
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch posts')
-  }
-
-  const posts = await res.json()
+  const posts = await getBlogPosts()
   return posts.map((post: BlogPost) => ({
     ...post,
     excerpt: {
-      rendered: post.excerpt.rendered.replace(/<a class="more-link".*?<\/a>/g, '')
+      rendered: post.excerpt?.rendered?.replace(/<a class="more-link".*?<\/a>/g, '') || ''
     }
   }))
 }

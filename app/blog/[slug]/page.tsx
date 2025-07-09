@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { BlogPostContent } from './BlogPostContent'
 import { decodeHtmlEntities } from '../../utils/textUtils'
 import { BlogCTA } from '@/app/components/BlogCTA'
+import { getBlogPosts, getBlogPost } from '../../lib/api'
 
 interface BlogPost {
   id: number
@@ -28,33 +29,15 @@ interface BlogPost {
 export const revalidate = 3600 // Revalidate every hour
 
 async function getPost(slug: string): Promise<BlogPost> {
-  const res = await fetch(`https://portfolio.deussearch.fr/wp-json/wp/v2/posts?slug=${slug}&_embed`, {
-    next: { revalidate: 3600 }
-  })
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch post')
-  }
-
-  const posts = await res.json()
-  
-  if (posts.length === 0) {
+  try {
+    return await getBlogPost(slug)
+  } catch (error) {
     notFound()
   }
-
-  return posts[0]
 }
 
 async function getAllPosts() {
-  const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?per_page=100&_fields=title,slug', {
-    next: { revalidate: 3600 }
-  })
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch posts')
-  }
-
-  return res.json()
+  return await getBlogPosts()
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {

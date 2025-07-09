@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Calendar, Code, Briefcase, Eye, ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import { getPortfolioItems } from '../../lib/api'
 import '@/app/styles/project.css'
 import Image from 'next/image'
 
@@ -39,15 +40,7 @@ interface Project {
 }
 
 async function getAllProjects() {
-  const res = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=50', {
-    next: { revalidate: 3600 }
-  })
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch projects')
-  }
-
-  const data = await res.json()
+  const data = await getPortfolioItems()
   
   return data.map((item: any) => ({
     id: item.id.toString(),

@@ -1,3 +1,5 @@
+const { getPortfolioItems, getBlogPosts } = require('./app/lib/api-commonjs.js')
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: 'https://www.nicolas-gruwe.fr',
@@ -24,8 +26,7 @@ module.exports = {
 
     // Portfolio
     try {
-      const portfolioRes = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/portfolio?per_page=50')
-      const portfolioItems = await portfolioRes.json()
+      const portfolioItems = await getPortfolioItems()
       
       for (const item of portfolioItems) {
         result.push({
@@ -41,8 +42,7 @@ module.exports = {
 
     // Blog
     try {
-      const blogRes = await fetch('https://portfolio.deussearch.fr/wp-json/wp/v2/posts?per_page=50')
-      const blogPosts = await blogRes.json()
+      const blogPosts = await getBlogPosts()
       
       for (const post of blogPosts) {
         result.push({
