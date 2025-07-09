@@ -1,11 +1,15 @@
 const API_BASE = 'https://portfolio.deussearch.fr/wp-json/wp/v2'
 
 export async function getPortfolioItems() {
-  const res = await fetch(`${API_BASE}/portfolio?per_page=50`, {
+  const options = process.env.NODE_ENV === 'production' ? {
     next: { 
       revalidate: 86400, // 24h
       tags: ['portfolio'] 
-    },
+    }
+  } : {}
+  
+  const res = await fetch(`${API_BASE}/portfolio?per_page=50`, {
+    ...options,
     headers: {
       'Accept-Encoding': 'gzip, deflate, br',
       'Accept': 'application/json',
@@ -20,11 +24,15 @@ export async function getPortfolioItems() {
 }
 
 export async function getBlogPosts() {
-  const res = await fetch(`${API_BASE}/posts?per_page=100&_fields=title,slug,excerpt,date`, {
+  const options = process.env.NODE_ENV === 'production' ? {
     next: { 
       revalidate: 3600, // 1h
       tags: ['blog']
     }
+  } : {}
+  
+  const res = await fetch(`${API_BASE}/posts?per_page=100&_fields=title,slug,excerpt,date`, {
+    ...options
   })
 
   if (!res.ok) {
@@ -35,11 +43,15 @@ export async function getBlogPosts() {
 }
 
 export async function getPortfolioItem(slug: string) {
-  const res = await fetch(`${API_BASE}/portfolio?slug=${slug}`, {
+  const options = process.env.NODE_ENV === 'production' ? {
     next: { 
       revalidate: 86400,
       tags: ['portfolio']
     }
+  } : {}
+  
+  const res = await fetch(`${API_BASE}/portfolio?slug=${slug}`, {
+    ...options
   })
 
   if (!res.ok) {
@@ -51,11 +63,15 @@ export async function getPortfolioItem(slug: string) {
 }
 
 export async function getBlogPost(slug: string) {
-  const res = await fetch(`${API_BASE}/posts?slug=${slug}&_fields=title,slug,excerpt,date,content`, {
+  const options = process.env.NODE_ENV === 'production' ? {
     next: { 
       revalidate: 3600,
       tags: ['blog']
     }
+  } : {}
+  
+  const res = await fetch(`${API_BASE}/posts?slug=${slug}&_fields=title,slug,excerpt,date,content`, {
+    ...options
   })
 
   if (!res.ok) {
@@ -67,11 +83,15 @@ export async function getBlogPost(slug: string) {
 }
 
 export async function getTestimonials() {
-  const res = await fetch(`${API_BASE}/temoignage?per_page=50`, {
+  const options = process.env.NODE_ENV === 'production' ? {
     next: { 
       revalidate: 86400, // 24h
       tags: ['testimonials']
     }
+  } : {}
+  
+  const res = await fetch(`${API_BASE}/temoignage?per_page=50`, {
+    ...options
   })
 
   if (!res.ok) {
