@@ -81,64 +81,64 @@ async function getProject(slug: string): Promise<Project | null> {
 //   }))
 // }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const project = await getProject(params.slug)
+// export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+//   const project = await getProject(params.slug)
 
-  if (!project) {
-    return {
-      title: 'Projet non trouvé | Portfolio - Nicolas Gruwe',
-      description: 'Ce projet n\'existe pas ou n\'est plus disponible.',
-    }
-  }
+//   if (!project) {
+//     return {
+//       title: 'Projet non trouvé | Portfolio - Nicolas Gruwe',
+//       description: 'Ce projet n\'existe pas ou n\'est plus disponible.',
+//     }
+//   }
 
-  const title = `${project.title} | Portfolio - Nicolas Gruwe`
-  const description = project.description
+//   const title = `${project.title} | Portfolio - Nicolas Gruwe`
+//   const description = project.description
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `https://nicolas-gruwe.fr/portfolio/${project.slug}`,
-      siteName: 'Nicolas Gruwe',
-      images: [
-        {
-          url: project.imageUrl,
-          width: 1200,
-          height: 630,
-          alt: project.title,
-        }
-      ],
-      locale: 'fr_FR',
-      type: 'article',
-      publishedTime: new Date().toISOString(),
-      authors: ['Nicolas Gruwe'],
-      tags: [project.mainTechnology, project.department, 'Portfolio', 'Développement Web'],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [project.imageUrl],
-      creator: '@nicolasgruwe',
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
-    alternates: {
-      canonical: `https://nicolas-gruwe.fr/portfolio/${project.slug}`,
-    },
-  }
-}
+//   return {
+//     title,
+//     description,
+//     openGraph: {
+//       title,
+//       description,
+//       url: `https://nicolas-gruwe.fr/portfolio/${project.slug}`,
+//       siteName: 'Nicolas Gruwe',
+//       images: [
+//         {
+//           url: project.imageUrl,
+//           width: 1200,
+//           height: 630,
+//           alt: project.title,
+//         }
+//       ],
+//       locale: 'fr_FR',
+//       type: 'article',
+//       publishedTime: new Date().toISOString(),
+//       authors: ['Nicolas Gruwe'],
+//       tags: [project.mainTechnology, project.department, 'Portfolio', 'Développement Web'],
+//     },
+//     twitter: {
+//       card: 'summary_large_image',
+//       title,
+//       description,
+//       images: [project.imageUrl],
+//       creator: '@nicolasgruwe',
+//     },
+//     robots: {
+//       index: true,
+//       follow: true,
+//       googleBot: {
+//         index: true,
+//         follow: true,
+//         'max-video-preview': -1,
+//         'max-image-preview': 'large',
+//         'max-snippet': -1,
+//       },
+//     },
+//     alternates: {
+//       canonical: `https://nicolas-gruwe.fr/portfolio/${project.slug}`,
+//     },
+//   }
+// }
 
 export default async function ProjectPage({ params }: { params: { slug: string } }) {
   const project = await getProject(params.slug)
