@@ -80,13 +80,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  
-  return posts.map((post: { slug: string }) => ({
-    slug: post.slug
-  }))
-}
+// export async function generateStaticParams() {
+//   const posts = await getAllPosts()
+//   
+//   return posts.map((post: { slug: string }) => ({
+//     slug: post.slug
+//   }))
+// }
 
 export default function BlogPost({ params }: { params: { slug: string } }) {
   return <BlogPostContent params={params} />

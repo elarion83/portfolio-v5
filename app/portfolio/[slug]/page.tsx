@@ -73,13 +73,13 @@ async function getProject(slug: string): Promise<Project | null> {
   return projects.find((p: Project) => p.slug === slug) || null
 }
 
-export async function generateStaticParams() {
-  const projects = await getAllProjects()
-  
-  return projects.map((project: Project) => ({
-    slug: project.slug
-  }))
-}
+// export async function generateStaticParams() {
+//   const projects = await getAllProjects()
+//   
+//   return projects.map((project: Project) => ({
+//     slug: project.slug
+//   }))
+// }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const project = await getProject(params.slug)
