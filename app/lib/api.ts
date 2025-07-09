@@ -67,7 +67,7 @@ export async function getBlogPost(slug: string) {
 }
 
 export async function getTestimonials() {
-  const res = await fetch(`${API_BASE}/testimonials?per_page=50`, {
+  const res = await fetch(`${API_BASE}/temoignage?per_page=50`, {
     next: { 
       revalidate: 86400, // 24h
       tags: ['testimonials']
