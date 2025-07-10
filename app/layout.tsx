@@ -6,7 +6,7 @@ import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
 import './globals.css'
 import './styles/custom.css'
-// import './styles/pages.css' // déplacé dans la page blog uniquement
+import './styles/pages.css'
 
 export const metadata: Metadata = {
   title: 'Nicolas Gruwe - Développeur WordPress & Full Stack Expert',

@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import { BlogContent } from './BlogContent'
 import { getBlogPosts } from '../lib/api'
 import { decodeHtmlEntities } from '../utils/textUtils'
-import '../styles/pages.css'
 
 // Force SSR pour cette page
 export const dynamic = 'force-dynamic'

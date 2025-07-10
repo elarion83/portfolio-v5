@@ -5,6 +5,7 @@ import * as Icons from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '@/app/contexts/LanguageContext'
 import { ConstellationBackground } from './ConstellationBackground'
+import Image from 'next/image'
 
 export function HomeContent() {
   const { t, language } = useLanguage()
@@ -18,16 +19,14 @@ export function HomeContent() {
         transition={{ duration: 0.5 }}
         className="min-h-screen relative overflow-hidden flex items-center justify-center"
       >
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
-            backgroundImage: 'url(/img/home.webp)',
-            backgroundBlendMode: 'overlay',
-            backgroundColor: 'rgba(38, 25, 57, 0.95)'
-          }}
-          aria-hidden="true"
-        >
-          <link rel="preload" href="/img/home.webp" as="image" />
+        <div className="absolute inset-0 z-0" aria-hidden="true">
+          <Image
+            src="/img/home.webp"
+            alt="Background Hero"
+            fill
+            priority
+            style={{ objectFit: 'cover', objectPosition: 'center', backgroundBlendMode: 'overlay', backgroundColor: 'rgba(38, 25, 57, 0.95)' }}
+          />
         </div>
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#261939]/80 via-transparent to-[#261939]/80" />
         
