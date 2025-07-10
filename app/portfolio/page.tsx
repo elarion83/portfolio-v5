@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import { PortfolioContent } from '../components/PortfolioContent'
 
+// Force SSR pour cette page
+export const dynamic = 'force-dynamic'
+
 interface Project {
   id: string
   title: string

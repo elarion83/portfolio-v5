@@ -3,6 +3,9 @@ import { BlogContent } from './BlogContent'
 import { getBlogPosts } from '../lib/api'
 import { decodeHtmlEntities } from '../utils/textUtils'
 
+// Force SSR pour cette page
+export const dynamic = 'force-dynamic'
+
 interface BlogPost {
   id: number
   title: {
