@@ -19,9 +19,9 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   staticPageGenerationTimeout: 120,
-  experimental: {
-    optimizeCss: true,
-  },
+  // experimental: {
+  //   optimizeCss: true,
+  // },
   // Suppression temporaire des headers pour éviter les conflits de pattern
   // async headers() {
   //   return [
