@@ -46,11 +46,13 @@ export default function RootLayout({
     <html lang="fr">
       <head>
         <link rel="icon" href="https://portfolio.deussearch.fr/wp-content/themes/portfolio/images/favicon.ico" />
-        <script
-          async
+        <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-GKXF35YJ15"
+          strategy="afterInteractive"
         />
-        <script
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
