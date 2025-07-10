@@ -22,30 +22,31 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
   },
-  async headers() {
-    return [
-      {
-        source: '/(.*)\\.(svg|jpg|png|webp|avif)$',
-        locale: false,
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/fonts/:all*',
-        locale: false,
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ]
-  },
+  // Suppression temporaire des headers pour éviter les conflits de pattern
+  // async headers() {
+  //   return [
+  //     {
+  //       source: '/(.*)\\.(svg|jpg|png|webp|avif)$',
+  //       locale: false,
+  //       headers: [
+  //         {
+  //           key: 'Cache-Control',
+  //           value: 'public, max-age=31536000, immutable',
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       source: '/fonts/:all*',
+  //       locale: false,
+  //       headers: [
+  //         {
+  //           key: 'Cache-Control',
+  //           value: 'public, max-age=31536000, immutable',
+  //         },
+  //       ],
+  //     },
+  //   ]
+  // },
 }
 
 module.exports = nextConfig 
