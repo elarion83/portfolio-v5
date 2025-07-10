@@ -70,7 +70,7 @@ export async function getBlogPost(slug: string) {
     }
   } : {}
   
-  const res = await fetch(`${API_BASE}/posts?slug=${slug}&_fields=title,slug,excerpt,date,content`, {
+  const res = await fetch(`${API_BASE}/posts?slug=${slug}&_embed`, {
     ...options
   })
 
