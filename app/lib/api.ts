@@ -31,7 +31,7 @@ export async function getBlogPosts() {
     }
   } : {}
   
-  const res = await fetch(`${API_BASE}/posts?per_page=100&_fields=title,slug,excerpt,date`, {
+  const res = await fetch(`${API_BASE}/posts?per_page=100&_embed`, {
     ...options
   })
 
