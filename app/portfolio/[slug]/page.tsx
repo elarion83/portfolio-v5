@@ -57,7 +57,7 @@ async function getAllProjects() {
     content: decodeHtmlEntities(item.content.rendered),
     year: item.acf?.annee || 'N/A',
     imageUrl: item.acf?.image_background || '/img/portfolio.webp',
-    logoUrl: item.acf?.logo_url || '',
+    logoUrl: item.yoast_head_json?.og_image?.[0]?.url || item.acf?.logo_url || '',
     isDarkLogo: item.acf?.logo_sombre === true,
     department: item.department_name || 'Other',
     mainTechnology: item.acf?.socle_technique || '',
