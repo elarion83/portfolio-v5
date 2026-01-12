@@ -3,6 +3,15 @@ const { getPortfolioItems, getBlogPosts } = require('./app/lib/api-commonjs.js')
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: 'https://www.nicolas-gruwe.fr',
+  // Force la régénération complète du sitemap
+  transform: async (config, path) => {
+    return {
+      loc: path,
+      changefreq: config.changefreq,
+      priority: config.priority,
+      lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
+    }
+  },
   generateRobotsTxt: false, // On a déjà créé notre robots.txt personnalisé
   changefreq: 'daily',
   priority: 0.7,
