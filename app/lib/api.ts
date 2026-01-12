@@ -1,21 +1,17 @@
 const API_BASE = 'https://portfolio.deussearch.fr/wp-json/wp/v2'
 
 export async function getPortfolioItems() {
-  const options = process.env.NODE_ENV === 'production' ? {
+  // Temporairement désactiver le cache pour forcer la mise à jour
+  const res = await fetch(`${API_BASE}/portfolio?per_page=50&_t=${Date.now()}`, {
     next: {
-      revalidate: 86400, // 24h
-      tags: ['portfolio']
-    }
-  } : {}
-
-  const res = await fetch(`${API_BASE}/portfolio?per_page=50`, {
-    ...options,
+      revalidate: 0, // Pas de cache
+    },
     headers: {
       'Accept-Encoding': 'gzip, deflate, br',
       'Accept': 'application/json',
     }
   })
-  
+
   if (!res.ok) {
     throw new Error('Failed to fetch portfolio items')
   }
