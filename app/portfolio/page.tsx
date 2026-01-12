@@ -73,6 +73,11 @@ async function getProjects() {
       };
     };
     department_name?: string;
+    yoast_head_json?: {
+      og_image?: Array<{
+        url?: string;
+      }>;
+    };
   }
   
   const formattedProjects = data.map((item: WPResponse) => ({
