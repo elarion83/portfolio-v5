@@ -137,6 +137,9 @@ export const metadata: Metadata = {
   },
 }
 
+// Force la revalidation des données
+export const revalidate = 0
+
 export default async function PortfolioPage() {
   const projects = await getProjects()
   return <PortfolioContent initialProjects={projects} />
