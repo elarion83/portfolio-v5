@@ -29,7 +29,7 @@ export interface HomeProjectItem {
   title: string
   slug: string
   description: string
-  /** Extrait du contenu (HTML strippé, ~300 caractères) */
+  /** Extrait du contenu (HTML strippé, ~640 caractères) */
   contentExcerpt: string
   year: string
   imageUrl: string
@@ -61,7 +61,7 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&#8216;/g, "'")
 }
 
-const EXCERPT_MAX_LENGTH = 320
+const EXCERPT_MAX_LENGTH = 640
 
 function excerptFromHtml(html: string, maxLen: number): string {
   const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
@@ -103,7 +103,7 @@ export async function getLatestProjectsForHome(limit = 5): Promise<HomeProjectIt
         .replace(/\s*\(\d{4}\)$/, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, ''),
-      description: item.excerpt?.rendered || '',
+      description: decodeHtmlEntities(item.excerpt?.rendered || ''),
       contentExcerpt: excerptFromHtml(rawContent || item.excerpt?.rendered || '', EXCERPT_MAX_LENGTH),
       year: item.acf?.annee || 'N/A',
       imageUrl: item.acf?.image_background || item.yoast_head_json?.og_image?.[0]?.url || '/img/portfolio.webp',

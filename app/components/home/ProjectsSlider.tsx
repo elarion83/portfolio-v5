@@ -57,7 +57,6 @@ export function ProjectsSlider({ projects }: ProjectsSliderProps) {
   }
 
   const project = projects[current]
-  const excerpt = project.contentExcerpt || project.description?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() || ''
   const hasPageSpeed = project.pageSpeed && Object.values(project.pageSpeed).some((v) => v > 0)
 
   return (
@@ -138,9 +137,10 @@ export function ProjectsSlider({ projects }: ProjectsSliderProps) {
                         <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 project-title" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', lineHeight: 1.2 }}>
                           {project.title}
                         </h3>
-                        <p className="text-gray-300 text-sm sm:text-base leading-relaxed line-clamp-4 mb-4">
-                          {excerpt}
-                        </p>
+                        <div
+                          className="home-project-excerpt text-gray-300 text-sm sm:text-base leading-relaxed line-clamp-8 mb-4"
+                          dangerouslySetInnerHTML={{ __html: project.description || project.contentExcerpt || '' }}
+                        />
                         <span className="inline-flex items-center gap-2 text-[#e28d1d] font-medium text-sm mt-auto">
                           {t('home.projects.viewProject')}
                           <ExternalLink className="w-4 h-4 flex-shrink-0" />

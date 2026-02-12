@@ -164,6 +164,24 @@
   font-weight: 500;
 }
 
+/* Home slider project excerpt (HTML from WordPress: line breaks, bold, apostrophes) */
+.home-project-excerpt p {
+  margin: 0 0 0.5em;
+  color: inherit;
+}
+.home-project-excerpt p:last-child {
+  margin-bottom: 0;
+}
+.home-project-excerpt strong {
+  font-weight: 700;
+  color: inherit;
+}
+.home-project-excerpt br {
+  display: block;
+  content: '';
+  margin-top: 0.25em;
+}
+
 /* Content Layout */
 .project-content-wrapper {
   position: relative;
