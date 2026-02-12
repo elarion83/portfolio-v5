@@ -11,8 +11,18 @@
   }
 
   .dark {
-    --background: 15 23 42;
+    --background: 3 5 7;
     --foreground: 255 255 255;
+  }
+  
+  /* Deep Night theme - always applied for homepage */
+  html {
+    background-color: #030507;
+  }
+  
+  body {
+    background-color: #030507;
+    color: #ffffff;
   }
 
   body {
@@ -39,6 +49,16 @@
       0 0 5px rgba(255, 255, 255, 0.5),
       0 0 10px rgba(226, 141, 29, 0.5),
       0 0 15px rgba(226, 141, 29, 0.3);
+  }
+
+  /* Couleur du nom (hero) : blanc → orange → blanc */
+  @keyframes hero-name-color {
+    0%, 100% { color: #ffffff; }
+    50% { color: #e28d1d; }
+  }
+
+  .hero-name-color {
+    animation: hero-name-color 5s ease-in-out infinite;
   }
 
   .title-neon-subtle {
@@ -283,4 +303,47 @@
 
 .glow-animation {
   animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Fond texturé : couleur unie + grille qui bouge */
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 48px 48px; }
+}
+
+.section-bg-textured {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-bg-textured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: gridMove 20s linear infinite;
+  pointer-events: none;
+}
+
+.section-bg-textured > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Marquee défilement infini droite → gauche */
+@keyframes heroMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.hero-marquee-track {
+  animation: heroMarquee 25s linear infinite;
+}
+
+.hero-marquee-track:hover {
+  animation-play-state: paused;
 }

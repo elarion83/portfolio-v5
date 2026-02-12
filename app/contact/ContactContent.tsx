@@ -98,20 +98,7 @@ export function ContactContent() {
   };
   
   return (
-    <div className="min-h-screen relative">
-      {/* Image de fond fixe */}
-      <div 
-        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
-        style={{ 
-          backgroundImage: 'url(/img/contact.jpg)',
-          backgroundBlendMode: 'overlay',
-          backgroundColor: 'rgba(38, 25, 57, 0.95)'
-        }}
-      />
-      
-      {/* Overlay gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#261939]/50 to-gray-900/50 z-0" />
-
+    <div className="min-h-screen relative bg-[#261939] section-bg-textured">
       {/* Contenu */}
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">

@@ -91,8 +91,10 @@ interface PortfolioContentProps {
 
 export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
   const [companyFilter, setCompanyFilter] = useState<string>('all')
+  const [techFilter, setTechFilter] = useState<string>('all')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [isCompanyFilterOpen, setIsCompanyFilterOpen] = useState(false)
+  const [isTechFilterOpen, setIsTechFilterOpen] = useState(false)
   const [achievement, setAchievement] = useState<Achievement | null>(null)
   const viewedProjectsRef = useRef(new Set<string>())
   const achievedRef = useRef(new Set<string>())
@@ -103,6 +105,14 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
     new Set(
       initialProjects
         .map(p => p.department)
+        .filter(Boolean)
+    )
+  ).sort()
+
+  const technologies = Array.from(
+    new Set(
+      initialProjects
+        .map(p => p.mainTechnology)
         .filter(Boolean)
     )
   ).sort()
@@ -146,9 +156,19 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
   }
 
   const getDepartmentCount = (department: string) => {
-    return initialProjects.filter(p => 
-      department === 'all' ? true : p.department === department
-    ).length
+    return initialProjects.filter(p => {
+      const matchDepartment = department === 'all' || p.department === department
+      const matchTech = techFilter === 'all' || p.mainTechnology === techFilter
+      return matchDepartment && matchTech
+    }).length
+  }
+
+  const getTechCount = (tech: string) => {
+    return initialProjects.filter(p => {
+      const matchDepartment = companyFilter === 'all' || p.department === companyFilter
+      const matchTech = tech === 'all' || p.mainTechnology === tech
+      return matchDepartment && matchTech
+    }).length
   }
 
   const renderCountBadge = (count: number, isActive: boolean) => (
@@ -191,9 +211,11 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
     </div>
   )
 
-  const filteredProjects = initialProjects.filter(project => 
-    companyFilter === 'all' ? true : project.department === companyFilter
-  )
+  const filteredProjects = initialProjects.filter(project => {
+    const matchDepartment = companyFilter === 'all' || project.department === companyFilter
+    const matchTech = techFilter === 'all' || project.mainTechnology === techFilter
+    return matchDepartment && matchTech
+  })
 
   return (
     <div className="min-h-screen relative">
@@ -220,23 +242,24 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
         </div>
 
         {/* Filters */}
-        <div className="max-w-7xl mx-auto mb-12">
+        <div className="max-w-7xl mx-auto mb-12 flex flex-wrap items-center gap-3">
+          {/* Filtre par entreprise */}
           <div className="relative">
             <button
-              onClick={() => setIsCompanyFilterOpen(!isCompanyFilterOpen)}
+              onClick={() => {
+                setIsCompanyFilterOpen(!isCompanyFilterOpen)
+                setIsTechFilterOpen(false)
+              }}
               className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 text-white hover:bg-white/10 transition-colors"
-              aria-label="Filtrer les projets par entreprise"
+              aria-label="Filtrer par entreprise"
               aria-expanded={isCompanyFilterOpen}
             >
               <Filter className="w-4 h-4" />
               <span className="font-medium">
-                {companyFilter === 'all' 
-                  ? t('portfolio.company.all')
-                  : companyFilter}
+                {companyFilter === 'all' ? t('portfolio.company.all') : companyFilter}
               </span>
               {renderCountBadge(getDepartmentCount(companyFilter), true)}
             </button>
-
             <AnimatePresence>
               {isCompanyFilterOpen && (
                 <motion.div
@@ -252,9 +275,7 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
                         setIsCompanyFilterOpen(false)
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-md ${
-                        companyFilter === 'all'
-                          ? 'bg-[#e28d1d] text-white'
-                          : 'hover:bg-white/5 text-white'
+                        companyFilter === 'all' ? 'bg-[#e28d1d] text-white' : 'hover:bg-white/5 text-white'
                       }`}
                     >
                       <span>{t('portfolio.company.all')}</span>
@@ -268,13 +289,70 @@ export function PortfolioContent({ initialProjects }: PortfolioContentProps) {
                           setIsCompanyFilterOpen(false)
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-md ${
-                          companyFilter === department
-                            ? 'bg-[#e28d1d] text-white'
-                            : 'hover:bg-white/5 text-white'
+                          companyFilter === department ? 'bg-[#e28d1d] text-white' : 'hover:bg-white/5 text-white'
                         }`}
                       >
                         <span>{department}</span>
                         {renderCountBadge(getDepartmentCount(department), companyFilter === department)}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Filtre par technologie */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setIsTechFilterOpen(!isTechFilterOpen)
+                setIsCompanyFilterOpen(false)
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 text-white hover:bg-white/10 transition-colors"
+              aria-label="Filtrer par technologie"
+              aria-expanded={isTechFilterOpen}
+            >
+              <Code className="w-4 h-4" />
+              <span className="font-medium">
+                {techFilter === 'all' ? (language === 'fr' ? 'Toutes les technologies' : 'All technologies') : techFilter}
+              </span>
+              {renderCountBadge(getTechCount(techFilter), true)}
+            </button>
+            <AnimatePresence>
+              {isTechFilterOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 mt-2 w-64 bg-[#261939]/95 backdrop-blur-sm border border-white/10 rounded-lg shadow-lg z-50"
+                >
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setTechFilter('all')
+                        setIsTechFilterOpen(false)
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-md ${
+                        techFilter === 'all' ? 'bg-[#e28d1d] text-white' : 'hover:bg-white/5 text-white'
+                      }`}
+                    >
+                      <span>{language === 'fr' ? 'Toutes les technologies' : 'All technologies'}</span>
+                      {renderCountBadge(getTechCount('all'), techFilter === 'all')}
+                    </button>
+                    {technologies.map((tech) => (
+                      <button
+                        key={tech}
+                        onClick={() => {
+                          setTechFilter(tech)
+                          setIsTechFilterOpen(false)
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-md ${
+                          techFilter === tech ? 'bg-[#e28d1d] text-white' : 'hover:bg-white/5 text-white'
+                        }`}
+                      >
+                        <span>{tech}</span>
+                        {renderCountBadge(getTechCount(tech), techFilter === tech)}
                       </button>
                     ))}
                   </div>

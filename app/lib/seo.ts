@@ -6,8 +6,8 @@ export const siteConfig = {
   ogImage: 'https://www.nicolas-gruwe.fr/img/home.webp',
   links: {
     twitter: 'https://twitter.com/nicolasgruwe',
-    github: 'https://github.com/nicolasgruwe',
-    linkedin: 'https://linkedin.com/in/nicolasgruwe',
+    github: 'https://github.com/elarion83',
+    linkedin: 'https://www.linkedin.com/in/nicolas-gruwe-b4805587/',
   },
 }
 
