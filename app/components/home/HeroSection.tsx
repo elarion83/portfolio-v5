@@ -119,7 +119,7 @@ export function HeroSection() {
             className="font-bold tracking-tight"
           >
             <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl hero-name-color">Nicolas Gruwe</span>
-            <span className="block mt-4 text-lg sm:text-xl text-gray-300/95 font-light max-w-2xl mx-auto leading-snug tracking-tight" style={{ fontFamily: 'var(--font-inter), system-ui, sans-serif' }}>
+            <span className="block mt-4 text-lg sm:text-xl text-gray-300/95 font-light max-w-2xl mx-auto leading-snug tracking-tight">
               {t('home.hero.solutionsPrefix')}
               <span className="relative inline-block h-[1.4em] min-w-[10ch] align-middle overflow-hidden">
                 <span className="absolute inset-0 flex items-center -translate-y-[2px]" aria-hidden>

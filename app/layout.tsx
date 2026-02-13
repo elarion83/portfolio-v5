@@ -63,7 +63,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${inter.className} ${poppins.variable} bg-background text-foreground`}>
+      <body className={`${inter.className} ${poppins.variable} bg-background text-foreground`}>
         <LanguageProvider>
           <div className="relative overflow-x-hidden w-full">
             <LanguageSwitch />
