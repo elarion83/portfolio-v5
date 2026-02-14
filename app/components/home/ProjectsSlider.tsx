@@ -132,7 +132,7 @@ export function ProjectsSlider({ projects }: ProjectsSliderProps) {
                     </div>
 
                     {/* Zone contenu : extrait + PageSpeed (fond pour ancrer le texte) */}
-                    <div className="lg:col-span-3 flex flex-col lg:flex-row gap-4 p-4 sm:p-6 bg-[#261939]/95 backdrop-blur-sm border-l border-white/10 min-h-[200px]">
+                    <div className="lg:col-span-3 flex flex-col lg:flex-row gap-4 p-4 sm:p-6 min-h-[200px] bg-block border-l border-block">
                       <div className="flex-1 flex flex-col justify-center min-w-0">
                         <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 project-title" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', lineHeight: 1.2 }}>
                           {project.title}
@@ -149,7 +149,7 @@ export function ProjectsSlider({ projects }: ProjectsSliderProps) {
 
                       {/* PageSpeed (reprend le bloc de la page projet) */}
                       {hasPageSpeed && project.pageSpeed && (
-                        <div className="glass-card p-4 sm:p-6 flex-shrink-0 w-full lg:w-56">
+                        <div className="home-block-card p-4 sm:p-6 flex-shrink-0 w-full lg:w-56">
                           <h4 className="text-lg font-bold text-white mb-4">{t('home.projects.performance')}</h4>
                           <div className="space-y-3">
                             {Object.entries(project.pageSpeed).map(([key, value]) => (

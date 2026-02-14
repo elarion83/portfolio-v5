@@ -22,7 +22,7 @@ export function ContactSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="rounded-xl border border-white/10 bg-[#261939]/50 backdrop-blur-sm p-8 sm:p-10 text-center"
+          className="home-block-card p-8 sm:p-10 text-center"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 title-neon">
             {t('home.contact.title')}

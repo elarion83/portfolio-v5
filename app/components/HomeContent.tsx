@@ -2,6 +2,7 @@
 
 import { HeroSection } from './home/HeroSection'
 import { ServicesSection } from './home/ServicesSection'
+import { AvailabilitySection } from './home/AvailabilitySection'
 import { TestimonialsSection } from './home/TestimonialsSection'
 import { ProjectsSlider } from './home/ProjectsSlider'
 import { ContactSection } from './home/ContactSection'
@@ -17,6 +18,7 @@ export function HomeContent({ latestProjects }: HomeContentProps) {
     <main className="relative">
       <HeroSection />
       <ServicesSection />
+      <AvailabilitySection />
       <TestimonialsSection />
       <ProjectsSlider projects={latestProjects} />
       <ContactSection />

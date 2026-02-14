@@ -113,7 +113,7 @@ export function TestimonialsSection() {
         </motion.div>
 
         <div className="relative max-w-4xl mx-auto">
-          <div className="relative rounded-xl border border-white/10 bg-[#261939]/50 backdrop-blur-sm p-6 sm:p-8 lg:p-10 min-h-[280px] flex flex-col">
+          <div className="home-block-card relative p-6 sm:p-8 lg:p-10 min-h-[280px] flex flex-col">
             <AnimatePresence mode="wait">
               <motion.article
                 key={testimonial.id}

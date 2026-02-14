@@ -14,6 +14,13 @@
     --background: 3 5 7;
     --foreground: 255 255 255;
   }
+
+  /* Blocs home (inspiration cartes sombres) */
+  :root {
+    --block-bg: #231a32;
+    --block-border: rgba(255, 255, 255, 0.08);
+    --block-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  }
   
   /* Deep Night theme - always applied for homepage */
   html {
@@ -346,4 +353,198 @@
 
 .hero-marquee-track:hover {
   animation-play-state: paused;
+}
+
+/* Cartes type "blocs" home : fond sombre violet, bords arrondis, ombre */
+.home-block-card {
+  background-color: var(--block-bg);
+  border: 1px solid var(--block-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--block-shadow);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.home-block-card:hover {
+  border-color: rgba(226, 141, 29, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.bg-block {
+  background-color: var(--block-bg);
+}
+.border-block {
+  border-color: var(--block-border);
+}
+
+/* ========== Tech Landing: Services & Availability (ultra-futuristic) ========== */
+:root {
+  --obsidian: #0a0a0f;
+  --obsidian-mid: #0f0f18;
+  --obsidian-light: #16161f;
+  --electric-violet: #8b5cf6;
+  --electric-violet-glow: rgba(139, 92, 246, 0.4);
+  --cyber-blue: #06b6d4;
+  --cyber-blue-glow: rgba(6, 182, 212, 0.35);
+  --glass-bg: rgba(15, 15, 24, 0.6);
+  --glass-border: rgba(139, 92, 246, 0.15);
+  --glass-border-blue: rgba(6, 182, 212, 0.2);
+}
+
+.tech-landing-section {
+  position: relative;
+  overflow: hidden;
+  background: var(--obsidian);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(6, 182, 212, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(139, 92, 246, 0.06), transparent);
+}
+
+/* Neural / data stream grid background */
+.tech-landing-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Subtle flowing line (fiber-optic feel) */
+.tech-landing-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.15),
+    rgba(6, 182, 212, 0.2),
+    rgba(139, 92, 246, 0.15),
+    transparent
+  );
+  animation: techFlow 12s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes techFlow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+
+.tech-landing-section .tech-section-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glass panel card – glassmorphism, sharp edges, iridescent border */
+.tech-glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 40px -12px rgba(139, 92, 246, 0.08);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.tech-glass-card:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 60px -10px var(--electric-violet-glow),
+    0 0 80px -20px var(--cyber-blue-glow);
+  transform: translateY(-2px);
+}
+
+/* Iridescent top edge (light refraction) */
+.tech-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(167, 139, 250, 0.5),
+    rgba(34, 211, 238, 0.4),
+    rgba(167, 139, 250, 0.5),
+    transparent
+  );
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.tech-landing-title {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(139, 92, 246, 0.25);
+}
+
+.tech-landing-subtitle {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.tech-glass-card .tech-card-title {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.tech-glass-card .tech-card-desc {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+.tech-icon-violet {
+  color: var(--electric-violet);
+  filter: drop-shadow(0 0 8px var(--electric-violet-glow));
+}
+
+.tech-icon-cyan {
+  color: var(--cyber-blue);
+  filter: drop-shadow(0 0 8px var(--cyber-blue-glow));
+}
+
+/* Lens flare neon (section Services) – suit le curseur */
+.services-lens-flare {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(139, 92, 246, 0.2) 0%,
+    rgba(34, 211, 238, 0.12) 22%,
+    rgba(139, 92, 246, 0.06) 40%,
+    transparent 62%
+  );
+  filter: blur(32px);
+  transition: left 0.2s ease-out, top 0.2s ease-out, opacity 0.12s ease;
+  animation: lens-flare-pulse 4s ease-in-out infinite;
+}
+
+@keyframes lens-flare-pulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
 }
