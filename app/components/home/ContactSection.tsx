@@ -51,11 +51,11 @@ export function ContactSection() {
             })}
           </div>
 
-          <Link href="/contact">
+          <Link href="/contact" className="btn-primary">
             <motion.button
-              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[#e28d1d] text-[#0d0a12] font-semibold rounded-lg hover:shadow-[0_0_30px_rgba(226,141,29,0.4)] transition-all"
+              type="button"
+              className="inline-flex items-center gap-2 font-semibold rounded-full"
             >
               {t('home.contact.sendMessage')}
               <ArrowRight className="w-5 h-5" />

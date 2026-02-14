@@ -13,6 +13,8 @@ const serviceKeys = [
   { key: 'audit' },
 ] as const
 
+const SERVICE_ITEMS_COUNT = 3
+
 export function ServicesSection() {
   const { t } = useLanguage()
   const sectionRef = useRef<HTMLElement>(null)
@@ -42,14 +44,10 @@ export function ServicesSection() {
       onMouseLeave={handleMouseLeave}
       className="tech-landing-section py-24 md:py-32 relative"
     >
-      {/* Lens flare neon qui suit le curseur */}
       {flare && (
         <div
           className="services-lens-flare"
-          style={{
-            left: flare.x,
-            top: flare.y,
-          }}
+          style={{ left: flare.x, top: flare.y }}
           aria-hidden
         />
       )}
@@ -69,7 +67,7 @@ export function ServicesSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-5">
+        <div className="services-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-5">
           {serviceKeys.map((item, index) => (
             <motion.div
               key={item.key}
@@ -77,15 +75,23 @@ export function ServicesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: index * 0.06 }}
-              className="tech-glass-card relative flex flex-col p-6 lg:p-7 overflow-hidden"
+              className="service-card tech-glass-card relative flex flex-col p-6 lg:p-7 overflow-hidden"
             >
-              <h3 className="tech-card-title text-base lg:text-lg mb-2">
-                {t(`home.services.${item.key}.title`)}
-              </h3>
-              <p className="tech-card-desc flex items-start gap-2.5 text-sm lg:text-[15px] flex-1">
+              <div className="flex items-start gap-2.5 mb-2">
                 <Zap className="w-4 h-4 tech-icon-violet flex-shrink-0 mt-0.5" aria-hidden />
-                <span>{t(`home.services.${item.key}.desc`)}</span>
-              </p>
+                <h3 className="tech-card-title text-base lg:text-lg font-semibold text-white">
+                  {t(`home.services.${item.key}.title`)}
+                </h3>
+              </div>
+              <ul className="service-list tech-card-desc text-sm lg:text-[15px] space-y-2.5 list-disc pl-5 flex-1">
+                {Array.from({ length: SERVICE_ITEMS_COUNT }, (_, i) => i + 1).map(
+                  (n) => (
+                    <li key={n} className="leading-snug">
+                      {t(`home.services.${item.key}.item${n}`)}
+                    </li>
+                  )
+                )}
+              </ul>
             </motion.div>
           ))}
         </div>

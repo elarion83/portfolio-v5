@@ -169,31 +169,25 @@ export function HeroSection() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
             {/* Primary CTA - Glow effect on hover */}
-            <Link href="/contact">
+            <Link href="/contact" className="btn-primary">
               <motion.button
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
-                className="group relative px-8 py-4 bg-[#e28d1d] text-deep-night-950 font-semibold rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(226,141,29,0.5)]"
+                type="button"
+                className="group relative font-semibold rounded-full overflow-visible"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   {t('home.cta.startProject')}
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-[#f5a742] to-[#e28d1d]"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: 0 }}
-                  transition={{ duration: 0.3 }}
-                />
               </motion.button>
             </Link>
 
             {/* Secondary CTA - Ghost button */}
-            <Link href="/portfolio">
+            <Link href="/portfolio" className="btn-secondary">
               <motion.button
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-8 py-4 border border-gray-700 text-white font-semibold rounded-lg hover:border-gray-600 hover:bg-white/5 transition-all duration-300"
+                type="button"
+                className="font-semibold rounded-full"
               >
                 {t('home.cta.discoverCreations')}
               </motion.button>
