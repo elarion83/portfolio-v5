@@ -4,6 +4,7 @@ import { inter, poppins } from './fonts'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { LanguageSwitch } from './components/LanguageSwitch'
 import { Navigation } from './components/Navigation'
+import { Analytics } from './components/Analytics'
 import './globals.css'
 import './styles/custom.css'
 import './styles/pages.css'
@@ -68,46 +69,12 @@ export default function RootLayout({
           <div className="relative overflow-x-hidden w-full">
             <LanguageSwitch />
             <Navigation />
+            <Analytics />
             <main className="content-container">
               {children}
             </main>
           </div>
         </LanguageProvider>
-        <Script
-          id="page-tracking"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Page tracking script
-              if (typeof window !== 'undefined') {
-                const trackPageView = (url) => {
-                  if (window.gtag) {
-                    window.gtag('config', 'G-GKXF35YJ15', {
-                      page_path: url,
-                    });
-                  }
-                };
-
-                // Track initial page
-                trackPageView(window.location.pathname + window.location.search);
-
-                // Track route changes
-                let currentPath = window.location.pathname;
-                const observer = new MutationObserver(() => {
-                  if (window.location.pathname !== currentPath) {
-                    currentPath = window.location.pathname;
-                    trackPageView(currentPath + window.location.search);
-                  }
-                });
-
-                observer.observe(document.body, {
-                  childList: true,
-                  subtree: true
-                });
-              }
-            `,
-          }}
-        />
       </body>
     </html>
   )

@@ -5,10 +5,12 @@ export const API_BASE = 'https://portfolio.deussearch.fr/wp-json/wp/v2'
 export const API_PORTFOLIO_URL = `${API_BASE}/portfolio`
 
 export async function getPortfolioItems() {
-  // Temporairement désactiver le cache pour forcer la mise à jour
-  const res = await fetch(`${API_PORTFOLIO_URL}?per_page=50&_t=${Date.now()}`, {
+  const res = await fetch(`${API_PORTFOLIO_URL}?per_page=50`, {
     next: {
-      revalidate: 0, // Pas de cache
+      // Évite un refetch complet à chaque navigation client-side.
+      // Ajustable si tu publies souvent sur WP.
+      revalidate: 3600, // 1h
+      tags: ['portfolio'],
     },
     headers: {
       'Accept-Encoding': 'gzip, deflate, br',

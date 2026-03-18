@@ -1,8 +1,7 @@
 import { Metadata } from 'next'
 import { PortfolioContent } from '../components/PortfolioContent'
 
-// Force SSR pour cette page
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 interface Project {
   id: string
@@ -141,9 +140,6 @@ export const metadata: Metadata = {
     description: 'Découvrez mes projets de développement WordPress et web sur mesure. Portfolio de Nicolas Gruwe, développeur freelance spécialisé en WordPress et React.',
   },
 }
-
-// Force la revalidation des données
-export const revalidate = 0
 
 export default async function PortfolioPage() {
   const projects = await getProjects()
