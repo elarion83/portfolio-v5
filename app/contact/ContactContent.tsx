@@ -98,7 +98,28 @@ export function ContactContent() {
   };
   
   return (
-    <div className="min-h-screen relative bg-[#261939] section-bg-textured">
+    <div
+      className="min-h-screen relative bg-[#261939] section-bg-textured"
+      style={{
+        backgroundImage: "url('/img/contact.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* Overlay sombre pour conserver un bon contraste sur l'image.
+          Note: `section-bg-textured > *` force parfois `position: relative`,
+          donc on verrouille via style inline. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: 'rgba(38, 25, 57, 0.7)',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      />
       {/* Contenu */}
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12">

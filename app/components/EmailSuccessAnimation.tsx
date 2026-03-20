@@ -4,6 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
 import { useLanguage } from '../contexts/LanguageContext'
+import { createPortal } from 'react-dom'
 
 interface EmailSuccessAnimationProps {
   onComplete: () => void
@@ -17,12 +18,15 @@ export function EmailSuccessAnimation({ onComplete }: EmailSuccessAnimationProps
     return () => clearTimeout(timer)
   }, [onComplete])
 
-  return (
+  // Portal: évite les problèmes de `fixed`/`z-index` causés par des ancestors avec transform/animations.
+  if (typeof window === 'undefined') return null
+
+  return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#261939]/95 backdrop-blur-sm"
+      className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-[#261939]/95 backdrop-blur-sm"
     >
       <div className="relative flex flex-col items-center justify-center w-full max-w-md mx-auto px-4">
         <motion.div
@@ -70,19 +74,19 @@ export function EmailSuccessAnimation({ onComplete }: EmailSuccessAnimationProps
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-[#e28d1d]"
-            initial={{ 
-              x: 0, 
-              y: 0, 
+            initial={{
+              x: 0,
+              y: 0,
               scale: 0,
-              opacity: 0 
+              opacity: 0
             }}
-            animate={{ 
+            animate={{
               x: Math.cos(i * 30 * Math.PI / 180) * 100,
               y: Math.sin(i * 30 * Math.PI / 180) * 100,
               scale: [0, 1, 0],
               opacity: [0, 1, 0]
             }}
-            transition={{ 
+            transition={{
               delay: 0.5,
               duration: 1,
               times: [0, 0.5, 1],
@@ -98,6 +102,7 @@ export function EmailSuccessAnimation({ onComplete }: EmailSuccessAnimationProps
           />
         ))}
       </div>
-    </motion.div>
+    </motion.div>,
+    document.body
   )
 } 
